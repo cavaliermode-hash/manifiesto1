@@ -1,0 +1,23 @@
+# Netlify: sitio estático, sin compilación. Se publica la carpeta raíz del repositorio.
+[build]
+  publish = "."
+  command = ""
+
+# Que el navegador siempre pida la versión más reciente de la página y de los datos.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
