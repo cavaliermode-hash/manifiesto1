@@ -395,16 +395,6 @@ body.tierra .solo-vuelo,body.tierra [data-solo-vuelo]{display:none!important}
 .pwm-b{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
 .pwm-b button{font:600 15px/1 var(--body);padding:11px 16px;border-radius:8px;border:1px solid var(--green);background:var(--green);color:#fff;cursor:pointer}
 .pwm-b .sec{background:#fff;color:var(--green)}
-#gate{position:fixed;inset:0;z-index:999;background:#fff;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
-.gate-box{width:100%;max-width:380px;border:1px solid var(--line);border-top:4px solid var(--green);border-radius:12px;padding:22px 20px}
-.gate-box img{display:block;width:min(260px,70%);height:auto;margin-bottom:14px}
-.gate-box h2{margin:6px 0 16px;font:700 28px/1 var(--display);text-transform:uppercase;color:var(--green)}
-.gate-box label{display:block;font-weight:600;margin-bottom:6px}
-.gate-box input{width:100%;font:500 18px/1.2 var(--mono);padding:12px;border:1px solid var(--green-line);border-radius:8px}
-.gate-box input:focus{outline:2px solid var(--green);outline-offset:1px}
-.gate-box button{width:100%;margin-top:12px;background:var(--green);color:#fff;border:0;border-radius:8px;padding:13px;font:600 16px/1 var(--body);cursor:pointer}
-.gate-box button:hover{background:var(--green-dark)}
-#gate-msg{min-height:1.4em;margin:10px 0 0;color:#A12B1F;font-size:14px}
 .tabs{display:flex;gap:6px;padding-block:10px 0;flex-wrap:wrap}
 .tabs button{font:600 15px/1 var(--body);padding:10px 16px;border-radius:999px;border:1px solid var(--green-line);background:#fff;color:var(--green-dark);cursor:pointer}
 .tabs button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}
@@ -469,7 +459,7 @@ body.vctl .controls, body.vctl main.wrap{display:none}
 .kstat b{display:block;font:700 22px/1.1 var(--mono)} .kstat span{font-size:12px;color:var(--muted)}
 .kstat[aria-pressed="true"]{border-color:var(--green);box-shadow:inset 0 0 0 2px var(--green)}
 .kstat.ok b{color:var(--green)} .kstat.ns b{color:#B3261E} .kstat.pe b{color:#8A5A00}
-.csearch{position:relative;margin:8px 0 4px}.csearch input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:10px 70px 10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff}.csearch input:focus{outline:none;border-color:#136c34;box-shadow:0 0 0 3px #D7EBDD}.ctl li[hidden],.ctl tr[hidden],.ctl section[hidden],.ctl h3[hidden],.ctl .pgrp[hidden]{display:none!important}#cqn,.vqn{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;color:#5C6B80}.cnone{text-align:center;color:#5C6B80;padding:16px!important}
+.csearch{position:relative;margin:8px 0 4px}.csearch input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:10px 120px 10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff}.csearch input:focus{outline:none;border-color:#136c34;box-shadow:0 0 0 3px #D7EBDD}.ctl li[hidden],.ctl tr[hidden],.ctl section[hidden],.ctl h3[hidden],.ctl .pgrp[hidden]{display:none!important}#cqn,.vqn{position:absolute;right:48px;top:50%;transform:translateY(-50%);font-size:13px;color:#5C6B80}.cnone{text-align:center;color:#5C6B80;padding:16px!important}
 .ktable-wrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:6px}
 .pgrp{margin:18px 0 0}.pgrp h3{margin:0 0 2px;font:700 17px/1.25 var(--display);color:var(--green-dark)}.pgrp .pw{margin:0 0 8px;color:var(--muted);font-size:14px}.pgrp .pc{font-weight:700;color:var(--green)}
 .ptag{display:inline-block;font:600 11px/1 var(--body);padding:4px 7px;border-radius:999px;background:var(--green-soft);color:var(--green-dark);margin-left:6px;white-space:nowrap}
@@ -585,7 +575,7 @@ body.vctl .qhint-w{display:none}
 .agv-body img{display:block;width:100%;max-width:1100px;height:auto;margin:0 auto;border-radius:6px;box-shadow:0 1px 6px rgba(0,0,0,.12);cursor:zoom-in}
 .agv-body.zoom img{width:250%;max-width:none;cursor:zoom-out}
 .agv-tip{margin:0;padding:6px 14px;font-size:12.5px;color:var(--muted);background:#eef1ef;text-align:center}
-body.locked>*:not(#gate){visibility:hidden}
+body.locked>*{visibility:hidden}
 
 /* Contraste claro (igual que el correo y el PDF): fondos verde claro y texto verde oscuro en la reserva */
 .count-card{background:#D7EBDD!important;color:#0F3D22!important;border:1px solid #BFDDC8}
@@ -637,9 +627,9 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 .dcierre{margin:18px 0 6px}.dcierre .dimp{margin:0;background:#FFF7E6;border-left:4px solid #E0A100;padding:10px 14px;color:var(--ink);line-height:1.45}.dcierre .dbye{margin:12px 2px 0;color:var(--ink)}.dcierre .dbye i{color:#1C6B2E}
 .itinweb{margin:14px 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;overflow-x:auto}
 .rmode{display:flex;gap:6px;margin:6px 0 10px}.rmode button{flex:1;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font:600 14px var(--body);cursor:pointer}.rmode button[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green)}
-.rstw{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:center;margin:4px 0 12px}@media (min-width:760px){.rstw{grid-template-columns:minmax(0,520px) 260px;justify-content:start;gap:24px}}
+.rstw{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:center;margin:4px 0 12px}@media (min-width:760px){.rstw{grid-template-columns:minmax(0,560px);justify-content:start}}
 .rstat{width:100%;border-collapse:collapse;font-size:12.5px}.rstat td{padding:3px 8px;border:1px solid #fff;line-height:1.25}.rstat td.n{text-align:right;font:700 13px var(--mono);width:46px}.rstat td.p{text-align:right;width:54px;font-size:12px}
-.rpie{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px}.rpie svg{width:200px;height:200px}.rpie figcaption{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font-size:11.5px;color:var(--muted)}.rpie figcaption span{display:inline-flex;align-items:center;gap:4px}.rpie i{width:10px;height:10px;border-radius:2px;display:inline-block;border:1px solid #bbb}.rstat tr{cursor:pointer}.rstat tr.on td{outline:2px solid var(--ink);outline-offset:-2px}
+.rpie{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px}.rpie svg{width:290px;height:290px;max-width:100%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.12))}.rpie figcaption{font:600 13px var(--body);color:var(--ink);letter-spacing:.2px}.rpie figcaption b{color:var(--green)}.rstat tr{cursor:pointer}.rstat tr.on td{outline:2px solid var(--ink);outline-offset:-2px}
 .rstat tr.tt td{background:#D9D9D9;font-weight:700;cursor:default}
 .rkpi{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0 14px}.rkpi div{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:#fff}.rkpi b{display:block;font:700 17px/1.2 var(--mono);color:var(--green)}.rkpi span{font-size:12px;color:var(--muted)}
 .rh{font:700 15px var(--body);color:var(--green);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.4px}
@@ -647,19 +637,10 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 .rtab .rs{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:999px;margin-top:2px;font-weight:600}
 @media (max-width:560px){.rkpi{grid-template-columns:repeat(2,1fr)}.rtab .hm{display:none}.rtab th,.rtab td{padding:5px 4px;font-size:12px}}
 .rnota{margin:10px 0 4px;background:#FFF7E6;border-left:4px solid #E0A100;border-radius:6px;padding:8px 12px;font-size:14px;color:var(--ink)}
+.csearch .cx{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:50%;background:#E6EAF0;color:#3F4D60;font:700 15px/30px Arial,sans-serif;text-align:center;padding:0;cursor:pointer}.csearch .cx:hover{background:#136c34;color:#fff}.csearch input:placeholder-shown + .cx{display:none}.csearch input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 </style>
 </head>
 <body>
-<div id="gate" hidden>
-  <form id="gate-form" class="gate-box" autocomplete="off">
-    <p class="eyebrow">Manifiesto de itinerario</p>
-    <h2>SEGUNDA CUMBRE UNIVERSALES</h2>
-    <label for="gate-pin">Escribe el PIN de acceso que recibiste</label>
-    <input id="gate-pin" type="password" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="gate-msg">
-    <button type="submit">Entrar</button>
-    <p id="gate-msg" role="alert"></p>
-  </form>
-</div>
 <header class="board">
   <div class="wrap">
     <div class="eyebrow" id="ev">Manifiesto de itinerario</div>
@@ -686,7 +667,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
     <button data-m="sal" aria-pressed="false">Regresos (Salidas)</button>
   </div>
   <p class="cs">Todos los invitados en una sola lista, sin importar la fecha. Marca Check-in o No show y ordena tocando el encabezado de cada columna.</p>
-  <div class="csearch"><input id="kq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><span class="vqn"></span></div>
+  <div class="csearch"><input id="kq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn"></span></div>
   <div class="cstats" role="group" aria-label="Filtrar">
     <button class="kstat" data-f="all" aria-pressed="true"><b id="ks-all">0</b><span>Total</span></button>
     <button class="kstat ok" data-f="ok" aria-pressed="false"><b id="ks-ok">0</b><span>Check-in</span></button>
@@ -712,10 +693,10 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 </section>
 <section class="wrap ctl" id="cla" hidden>
   <h2 class="ct">Claves de reserva</h2>
-  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ abre y descarga el PDF solo de vuelos, 📄 abre su itinerario en PDF, 💬 lo envía por WhatsApp y ✉️ por correo.</p>
+  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 📄 abre su itinerario en PDF, 💬 lo envía por WhatsApp, ✉️ por correo y 📋 copia el correo con formato.</p>
   <div class="zipbar"><button type="button" id="zipv">⬇️ ZIP de PDF de vuelos</button><button type="button" id="zipi">⬇️ ZIP de itinerarios</button><span id="zipmsg" role="status"></span></div>
   <div class="rolbar" id="rolbar" role="group" aria-label="Filtrar por rol"></div>
-  <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><span id="cqn"></span></div>
+  <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span id="cqn"></span></div>
   <div class="ktable-wrap"><table class="ktable ctab">
     <thead><tr>
       <th><button data-sort="n">Nombre <span></span></button></th>
@@ -739,7 +720,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 <section class="wrap ctl" id="pyt" hidden>
   <h2 class="ct">Traslados y pernoctas</h2>
   <p class="cs">Quiénes pernoctan en el Hotel NH y quiénes tienen traslado terrestre, agrupados por punto de encuentro.</p>
-  <div class="csearch"><input id="pq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><span class="vqn"></span></div>
+  <div class="csearch"><input id="pq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn"></span></div>
   <div id="pout"></div>
   <div class="ctools" hidden><button id="pcopy">Copiar resumen</button></div>
   <p id="pmsg" class="kmsg" role="status"></p>
@@ -747,7 +728,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 <section class="wrap ctl" id="ctl" hidden>
   <h2 class="ct" id="ct-t"></h2>
   <p class="cs" id="ct-s"></p>
-  <div class="csearch"><input id="lq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><span class="vqn"></span></div>
+  <div class="csearch"><input id="lq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn"></span></div>
   <div class="cstats" role="group" aria-label="Filtrar" hidden>
     <button class="cstat" data-f="all" aria-pressed="true"><b id="cs-all">0</b><span>Total</span></button>
     <button class="cstat ok" data-f="ok" aria-pressed="false"><b id="cs-ok">0</b><span>Check-in</span></button>
@@ -832,7 +813,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
     <details><summary>¿Los horarios están en hora de qué ciudad?</summary><p>Cada horario está en la hora local del aeropuerto. En estas fechas, Sonora tiene 1 hora menos que la Ciudad de México: si sales de Hermosillo a las 12:39, en la Ciudad de México son las 13:39.</p></details>
     <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu nombre completo, con todos tus nombres y tus dos apellidos, tal como aparece en tu reserva (por ejemplo, <b>MARCO ANTONIO ROMERO RAMIRO</b>). Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a tu coordinador de Viajes El Corte Inglés.</p></details>
   </section>
-  <p class="foot">Horarios en hora local de cada aeropuerto.</p>
+  <p class="foot">Horarios en hora local de cada aeropuerto. · <a href="privacidad.html" style="color:inherit">Aviso de privacidad</a></p>
 </main>
 
 <div id="agv" class="agv" role="dialog" aria-modal="true" aria-label="Agenda del evento" hidden>
@@ -860,7 +841,7 @@ const DIA = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 function fmtDate(s){ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||''); if(!m) return s||''; const d=new Date(Date.UTC(+m[1],m[2]-1,+m[3])); return `${DIA[d.getUTCDay()]} ${+m[3]} ${MES[m[2]-1]}`; }
 const AP = {ACA:'Acapulco',MEX:'Cd. de México',TIJ:'Tijuana',GDL:'Guadalajara',MTY:'Monterrey',HMO:'Hermosillo',LMM:'Los Mochis',TLC:'Toluca',PBC:'Puebla',NLU:'AIFA',CUN:'Cancún',SJD:'Los Cabos',MID:'Mérida',QRO:'Querétaro',BJX:'León',CUL:'Culiacán',MZT:'Mazatlán',VER:'Veracruz',OAX:'Oaxaca',VSA:'Villahermosa',CJS:'Cd. Juárez',CUU:'Chihuahua',TRC:'Torreón',SLP:'San Luis Potosí',AGU:'Aguascalientes',MXL:'Mexicali',PVR:'Puerto Vallarta'};
 const legs = r => [r.c1,r.ida,r.reg,r.c2].filter(Boolean);
-const confirmed = r => /CONFIRM/.test(r.st);
+const confirmed = r => /CONFIRM|EMITIDO|BLOQUEO.*OK/.test(r.st);
 const state = {sel:null, q:'', st:'', ida:'', reg:'', view:'pax', hits:new Map()};
 
 /* Búsqueda por nombre completo: solo hay resultado si las palabras escritas son exactamente todas las del nombre
@@ -1013,6 +994,8 @@ function notaBloques(r){
       const rest = m[7] || ''; let k, fin = '';
       if((k = rest.match(/A tu regreso el (.+?), al aterrizar en tu vuelo (.+?) \(llegada ([\d:]+ h)\), te esperamos en la salida de vuelos nacionales del (.+?) para trasladarte (?:al mismo punto de encuentro: (.+?)|de vuelta a tu domicilio registrado)\.$/)))
         fin = k[1], reg.push({i:'🚗', t:'Traslado de regreso', rows:[['Fecha', k[1]], ['Vuelo', `${k[2]} · llegada ${k[3]}`], ['Recogida', `Salida de vuelos nacionales del ${k[4]}`], ['Destino', k[5] ? 'Mismo punto de encuentro: ' + k[5] : 'Su domicilio registrado']]});
+      else if((k = rest.match(/A tu regreso el (.+?) a las ([\d:]+ h) te recogemos en el lobby del (.+?) para llevarte de vuelta a (.+?)\./)))
+        fin = k[1], reg.push({i:'🚗', t:'Traslado de regreso', rows:[['Fecha y hora', `${k[1]} · ${k[2]}`], ['Recogida', 'Lobby del ' + k[3]], ['Destino', k[4].replace(/^tu /, 'Su ').replace(/^./, c => c.toUpperCase())]]});
       else if((k = rest.match(/Al terminar el evento, el traslado te lleva de vuelta (a la misma dirección|al mismo aeropuerto)\./)))
         fin = 'jueves 5 de noviembre', reg.push({i:'🚗', t:'Traslado de regreso', rows:[['Fecha', 'Jueves 5 de noviembre, al terminar el evento'], ['Recogida', 'Sede del evento (Hotel Marinaterra)'], ['Destino', /aeropuerto/.test(k[1]) ? 'El mismo aeropuerto de llegada' : 'Su domicilio registrado']]});
       else if(rest) reg.push({i:'🚗', t:'Traslado de regreso', text: rest});
@@ -1042,6 +1025,7 @@ function lineaTiempo(r){
     if(b.t === 'Traslado de ida'){ const fh = val(R, 'Fecha y hora'); add(isoDe(fh), fh.split('·')[1] || '', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'Pernocta a su llegada'){ add(isoDe(val(R, 'Check-in')), '23:00', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'A su llegada'){ const f = isoDe(val(R, 'Fecha')), l = legsI.find(x => x.f === f && x.d === 'HMO'); add(f, l ? minDe(l.l) + 1 : '12:00', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
+    if(/^Traslado de regreso/.test(b.t) && val(R, 'Fecha y hora')){ const fh = val(R, 'Fecha y hora'); add(isoDe(fh) || HOTEL.co, fh.split('·')[1] || '12:30', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(/^Traslado de regreso/.test(b.t)){ const f = isoDe(val(R, 'Fecha')) || HOTEL.co, vu = val(R, 'Vuelo'), dest = val(R, 'Destino');
       if(/salida/.test(vu) && /aeropuerto de Hermosillo/i.test(dest)){ regHMO = true; add(f, minDe(vu.split('salida')[1]) - 1, {tipo: 'blk', i: b.i, t: 'Traslado del hotel al aeropuerto de Hermosillo', rows: R, nb: REGRESO_TXT}); return; }
       if(/llegada/.test(vu)){ add(f, minDe(vu.split('llegada')[1]) + 1, {tipo: 'blk', i: b.i, t: b.t === 'Traslado de regreso' ? 'Traslado de regreso a su ciudad' : b.t, rows: R}); return; }
@@ -1057,6 +1041,8 @@ function lineaTiempo(r){
     add(ci, '15:00', {tipo: 'info', i: '🛎️', t: 'Check-in del ' + HOTEL.n + ' · ' + hci + ' h', text: ''});
     add(HOTEL.co, '12:00', {tipo: 'info', i: '🛎️', t: 'Check-out del ' + HOTEL.n, text: ''}); }
   if(!tierra && aplicaRegreso(r) && !regHMO){ const l = legsR.find(x => x.o === 'HMO'); add(l.f, minDe(l.s) - 1, {tipo: 'verde', i: '🚐', t: 'Traslado del hotel al aeropuerto de Hermosillo', text: REGRESO_TXT}); }
+  { const co = S.find(x => x.tipo === 'info' && /^Check-out/.test(x.t)), sal = S.filter(x => x.f === HOTEL.co && x !== co && (/regreso|aeropuerto/i.test(x.t || '') || x.dir === 'Regreso')).map(x => x.m);
+    if(co && sal.length && Math.min(...sal) <= co.m) co.m = Math.min(...sal) - 1; } // el check-out va antes de salir del hotel
   S.forEach((x, k) => x.k = k);
   return S.sort((a, b) => a.f.localeCompare(b.f) || a.m - b.m || a.k - b.k);
 }
@@ -1494,7 +1480,7 @@ function vueloHTML(r, pie){ /* despedida ECI siempre al final (búsqueda, VECI y
           <tr><td style="padding:2px 0">Duración</td><td></td><td>${dur(l)}</td><td></td></tr>
         </table></td></tr></table>`;
   return `<div style="width:760px;background:#fff;padding:26px 30px 30px;box-sizing:border-box;font-family:Arial,sans-serif">
-    <div style="border-top:2px solid ${G}"></div>
+    
     <div style="font:bold 22px Arial,sans-serif;color:${G};margin:22px 0 14px">Su viaje</div>
     <div style="border-top:2px solid ${G};width:40%;margin-bottom:4px"></div>
     <table style="width:100%;border-collapse:collapse;background:${G};color:#fff"><tr><td style="width:120px;padding:9px 12px;font:12px Arial,sans-serif">Viajero</td><td style="padding:9px 12px;font:bold 13px Arial,sans-serif">${esc(tcase(r.n))}</td></tr></table>
@@ -1520,8 +1506,15 @@ async function vueloPDF(r, pie){
     return doc.output('blob');
   } finally { box.remove(); }
 }
-document.addEventListener('click', e => { const b = e.target.closest('[data-vpdf]'); if(!b) return; e.preventDefault();
+document.addEventListener('click', async e => { const b = e.target.closest('[data-vpdf]'); if(!b) return; e.preventDefault();
   const r = DATA[+b.dataset.vpdf]; DLG = true; setTimeout(() => { DLG = false; awaySince = 0; }, 3000);
+  if(!b.dataset.solover){ // VECI (✈️): solo descarga el PDF, sin abrir otra pestaña
+    if(b.disabled) return; const t0 = b.textContent; b.disabled = true; b.textContent = '⏳';
+    try{ const blob = await vueloPDF(r, true), a = document.createElement('a'); a.href = URL.createObjectURL(new File([blob], tcase(r.n) + '.pdf', {type:'application/pdf'})); a.download = tcase(r.n) + '.pdf';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); b.textContent = '✅'; setTimeout(() => { b.textContent = t0; }, 1500); }
+    catch(er){ b.textContent = t0; alert('No se pudo generar el PDF. Revisa tu conexión e inténtalo de nuevo.'); }
+    finally{ b.disabled = false; setTimeout(() => { DLG = false; awaySince = 0; }, 1500); }
+    return; }
   window.open(location.pathname + '?vpdf=' + encodeURIComponent(r.n) + (b.dataset.solover ? '&ver=1' : '') + '&v=' + APP_V + '.' + Date.now(), '_blank'); });
 /* ---------- Descargar todos los PDF en un ZIP (un PDF por persona, con su nombre). Respeta el buscador de Claves. ---------- */
 let zipP; function loadZip(){ if(window.JSZip) return Promise.resolve(window.JSZip);
@@ -1580,17 +1573,7 @@ async function pdfDirecto2(sp, solo, nn){
 }
 function mailBox(r){
   const i = DATA.indexOf(r);
-  return `<section class="mailbox wa" aria-labelledby="wa-t">
-    <h3 id="wa-t">💬 Envíatelo por WhatsApp</h3>
-    <p>Escribe tu número de celular a 10 dígitos y toca el botón: se abrirá WhatsApp con tu clave, tus vuelos, tus indicaciones y el enlace a la <b>agenda del evento</b>. Si lo dejas vacío, podrás elegir el chat al que quieres mandarlo.</p>
-    <form class="mb-form" data-wa="${i}" novalidate>
-      <label class="sr" for="wa-tel">Tu número de celular (10 dígitos)</label>
-      <input id="wa-tel" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="10 dígitos (opcional)" maxlength="16">
-      <button class="abtn2 wa-btn" type="submit">Enviar por WhatsApp</button>
-    </form>
-    <p class="mb-msg" id="wa-msg" role="status"></p>
-  </section>
-  ${[r.c1, r.ida, r.reg, r.c2].some(Boolean) ? `<section class="mailbox pdfbox" aria-labelledby="pdf-t">
+  return `  ${[r.c1, r.ida, r.reg, r.c2].some(Boolean) ? `<section class="mailbox pdfbox" aria-labelledby="pdf-t">
     <h3 id="pdf-t">✈️ Ver mis vuelos en PDF</h3>
     <p>Abre en otra pestaña el PDF con <b>tus vuelos</b>: tus claves de reserva, aerolínea, número de vuelo, horarios de salida y llegada, y los puntos importantes de tu vuelo. Desde ahí lo puedes guardar, imprimir o compartir.</p>
     <button class="abtn2" type="button" data-vpdf="${i}" data-solover="1">Ver en PDF</button>
@@ -1840,7 +1823,7 @@ function ctlRender(){
         const con = cx ? ` · conexión ${esc(cx.v)} ${lle ? 'desde ' + esc(cx.o) : 'a ' + esc(cx.d)}` : '';
         const clave = lle ? (r.ci || r.cr) : (r.cr || r.ci);
         const pern = lle && (r.notas||[]).some(n => n.k === 'pe') ? '<span class="ctag">Hotel NH</span>' : '';
-        return `<li>${esc(r.n)}${r.staff ? rolTag(r.rol || 'STAFF') : ''}${kBtns(r.n)}</li>`; }).join('') + '</ul></section>';
+        return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}</li>`; }).join('') + '</ul></section>';
   });
   $('#cout').innerHTML = html || '<p class="cnote">No hay invitados en este filtro.</p>';
 }
@@ -1938,7 +1921,7 @@ function vFiltra(id){
 document.addEventListener('input', e => { if(VQ[e.target.id]) vFiltra(e.target.id); });
 addEventListener('DOMContentLoaded', () => Object.entries(VQ).forEach(([id, sel]) => { const c = $(sel); if(c) new MutationObserver(() => vFiltra(id)).observe(c, {childList:true, subtree:true}); }));
 /* Botones 📄 PDF, 💬 WhatsApp y ✉️ correo de una persona (Claves y Traslados y pernoctas) */
-function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Abrir y descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}<button data-pdfv="${i}" title="Abrir el itinerario de ${esc(tcase(n))} en PDF" aria-label="PDF de ${esc(tcase(n))}">📄</button>${TEL[n]
+function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}<button data-pdfv="${i}" title="Abrir el itinerario de ${esc(tcase(n))} en PDF" aria-label="PDF de ${esc(tcase(n))}">📄</button>${TEL[n]
       ? `<a class="cwa" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(waTxt(DATA[i]))}" target="_blank" rel="noopener" title="Enviar por WhatsApp a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp a ${esc(tcase(n))}">💬</a>`
       : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${MAIL[n]
       ? `<a class="cwa cml" data-mail="${i}" href="mailto:${encodeURIComponent(MAIL[n])}?subject=${encodeURIComponent('Tu itinerario · Segunda Cumbre Universales')}&body=${encodeURIComponent(mailTxt(DATA[i]))}" title="Enviar por correo a ${esc(tcase(n))} (${esc(MAIL[n])})" aria-label="Correo a ${esc(tcase(n))}">✉️</a>`
@@ -2053,23 +2036,23 @@ function pytRender(){
   if(PYT_F){ // resultado del cuadrito seleccionado
     const L = INV().filter(PYT_FIL[PYT_F][1]).sort((a, b) => a.n.localeCompare(b.n, 'es'));
     h += `<div class="pgrp pres"><h3>${PYT_FIL[PYT_F][0]}</h3><p class="pw"><span class="pc">${L.length} ${L.length===1?'persona':'personas'}</span> · <button type="button" class="pver" data-pf="${PYT_F}">✕ Ver todo</button></p>`
-      + tabla(L.map(r => `<tr><td class="kn">${esc(r.n)}${svcTags(r)}</td>${accBtns(DATA.indexOf(r))}</tr>`)) + '</div>';
+      + tabla(L.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
     $('#pout').innerHTML = h; return;
   }
   h += `<div class="pgrp"><h3>🚗+🏨+✈️ Traslado + pernocta + vuelo</h3><p class="pw"><span class="pc">${tres.length} ${tres.length===1?'persona':'personas'}</span></p>`
-    + tabla(tres.map(r => `<tr><td class="kn">${esc(r.n)}${svcTags(r)}</td>${accBtns(DATA.indexOf(r))}</tr>`)) + '</div>';
+    + tabla(tres.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
   const peSolo = pern.filter(r => !conTraslado(r));
   h += `<div class="pgrp"><h3>🏨+✈️ Pernocta + vuelo (sin traslado)</h3><p class="pw"><span class="pc">${peSolo.length} ${peSolo.length===1?'persona':'personas'}</span> · llegan en vuelo a CDMX, duermen en el Hotel NH y vuelan a Hermosillo al día siguiente</p>`
-    + tabla(peSolo.map(r => `<tr><td class="kn">${esc(r.n)}${svcTags(r)}</td>${accBtns(DATA.indexOf(r))}</tr>`)) + '</div>';
+    + tabla(peSolo.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
   h += `<div class="pgrp"><h3>🏨 Pernoctan en el Hotel NH Collection Mexico City Airport T2</h3><p class="pw"><span class="pc">${pern.length} ${pern.length===1?'persona':'personas'}</span> · a su llegada · check-in lunes 2 nov · check-out martes 3 nov</p>`
-    + tabla(pern.map(r => { return `<tr><td class="kn">${esc(r.n)}${svcTags(r)}</td>${accBtns(DATA.indexOf(r))}</tr>`; })) + '</div>';
+    + tabla(pern.map(r => { return `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`; })) + '</div>';
   h += `<div class="pgrp"><h3>🚗 Traslados terrestres por ciudad</h3><p class="pw"><span class="pc">${tras} ${tras===1?'persona':'personas'}</span></p></div>`;
   [...grupos].sort((a, b) => a[1].cd.localeCompare(b[1].cd, 'es')).forEach(([key, g]) => {
     h += `<div class="pgrp"><h3>${esc(key)}</h3><p class="pw"><span class="pc">${g.pax.length}</span>${g.sub ? ' · ' + esc(g.sub) : ''}</p>`
-      + tabla(g.pax.map(({r, det}) => `<tr><td class="kn">${esc(r.n)}${svcTags(r)}</td>${accBtns(DATA.indexOf(r))}</tr>`)) + '</div>';
+      + tabla(g.pax.map(({r, det}) => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
   });
   h += `<div class="pgrp"><h3>🚙 Locales que llegan por su cuenta</h3><p class="pw"><span class="pc">${locales.length} ${locales.length===1?'persona':'personas'}</span> · sin vuelo ni traslado; llegan directo a la sede del evento.</p>`
-    + tabla(locales.map(r => { return `<tr><td class="kn">${esc(r.n)}${svcTags(r)}</td>${accBtns(DATA.indexOf(r))}</tr>`; })) + '</div>';
+    + tabla(locales.map(r => { return `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`; })) + '</div>';
   $('#pout').innerHTML = h;
 }
 function pytTxt(){
@@ -2134,7 +2117,7 @@ function konRender(){
   document.querySelectorAll('#con .ktable th button').forEach(b => { if(b.dataset.sort === KON.sort){ b.setAttribute('aria-sort', KON.dir>0?'ascending':'descending'); b.querySelector('span').dataset.a = KON.dir>0?'▲':'▼'; } else b.removeAttribute('aria-sort'); });
   const rows = all.filter(x => KON.filter === 'all' || x.s === KON.filter);
   $('#kbody').innerHTML = rows.map(x => { const l = x.l;
-    return `<tr class="st-${x.s}"><td class="kn">${esc(x.n)}${stTag(x.n)}<span class="knb"><button type="button" data-kver="${esc(x.n)}" title="Ver su reserva como en la búsqueda" aria-label="Ver reserva de ${esc(x.n)}">🔍</button><button type="button" data-kcopy="${esc(x.n)}" title="Copiar nombre" aria-label="Copiar nombre de ${esc(x.n)}">📋</button></span></td>${l ? `<td class="kf">${esc(fmtDate(l.f))}<small>${esc(lle ? l.l : l.s)} · ${esc(l.o)}→${esc(l.d)}</small></td>
+    return `<tr class="st-${x.s}"><td class="kn">${esc(x.n)}${rolTag((DATA.find(r => r.n === x.n) || {}).rol || (stTag(x.n) ? 'STAFF' : ''))}</td>${l ? `<td class="kf">${esc(fmtDate(l.f))}<small>${esc(lle ? l.l : l.s)} · ${esc(l.o)}→${esc(l.d)}</small></td>
       <td class="kv">${esc(l.v)}</td>` : `<td class="kf">${esc(x.lab)}<small>${x.v === 'Por su cuenta' ? '🚗' : '🚐'} ${esc(x.det)}</small></td><td class="kv">${esc(x.v)}</td>`}<td><div class="kb"><button class="bok" data-n="${esc(x.n)}" data-s="ok" aria-pressed="${x.s==='ok'}">✓ Check-in</button>
       <button class="bns" data-n="${esc(x.n)}" data-s="ns" aria-pressed="${x.s==='ns'}">✗ No show</button></div></td></tr>`; }).join('')
     || '<tr><td colspan="4" class="cnote">No hay invitados en este filtro.</td></tr>';
@@ -2210,16 +2193,19 @@ let TEL = {}, MAIL = {}, REP = null;
 /* Reporte: datos cifrados aparte con su propia contraseña; se pide al entrar y queda abierto hasta recargar la página */
 const repSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('repses') || 'null'); return v && Date.now() - v.t < VECI_MS ? v : null; }catch(e){ return null; } };
 const repSave = pw => { try{ sessionStorage.setItem('repses', JSON.stringify({pw: pw || (repSes() || {}).pw || '', t: Date.now()})); }catch(e){} };
+/* Confirmado emitido OK y Bloqueo (Aeroméxico / emitido) OK cuentan juntos como un solo estatus */
+const ST_CONF = /^(CONFIRMADO EMITIDO|BLOQUEO (AEROMEXICO|EMITIDO)|INDIVIDUAL EMITIDO)|EMITIDO OK$/; // cualquier boleto emitido u OK de bloqueo
+function repNorm(R){ if(R && R.filas) R.filas.forEach(x => { const k = stKey(x.st); if(/^CONFIRMADO EMITIDO/.test(k)) x.st = 'INDIVIDUAL EMITIDO OK'; else if(/^BLOQUEO AEROMEXICO/.test(k)) x.st = 'BLOQUEO EMITIDO OK'; }); return R; }
 async function repGate(){
   if(REP){ repSave(); return true; } if(!PACK || !PACK.rep) return false;
   const ses = repSes();
-  if(ses && ses.pw){ try{ REP = (await Cifra.descifrar(PACK.rep, ses.pw)).rep || null; if(REP){ repSave(); return true; } }catch(e){} }
+  if(ses && ses.pw){ try{ REP = repNorm((await Cifra.descifrar(PACK.rep, ses.pw)).rep || null); if(REP){ repSave(); return true; } }catch(e){} }
   const pw = await askPw(ses === null && sessionStorage.getItem('repses') ? `Pasaron ${VECI_MIN} minutos sin actividad en el Reporte. Escribe la contraseña:` : 'Para abrir el Reporte escribe la contraseña:'); if(pw === null) return false;
-  try{ const k = pw.trim().toLowerCase(); REP = (await Cifra.descifrar(PACK.rep, k)).rep || null; if(REP) repSave(k); return !!REP; }
+  try{ const k = pw.trim().toLowerCase(); REP = repNorm((await Cifra.descifrar(PACK.rep, k)).rep || null); if(REP) repSave(k); return !!REP; }
   catch(e){ alert('Contraseña incorrecta.'); return false; }
 }
 /* ---------- Reporte de telemarketing y presupuesto (solo VECI) ---------- */
-const REP_ST = [['PENDIENTE POR MANDAR LA INFORMACIÓN','#DDEBF7','#16301F'],['PENDIENTE CONFIRMAR PARTICIPANTE O INVITADO','#C9C400','#16301F'],['CONFIRMADO EMITIDO OK','#70AD47','#0F2A12'],['BLOQUEO AEROMEXICO OK','#D9CCB0','#16301F'],['TERRESTRE CONFIRMADO','#9C5B2E','#FFFFFF'],['CANCELADO','#C00000','#FFFFFF']];
+const REP_ST = [['PENDIENTE POR MANDAR LA INFORMACIÓN','#DDEBF7','#16301F'],['PENDIENTE CONFIRMAR PARTICIPANTE O INVITADO','#C9C400','#16301F'],['INDIVIDUAL EMITIDO OK','#70AD47','#0F2A12'],['BLOQUEO EMITIDO OK','#D9CCB0','#16301F'],['TERRESTRE CONFIRMADO','#9C5B2E','#FFFFFF'],['CANCELADO','#C00000','#FFFFFF']];
 const RV = {v:'tot', st:'', q:'', sort:'n', dir:1};
 const REP_NOTA = 'Nota: el presupuesto aéreo incluye asientos y pago de equipaje. No incluye los costos de telemarketing ni de emisión.';
 const repNotaHTML = () => `<p class="rnota">📝 <b>Nota:</b> ${esc(REP_NOTA.replace(/^Nota: /, ''))}</p>`;
@@ -2228,14 +2214,18 @@ const stKey = t => norm(t).replace(/\s+/g, ' ').trim();
 const grupoRol = x => /^RELLENO$/.test(x.n) ? 'Relleno (bloqueo)' : /^STAFF/i.test(x.rol) ? 'Staff' : 'Invitados';
 const r2 = x => Math.round(x * 100) / 100;
 const sumR = L => { const t = L.reduce((a, x) => ({tarifa:a.tarifa + x.tarifa, iva:a.iva + x.iva, otros:a.otros + x.otros, total:a.total + x.total}), {tarifa:0, iva:0, otros:0, total:0}); for(const k in t) t[k] = r2(t[k]); return t; };
-function pastelSVG(D){ // gráfica de pastel por estatus (SVG)
-  const T = D.reduce((a, d) => a + d.v, 0) || 1, cx = 110, cy = 110, R = 100; let a0 = -Math.PI / 2, sl = '', tx = '';
-  D.filter(d => d.v > 0).forEach(d => { const fr = d.v / T, a1 = a0 + fr * 2 * Math.PI, m = (a0 + a1) / 2;
-    if(fr >= 0.999) sl += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${d.bg}"/>`;
-    else sl += `<path d="M${cx},${cy} L${(cx + R * Math.cos(a0)).toFixed(2)},${(cy + R * Math.sin(a0)).toFixed(2)} A${R},${R} 0 ${fr > 0.5 ? 1 : 0} 1 ${(cx + R * Math.cos(a1)).toFixed(2)},${(cy + R * Math.sin(a1)).toFixed(2)} Z" fill="${d.bg}" stroke="#fff" stroke-width="2"><title>${esc(d.l)}: ${d.v}</title></path>`;
-    if(fr >= 0.05) tx += `<text x="${(cx + R * 0.62 * Math.cos(m)).toFixed(1)}" y="${(cy + R * 0.62 * Math.sin(m)).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="700" fill="${d.fg}">${(fr * 100).toFixed(1)}%</text>`;
+function repConfNota(F){ const c = {}; F.filter(x => x.st === 'CONFIRMADO / EMITIDO OK').forEach(x => { const k = x.st0.replace(/\s+/g, ' ').trim(); c[k] = (c[k] || 0) + 1; });
+  const t = Object.entries(c).map(([k, v]) => `${k.charAt(0) + k.slice(1).toLowerCase().replace(/ ok$/, ' OK').replace('aeromexico', 'Aeroméxico')} (${v})`).join(' + ');
+  return t ? `<p class="cs" style="margin-top:-6px">“Confirmado / emitido OK” incluye: ${esc(t)}.</p>` : ''; }
+function pastelSVG(D){ // gráfica de pastel por estatus (SVG): porcentaje y personas dentro de cada rebanada
+  const V = D.filter(d => d.v > 0), T = V.reduce((a, d) => a + d.v, 0) || 1, cx = 150, cy = 150, R = 138; let a0 = -Math.PI / 2, sl = '', tx = '';
+  V.forEach(d => { const fr = d.v / T, a1 = a0 + fr * 2 * Math.PI, m = (a0 + a1) / 2, nom = d.l.replace(/ OK$/, '');
+    if(fr >= 0.999) sl += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${d.bg}"><title>${esc(nom)}: ${d.v}</title></circle>`;
+    else sl += `<path d="M${cx},${cy} L${(cx + R * Math.cos(a0)).toFixed(2)},${(cy + R * Math.sin(a0)).toFixed(2)} A${R},${R} 0 ${fr > 0.5 ? 1 : 0} 1 ${(cx + R * Math.cos(a1)).toFixed(2)},${(cy + R * Math.sin(a1)).toFixed(2)} Z" fill="${d.bg}" stroke="#fff" stroke-width="2.5"><title>${esc(nom)}: ${d.v} (${(fr * 100).toFixed(1)}%)</title></path>`;
+    const big = fr >= 0.15, rr = R * (big ? 0.55 : 0.72), x = (cx + rr * Math.cos(m)).toFixed(1), y = (cy + rr * Math.sin(m)).toFixed(1);
+    if(fr >= 0.04) tx += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="${d.fg}" font-family="Arial,sans-serif" font-size="${big ? 22 : 15}" font-weight="800">${(fr * 100).toFixed(1)}%</text>`;
     a0 = a1; });
-  return `<figure class="rpie"><svg viewBox="0 0 220 220" role="img" aria-label="Gráfica de pastel por estatus">${sl}${tx}</svg><figcaption>${D.filter(d => d.v > 0).map(d => `<span><i style="background:${d.bg}"></i>${esc(d.l.replace(/ OK$/, ''))} · ${d.v}</span>`).join('')}</figcaption></figure>`;
+  return `<figure class="rpie"><figcaption>Distribución por estatus · <b>${T} personas</b></figcaption><svg viewBox="0 0 300 300" role="img" aria-label="Gráfica de pastel: distribución por estatus de ${T} personas">${sl}${tx}</svg></figure>`;
 }
 function repRender(){
   const el = $('#rout'); if(!el) return;
@@ -2244,7 +2234,7 @@ function repRender(){
   const F = REP.filas, tot = sumR(F), n = F.length;
   const stRow = ([lab, bg, fg]) => { const c = F.filter(x => stKey(x.st) === stKey(lab)).length; return `<tr data-rst="${esc(lab)}" class="${RV.st === lab ? 'on' : ''}"><td style="background:${bg};color:${fg}">${esc(lab)}</td><td class="n" style="background:${bg};color:${fg}">${c}</td><td class="p" style="background:${bg};color:${fg}">${n ? (c * 100 / n).toFixed(1) : 0}%</td></tr>`; };
   const otros = F.filter(x => !REP_ST.some(([l]) => stKey(l) === stKey(x.st)));
-  let h = `<h3 class="rh">Estatus de telemarketing</h3><div class="rstw"><table class="rstat"><tbody>${REP_ST.map(stRow).join('')}${otros.length ? `<tr><td>Otro / sin estatus</td><td class="n">${otros.length}</td><td class="p">${(otros.length * 100 / n).toFixed(1)}%</td></tr>` : ''}<tr class="tt"><td>TOTAL DE INVITADOS</td><td class="n">${n}</td><td class="p">100%</td></tr></tbody></table>${pastelSVG(REP_ST.map(([l, bg, fg]) => ({l, bg, fg, v: F.filter(x => stKey(x.st) === stKey(l)).length})))}</div>`;
+  let h = `<h3 class="rh">Estatus de telemarketing</h3><div class="rstw"><table class="rstat"><tbody>${REP_ST.map(stRow).join('')}${otros.length ? `<tr><td>Otro / sin estatus</td><td class="n">${otros.length}</td><td class="p">${(otros.length * 100 / n).toFixed(1)}%</td></tr>` : ''}<tr class="tt"><td>TOTAL DE INVITADOS</td><td class="n">${n}</td><td class="p">100%</td></tr></tbody></table></div>`;
   if(RV.v === 'tot'){
     const G = ['Invitados', 'Staff', 'Relleno (bloqueo)'].map(g => [g, F.filter(x => grupoRol(x) === g)]).filter(([, L]) => L.length);
     const ep = F.filter(x => /OK/.test(x.ep)).length, inv = F.filter(x => grupoRol(x) === 'Invitados');
@@ -2260,7 +2250,7 @@ function repRender(){
     const k = RV.sort; L = L.slice().sort((a, b) => (typeof a[k] === 'number' ? a[k] - b[k] : String(a[k]).localeCompare(String(b[k]), 'es')) * RV.dir);
     const t = sumR(L), stc = st => (REP_ST.find(([l]) => stKey(l) === stKey(st)) || ['', '#eee', '#333']);
     const th = (k2, lab, cls = '') => `<th class="${cls}"><button type="button" data-rso="${k2}">${lab}${RV.sort === k2 ? (RV.dir > 0 ? ' ▲' : ' ▼') : ''}</button></th>`;
-    h += `<div class="csearch"><input id="rq" class="vq" type="search" placeholder="🔍 Buscar por nombre o rol" autocomplete="off" value="${esc(RV.q)}" aria-label="Buscar por nombre o rol"><span class="vqn">${L.length} de ${n}</span></div>${RV.st ? `<p class="cs">Filtro: <b>${esc(RV.st)}</b> · <button type="button" class="lnk" data-rst="${esc(RV.st)}" style="all:unset;cursor:pointer;color:var(--green);font-weight:700;text-decoration:underline">quitar filtro</button></p>` : ''}
+    h += `<div class="csearch"><input id="rq" class="vq" type="search" placeholder="🔍 Buscar por nombre o rol" autocomplete="off" value="${esc(RV.q)}" aria-label="Buscar por nombre o rol"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn">${L.length} de ${n}</span></div>${RV.st ? `<p class="cs">Filtro: <b>${esc(RV.st)}</b> · <button type="button" class="lnk" data-rst="${esc(RV.st)}" style="all:unset;cursor:pointer;color:var(--green);font-weight:700;text-decoration:underline">quitar filtro</button></p>` : ''}
       <div class="ktable-wrap"><table class="rtab"><thead><tr>${th('n', 'Nombre')}${th('tarifa', 'Tarifa', 'hm')}${th('iva', 'IVA', 'hm')}${th('otros', 'Otros imp.', 'hm')}${th('total', 'Total')}</tr></thead>
       <tbody>${L.map(x => { const [, bg, fg] = stc(x.st); return `<tr><td><b>${esc(tcase(x.n))}</b><br><span class="rs" style="background:${bg};color:${fg}">${esc(x.st || 'SIN ESTATUS')}</span> <small style="color:var(--muted)">${esc(rolVer(x.rol))}</small></td><td class="hm">${mxn(x.tarifa)}</td><td class="hm">${mxn(x.iva)}</td><td class="hm">${mxn(x.otros)}</td><td><b>${mxn(x.total)}</b></td></tr>`; }).join('')}</tbody>
       <tfoot><tr><td>Total (${L.length})</td><td class="hm">${mxn(t.tarifa)}</td><td class="hm">${mxn(t.iva)}</td><td class="hm">${mxn(t.otros)}</td><td>${mxn(t.total)}</td></tr></tfoot></table></div>
@@ -2362,6 +2352,8 @@ async function repExcel(btn){
   finally{ btn.disabled = false; btn.textContent = t0; setTimeout(() => { DLG = false; awaySince = 0; }, 1500); }
 }
 document.addEventListener('click', e => { const b = e.target.closest('#rout .rdl'); if(b) repExcel(b); });
+/* ✕ en los buscadores: borra el texto de un toque y vuelve a mostrar todo */
+document.addEventListener('click', e => { const x = e.target.closest('.csearch .cx'); if(!x) return; const i = x.parentNode.querySelector('input'); if(!i) return; i.value = ''; i.dispatchEvent(new Event('input', {bubbles:true})); const j = x.parentNode.querySelector('input') || document.getElementById(i.id); if(j) j.focus(); });
 document.addEventListener('input', e => { if(e.target.id !== 'rq') return; RV.q = e.target.value; const pos = e.target.selectionStart; repRender(); const i = $('#rq'); if(i){ i.focus(); try{ i.setSelectionRange(pos, pos); }catch(er){} } });
 // actividad dentro de VECI: renueva los 60 minutos (como mucho una vez cada 15 s)
 let veciTick = 0;
@@ -2445,12 +2437,11 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 308;
+const APP_V = 322;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
-const gate = $('#gate'), gmsg = $('#gate-msg'), gin = $('#gate-pin');
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
-function showGate(msg){ gate.hidden = false; gmsg.textContent = msg || ''; gin.value = ''; setTimeout(()=>gin.focus(), 50); }
+function showGate(msg){ const o = $('#out'); if(o) o.innerHTML = `<div class="empty">${esc(msg || 'No se pudo cargar la información. Recarga la página.')}</div>`; } // sin formulario de PIN: la página abre directo
 let PACK = null, UNLOCKED = false;
 /* El PIN se pide solo al abrir la página. Mientras siga abierta (aunque cambie de app, bloquee el celular o cambie de pestaña) se queda adentro.
    Al cerrar la página o la app, o al recargar, se pierde el acceso y se vuelve a pedir el PIN. */
@@ -2464,14 +2455,11 @@ function lockNow(){
 window.addEventListener('pagehide', e => { if(e.persisted) lockNow(); });
 async function unlock(pin, fromSaved){
   try{ const d = await Cifra.descifrar(PACK.enc, pin);
-    if(UNLOCKED){ gate.hidden = true; document.body.classList.remove('locked'); return; } // re-entrada tras salir de la app
-    UNLOCKED = true; DATA = d.filas; gate.hidden = true; $('#upd').textContent = 'Actualizado: ' + PACK.actualizado + ' · v' + APP_V; { const vv = document.getElementById('verv'); if(vv) vv.textContent = 'Versión ' + APP_V + ' · datos actualizados ' + PACK.actualizado; } init(); syncStart(pin); if(!pdfDirecto()) restoreView(); }
-  catch(e){ showGate('PIN incorrecto. Revísalo e intenta de nuevo.'); }
+    if(UNLOCKED){ document.body.classList.remove('locked'); return; } // re-entrada tras salir de la app
+    UNLOCKED = true; DATA = d.filas; $('#upd').textContent = 'Actualizado: ' + PACK.actualizado + ' · v' + APP_V; { const vv = document.getElementById('verv'); if(vv) vv.textContent = 'Versión ' + APP_V + ' · datos actualizados ' + PACK.actualizado; } init(); syncStart(pin); if(!pdfDirecto()) restoreView(); }
+  catch(e){ showGate('No se pudo cargar la información. Recarga la página.'); }
 }
-$('#gate-form').addEventListener('submit', e => { e.preventDefault(); const v = gin.value.trim();
-  if(!v){ gmsg.textContent = 'Escribe el PIN.'; return; }
-  if(!PACK){ gmsg.textContent = 'Cargando… intenta de nuevo en un momento.'; return; }
-  gmsg.textContent = 'Verificando…'; unlock(v, false); });
+
 /* Siempre al día: al abrir, al volver a la app/pestaña o al regresar con "Atrás", revisa si hay versión nueva
    de la página o datos nuevos y, si los hay, recarga la página con lo más reciente (sin usar la copia guardada). */
 /* Siempre al día: cada vez que se sale de la página o de la app (otra app, otra ventana u otra pestaña, bloquear el celular)
@@ -2517,7 +2505,7 @@ fetch('data.json?v='+Date.now(), {cache:'no-store'}).then(r=>r.json()).then(j=>{
   if(j.app && j.app > APP_V){ let tried=false; try{ tried=sessionStorage.getItem('reload'+j.app)==='1'; sessionStorage.setItem('reload'+j.app,'1'); }catch(e){}
     if(!tried){ location.replace(location.pathname+'?v='+j.app+Date.now()); return; } }
   PACK = j; if(OPEN_PIN) unlock(OPEN_PIN); else showGate(''); })
-  .catch(()=>{ gate.hidden = true; $('#out').innerHTML='<div class="empty">No se pudo cargar la información. Recarga la página.</div>'; });
+  .catch(()=>{ $('#out').innerHTML='<div class="empty">No se pudo cargar la información. Recarga la página.</div>'; });
 </script>
 </body>
 </html>
