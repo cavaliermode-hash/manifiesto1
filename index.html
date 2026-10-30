@@ -810,12 +810,12 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
     <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Viajes El Corte Inglés</i></b></p></div>
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
-    <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo</b>, con <b>todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, <b>contacta a tu coordinador de Viajes El Corte Inglés</b>.</p></details>
-    <details><summary>¿Tengo dos claves de reserva?</summary><p>Si tu vuelo de ida y tu vuelo de regreso tienen <b>claves distintas</b>, cada una aparece <b>junto a su vuelo</b> en tu itinerario. Usa la <b>clave que corresponde a cada trayecto</b> para tu check-in y para consultar tu reserva con la aerolínea.</p></details>
-    <details><summary>¿Qué pasa si llego antes del 3 o me voy después del 5 de noviembre?</summary><p><b>MetLife cubre únicamente las noches de hotel y los traslados terrestres que estén dentro de las fechas del evento o por ruta</b>. Las noches o traslados adicionales <b>corren por tu cuenta</b>.</p></details>
-    <details><summary>¿Cuándo y cómo hago el check-in de mis vuelos?</summary><p>Puedes hacerlo <b>24 horas antes</b> de tu vuelo en la <b>app o en la página de la aerolínea</b>, con tu <b>clave de reserva de 6 letras</b>. Si no es posible hacerlo en línea, preséntate <b>2 horas antes</b> en el <b>mostrador de la aerolínea</b>.</p></details>
-    <details><summary>¿Cómo identifico mi traslado en el aeropuerto?</summary><p>A tu llegada al aeropuerto, localiza el <b>logo de MetLife</b> para trasladarte al <b>hotel</b>. <b>Habrá staff apoyando</b>.</p></details>
-    <details><summary>¿Cuándo sale mi traslado de regreso al aeropuerto?</summary><p>El <b>horario de pick up</b> se <b>publica en sitio al terminar las sesiones en sitio</b>.</p></details>
+    <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a tu <b>coordinador de Viajes El Corte Inglés</b>.</p></details>
+    <details><summary>¿Tengo dos claves de reserva?</summary><p>Si tu vuelo de ida y tu vuelo de regreso tienen <b>claves distintas</b>, cada una aparece junto a su vuelo en tu itinerario y debes usar <b>la clave que corresponde a cada trayecto</b>. Si es la misma, aparece una sola vez como clave de ida y regreso.</p></details>
+    <details><summary>¿Qué pasa si llego antes del 3 o me voy después del 5 de noviembre?</summary><p>MetLife cubre únicamente <b>las noches de hotel y los traslados terrestres dentro de las fechas del evento (3 al 5 de noviembre) o por ruta</b>. Las noches o traslados adicionales <b>corren por tu cuenta</b>.</p></details>
+    <details><summary>¿Cuándo y cómo hago el check-in de mis vuelos?</summary><p>Puedes hacerlo desde <b>24 horas antes</b> de tu vuelo en la app o en la página de la aerolínea, con tu <b>clave de reserva de 6 letras</b>. Si no es posible hacerlo en línea, preséntate en el mostrador de la aerolínea <b>2 horas antes</b> de tu vuelo.</p></details>
+    <details><summary>¿Cómo identifico mi traslado en el aeropuerto?</summary><p>A tu llegada al aeropuerto, localiza el <b>logo de MetLife</b>: habrá <b>staff apoyando</b> para trasladarte al hotel.</p></details>
+    <details><summary>¿Cuándo sale mi traslado de regreso al aeropuerto?</summary><p>El <b>horario de pick up</b> del hotel al aeropuerto se <b>publicará al terminar las sesiones en sitio</b>.</p></details>
   </section>
   <p class="foot">Horarios en hora local de cada aeropuerto. · <a href="privacidad.html" style="color:inherit">Aviso de privacidad</a></p>
 </main>
@@ -2441,7 +2441,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 333;
+const APP_V = 334;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
