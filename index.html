@@ -638,6 +638,10 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 @media (max-width:560px){.rkpi{grid-template-columns:repeat(2,1fr)}.rtab .hm{display:none}.rtab th,.rtab td{padding:5px 4px;font-size:12px}}
 .rnota{margin:10px 0 4px;background:#FFF7E6;border-left:4px solid #E0A100;border-radius:6px;padding:8px 12px;font-size:14px;color:var(--ink)}
 .csearch .cx{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:50%;background:#E6EAF0;color:#3F4D60;font:700 15px/30px Arial,sans-serif;text-align:center;padding:0;cursor:pointer}.csearch .cx:hover{background:#136c34;color:#fff}.csearch input:placeholder-shown + .cx{display:none}.csearch input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+.rtab th,.rtab td{padding:3px 8px;font-size:12.5px;line-height:1.25}.rtab th{font-size:12px}.rtab .rs{font-size:10px;padding:0 6px;margin:0 2px 0 4px;vertical-align:1px}.rtab td small{font-size:11px}
+#rep .ct{font-size:clamp(20px,5vw,28px);margin-bottom:2px}#rep .rh{margin:10px 0 4px;font-size:14px}#rep .rkpi{gap:5px;margin:4px 0 8px}#rep .rkpi div{padding:5px 6px;border-radius:8px}#rep .rkpi b{font-size:15px}#rep .rkpi span{font-size:11px}#rep .cs{margin:4px 0}#rep .rmode{margin:4px 0 6px}#rep .rmode button{padding:6px 10px;font-size:13px}#rep .rnota{margin:8px 0 2px;padding:6px 10px;font-size:13px}#rep .ctools{margin-top:8px}
+@media (max-width:560px){.rtab th,.rtab td{padding:3px 4px;font-size:11.5px}}
+.cfh .cpe{display:inline-block;font:700 11px/1.2 var(--body);background:#FFF1D6;color:#7A4E00;border:1px solid #EBCB72;border-radius:999px;padding:3px 9px;margin-left:6px}.cnames .csig{display:inline-block;margin-left:8px;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -652,11 +656,11 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
       <button role="tab" data-veci="1" aria-selected="false">VECI</button>
     </nav>
     <nav class="tabs vsub" aria-label="Secciones VECI" hidden>
+      <button role="tab" data-tab="cla" aria-selected="false">Claves</button>
       <button role="tab" data-tab="lle" aria-selected="false">Llegadas</button>
       <button role="tab" data-tab="sal" aria-selected="false">Salidas</button>
       <button role="tab" data-tab="pyt" aria-selected="false">Traslados y pernoctas</button>
       <button role="tab" data-tab="con" aria-selected="false">Concentrado</button>
-      <button role="tab" data-tab="cla" aria-selected="false">Claves</button>
     </nav>
   </div>
 </header>
@@ -693,8 +697,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 </section>
 <section class="wrap ctl" id="cla" hidden>
   <h2 class="ct">Claves de reserva</h2>
-  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 📄 abre su itinerario en PDF, 💬 lo envía por WhatsApp, ✉️ por correo y 📋 copia el correo con formato.</p>
-  <div class="zipbar"><button type="button" id="zipv">⬇️ ZIP de PDF de vuelos</button><button type="button" id="zipi">⬇️ ZIP de itinerarios</button><span id="zipmsg" role="status"></span></div>
+  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 lo envía por WhatsApp y 📋 copia el correo con formato para pegarlo.</p>
   <div class="rolbar" id="rolbar" role="group" aria-label="Filtrar por rol"></div>
   <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span id="cqn"></span></div>
   <div class="ktable-wrap"><table class="ktable ctab">
@@ -713,7 +716,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 <section class="wrap ctl" id="rep" hidden>
   <h2 class="ct">Reporte de telemarketing y presupuesto</h2>
   <p class="cs">Datos del Excel de telemarketing (todas las filas: invitados, staff y lugares de relleno del bloqueo). Toca un estatus para filtrar la tabla por nombre.</p>
-  <div class="rmode" role="group" aria-label="Vista"><button type="button" data-rv="tot" aria-pressed="true">Por totales</button><button type="button" data-rv="nom" aria-pressed="false">Por nombre</button></div>
+  <div class="rmode" role="group" aria-label="Vista"><button type="button" data-rv="tot" aria-pressed="true">TOTALES</button><button type="button" data-rv="nom" aria-pressed="false">POR NOMBRE</button></div>
   <div id="rout"></div>
   <p id="rmsg" class="kmsg" role="status"></p>
 </section>
@@ -1554,8 +1557,8 @@ function zipRoles(){ const el = document.getElementById('ziproles'); if(!el) ret
   const c = {}; DATA.forEach(r => { const k = /^staff/i.test(r.rol || '') ? 'STAFF*' : (r.rol || 'SIN ROL').toUpperCase(); (c[k] = c[k] || []).push(r); });
   const ks = Object.keys(c).sort((a, b) => (a === 'STAFF*') - (b === 'STAFF*') || c[b].length - c[a].length);
   c['NOSTAFF*'] = DATA.filter(r => !/^staff/i.test(r.rol || '')); ks.unshift('NOSTAFF*');
-  el.innerHTML = `<h3>⬇️ Descargar PDF por rol</h3><p class="cs">Cada botón baja un ZIP solo con ese rol, un PDF por persona, ordenados por llegada.</p><table class="ktable"><tbody>${ks.map(k => { const n = c[k].length, nv = c[k].filter(r => [r.c1, r.ida, r.reg, r.c2].some(Boolean)).length, t = k === 'STAFF*' ? 'STAFF' : k === 'NOSTAFF*' ? 'TODOS (SIN STAFF)' : k;
-    return `<tr${k === 'NOSTAFF*' ? ' class="zall"' : ''}><td class="kn">${esc(t)} <small style="font-weight:500;color:var(--muted)">(${n})</small></td><td class="zrb"><button type="button" data-zr="${esc(k)}" data-zt="v"${nv ? '' : ' disabled'}>✈️ Vuelos (${nv})</button><button type="button" data-zr="${esc(k)}" data-zt="i">📄 Itinerarios (${n})</button></td></tr>`; }).join('')}</tbody></table><p id="ziprmsg" class="kmsg" role="status"></p>`; }
+  el.innerHTML = `<h3>⬇️ Descargar PDF de vuelos por rol</h3><p class="cs">Cada botón baja un ZIP con los PDF de vuelos de ese rol, uno por persona, ordenados por llegada.</p><table class="ktable"><tbody>${ks.map(k => { const n = c[k].length, nv = c[k].filter(r => [r.c1, r.ida, r.reg, r.c2].some(Boolean)).length, t = k === 'STAFF*' ? 'STAFF' : k === 'NOSTAFF*' ? 'TODOS (SIN STAFF)' : k;
+    return `<tr${k === 'NOSTAFF*' ? ' class="zall"' : ''}><td class="kn">${esc(t)} <small style="font-weight:500;color:var(--muted)">(${n})</small></td><td class="zrb"><button type="button" data-zr="${esc(k)}" data-zt="v"${nv ? '' : ' disabled'}>✈️ Vuelos (${nv})</button></td></tr>`; }).join('')}</tbody></table><p id="ziprmsg" class="kmsg" role="status"></p>`; }
 function pdfDirecto(){
   const sp = new URLSearchParams(location.search), solo = !!sp.get('vpdf'), n = sp.get('pdf') || sp.get('vpdf'); if(!n) return false;
   pdfDirecto2(sp, solo, n.trim().toUpperCase()); return true;
@@ -1806,7 +1809,13 @@ const ctlSt = n => (CTL.marks[CTL.tab] || {})[n] || 'pe';
 function ctlGroups(){
   const g = {};
   DATA.forEach(r => { const l = ctlLeg(r); if(!l || !l.f) return;
-    const k = l.f + '|' + ctlHora(l) + '|' + l.v; (g[k] = g[k] || {l, pax: []}).pax.push(r); });
+    const k = l.f + '|' + ctlHora(l) + '|' + l.v; (g[k] = g[k] || {l, pax: []}).pax.push(r);
+    // Llegadas: quien vuela desde otra ciudad un día antes y pernocta en México también aparece en la fecha de ese vuelo
+    if(CTL.tab === 'lle' && r.c1 && r.c1.f && r.ida && r.c1.f !== r.ida.f){ const c = r.c1, kc = c.f + '|' + ctlHora(c) + '|' + c.v;
+      (g[kc] = g[kc] || {l: c, pax: [], pe: true}).pax.push(r); }
+    // Salidas: la conexión a su ciudad de origen también aparece como vuelo (el mismo día o al día siguiente)
+    if(CTL.tab === 'sal' && r.c2 && r.c2.f && r.reg){ const c = r.c2, kc = c.f + '|' + ctlHora(c) + '|' + c.v;
+      (g[kc] = g[kc] || {l: c, pax: [], cx: c.f !== r.reg.f ? 'sig' : 'mismo'}).pax.push(r); } });
   return Object.keys(g).sort().map(k => { g[k].pax.sort((a,b) => a.n.localeCompare(b.n,'es')); return g[k]; });
 }
 function ctlRender(){
@@ -1822,12 +1831,14 @@ function ctlRender(){
     const l = G.l, ok = G.pax.filter(r => ctlSt(r.n) === 'ok').length;
     if(l.f !== day){ html += `<h3 class="cday">${esc(fmtDate(l.f))}</h3>`; day = l.f; }
     html += `<section class="cfl"><div class="cfh"><span class="t">${esc(ctlHora(l))}</span><span class="v">${esc(l.v)}</span>
-      <span class="r">${l.terr ? esc(l.route) : `${esc(l.o)} ${esc(l.s)} → ${esc(l.d)} ${esc(l.l)}`}</span><span class="c">${G.pax.length} ${G.pax.length===1?"pasajero":"pasajeros"}</span>${faUrl(l.v) ? `<a class="fa-link" href="${faUrl(l.v)}" target="_blank" rel="noopener">Estatus ↗</a>` : ''}</div><ul class="cnames">` +
+      <span class="r">${l.terr ? esc(l.route) : `${esc(l.o)} ${esc(l.s)} → ${esc(l.d)} ${esc(l.l)}`}</span><span class="c">${G.pax.length} ${G.pax.length===1?"pasajero":"pasajeros"}</span>${G.pe ? '<span class="cpe">Llega a México para pernoctar · Hotel NH</span>' : G.cx ? `<span class="cpe">${G.cx === 'sig' ? 'Conexión al día siguiente a su ciudad' : 'Conexión a su ciudad de origen'}</span>` : ''}${faUrl(l.v) ? `<a class="fa-link" href="${faUrl(l.v)}" target="_blank" rel="noopener">Estatus ↗</a>` : ''}</div><ul class="cnames">` +
       pax.map(r => { const s = ctlSt(r.n), cx = lle ? r.c1 : r.c2;
         const con = cx ? ` · conexión ${esc(cx.v)} ${lle ? 'desde ' + esc(cx.o) : 'a ' + esc(cx.d)}` : '';
         const clave = lle ? (r.ci || r.cr) : (r.cr || r.ci);
         const pern = lle && (r.notas||[]).some(n => n.k === 'pe') ? '<span class="ctag">Hotel NH</span>' : '';
-        return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}</li>`; }).join('') + '</ul></section>';
+        const sig = G.pe && r.ida ? `<small class="csig">sigue ${esc(fmtDate(r.ida.f))} · ${esc(r.ida.v)} ${esc(r.ida.o)} ${esc(r.ida.s)} → ${esc(r.ida.d)}</small>`
+          : G.cx && r.reg ? `<small class="csig">viene de ${esc(fmtDate(r.reg.f))} · ${esc(r.reg.v)} ${esc(r.reg.o)} → ${esc(r.reg.d)} ${esc(r.reg.l)}</small>` : '';
+        return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${sig}</li>`; }).join('') + '</ul></section>';
   });
   $('#cout').innerHTML = html || '<p class="cnote">No hay invitados en este filtro.</p>';
 }
@@ -1925,11 +1936,9 @@ function vFiltra(id){
 document.addEventListener('input', e => { if(VQ[e.target.id]) vFiltra(e.target.id); });
 addEventListener('DOMContentLoaded', () => Object.entries(VQ).forEach(([id, sel]) => { const c = $(sel); if(c) new MutationObserver(() => vFiltra(id)).observe(c, {childList:true, subtree:true}); }));
 /* Botones 📄 PDF, 💬 WhatsApp y ✉️ correo de una persona (Claves y Traslados y pernoctas) */
-function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}<button data-pdfv="${i}" title="Abrir el itinerario de ${esc(tcase(n))} en PDF" aria-label="PDF de ${esc(tcase(n))}">📄</button>${TEL[n]
+function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}${TEL[n]
       ? `<a class="cwa" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(waTxt(DATA[i]))}" target="_blank" rel="noopener" title="Enviar por WhatsApp a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp a ${esc(tcase(n))}">💬</a>`
-      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${MAIL[n]
-      ? `<a class="cwa cml" data-mail="${i}" href="mailto:${encodeURIComponent(MAIL[n])}?subject=${encodeURIComponent('Tu itinerario · Segunda Cumbre Universales')}&body=${encodeURIComponent(mailTxt(DATA[i]))}" title="Enviar por correo a ${esc(tcase(n))} (${esc(MAIL[n])})" aria-label="Correo a ${esc(tcase(n))}">✉️</a>`
-      : '<span class="cwa na" title="Sin correo registrado">—</span>'}<button class="ccopy" type="button" data-cmail="${i}" title="Copiar el correo de ${esc(tcase(n))} (sin abrir el correo)" aria-label="Copiar correo de ${esc(tcase(n))}">📋</button></div></td>`; }
+      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}<button class="ccopy" type="button" data-cmail="${i}" title="Copiar el correo de ${esc(tcase(n))} (sin abrir el correo)" aria-label="Copiar correo de ${esc(tcase(n))}">📋</button></div></td>`; }
 function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const c = {}; DATA.forEach(r => { const k = (r.rol || 'SIN ROL').toUpperCase(); c[k] = (c[k] || 0) + 1; });
   const orden = Object.keys(c).sort((a, b) => (/^STAFF/.test(a) - /^STAFF/.test(b)) || c[b] - c[a] || a.localeCompare(b, 'es'));
@@ -2210,7 +2219,7 @@ async function repGate(){
 }
 /* ---------- Reporte de telemarketing y presupuesto (solo VECI) ---------- */
 const REP_ST = [['PENDIENTE POR MANDAR LA INFORMACIÓN','#DDEBF7','#16301F'],['PENDIENTE CONFIRMAR PARTICIPANTE O INVITADO','#C9C400','#16301F'],['INDIVIDUAL EMITIDO OK','#70AD47','#0F2A12'],['BLOQUEO EMITIDO OK','#D9CCB0','#16301F'],['TERRESTRE CONFIRMADO','#9C5B2E','#FFFFFF'],['CANCELADO','#C00000','#FFFFFF']];
-const RV = {v:'tot', st:'', q:'', sort:'n', dir:1};
+const RV = {v:'tot', st:'', q:'', sort:'n', dir:1}; // sin buscador en el Reporte (q siempre vacío)
 const REP_NOTA = 'Nota: el presupuesto aéreo incluye asientos y pago de equipaje. No incluye los costos de telemarketing ni de emisión.';
 const repNotaHTML = () => `<p class="rnota">📝 <b>Nota:</b> ${esc(REP_NOTA.replace(/^Nota: /, ''))}</p>`;
 const mxn = x => '$' + (Math.round(x * 100) / 100).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -2238,11 +2247,10 @@ function repRender(){
   const F = REP.filas, tot = sumR(F), n = F.length;
   const stRow = ([lab, bg, fg]) => { const c = F.filter(x => stKey(x.st) === stKey(lab)).length; return `<tr data-rst="${esc(lab)}" class="${RV.st === lab ? 'on' : ''}"><td style="background:${bg};color:${fg}">${esc(lab)}</td><td class="n" style="background:${bg};color:${fg}">${c}</td><td class="p" style="background:${bg};color:${fg}">${n ? (c * 100 / n).toFixed(1) : 0}%</td></tr>`; };
   const otros = F.filter(x => !REP_ST.some(([l]) => stKey(l) === stKey(x.st)));
-  let h = `<h3 class="rh">Estatus de telemarketing</h3><div class="rstw"><table class="rstat"><tbody>${REP_ST.map(stRow).join('')}${otros.length ? `<tr><td>Otro / sin estatus</td><td class="n">${otros.length}</td><td class="p">${(otros.length * 100 / n).toFixed(1)}%</td></tr>` : ''}<tr class="tt"><td>TOTAL DE INVITADOS</td><td class="n">${n}</td><td class="p">100%</td></tr></tbody></table></div>`;
+  let h = RV.v !== 'tot' ? '' : `<h3 class="rh">Estatus de telemarketing</h3><div class="rstw"><table class="rstat"><tbody>${REP_ST.map(stRow).join('')}${otros.length ? `<tr><td>Otro / sin estatus</td><td class="n">${otros.length}</td><td class="p">${(otros.length * 100 / n).toFixed(1)}%</td></tr>` : ''}<tr class="tt"><td>TOTAL DE INVITADOS</td><td class="n">${n}</td><td class="p">100%</td></tr></tbody></table></div>`;
   if(RV.v === 'tot'){
     const G = ['Invitados', 'Staff', 'Relleno (bloqueo)'].map(g => [g, F.filter(x => grupoRol(x) === g)]).filter(([, L]) => L.length);
     const ep = F.filter(x => /OK/.test(x.ep)).length, inv = F.filter(x => grupoRol(x) === 'Invitados');
-    h += `<div class="rkpi"><div><b>${inv.length}</b><span>Invitados</span></div><div><b>${F.filter(x => grupoRol(x) === 'Staff').length}</b><span>Staff</span></div><div><b>${F.filter(x => x.pern).length}</b><span>Pernocta NH</span></div><div><b>${F.filter(x => x.tras).length}</b><span>Con traslado</span></div></div>`;
     const tabla = (tit, rows) => `<h3 class="rh">${tit}</h3><div class="ktable-wrap"><table class="rtab"><thead><tr><th></th><th>Personas</th><th class="hm">Tarifa</th><th class="hm">IVA</th><th class="hm">Otros imp.</th><th>Total</th><th>Promedio</th></tr></thead><tbody>${rows.map(([l, L]) => { const t = sumR(L), con = L.filter(x => x.total > 0).length; return `<tr><td>${esc(l)}</td><td>${L.length}</td><td class="hm">${mxn(t.tarifa)}</td><td class="hm">${mxn(t.iva)}</td><td class="hm">${mxn(t.otros)}</td><td>${mxn(t.total)}</td><td>${con ? mxn(t.total / con) : '—'}</td></tr>`; }).join('')}</tbody><tfoot><tr><td>Total</td><td>${n}</td><td class="hm">${mxn(tot.tarifa)}</td><td class="hm">${mxn(tot.iva)}</td><td class="hm">${mxn(tot.otros)}</td><td>${mxn(tot.total)}</td><td>${F.filter(x => x.total > 0).length ? mxn(tot.total / F.filter(x => x.total > 0).length) : '—'}</td></tr></tfoot></table></div>`;
     h += tabla('Por estatus', REP_ST.map(([l]) => [l, F.filter(x => stKey(x.st) === stKey(l))]).filter(([, L]) => L.length));
     h += `<h3 class="rh">Presupuesto aéreo · totales</h3><div class="rkpi"><div><b>${mxn(tot.tarifa)}</b><span>Tarifa</span></div><div><b>${mxn(tot.iva)}</b><span>IVA</span></div><div><b>${mxn(tot.otros)}</b><span>Otros impuestos</span></div><div><b>${mxn(tot.total)}</b><span>Total</span></div></div>`;
@@ -2254,9 +2262,9 @@ function repRender(){
     const k = RV.sort; L = L.slice().sort((a, b) => (typeof a[k] === 'number' ? a[k] - b[k] : String(a[k]).localeCompare(String(b[k]), 'es')) * RV.dir);
     const t = sumR(L), stc = st => (REP_ST.find(([l]) => stKey(l) === stKey(st)) || ['', '#eee', '#333']);
     const th = (k2, lab, cls = '') => `<th class="${cls}"><button type="button" data-rso="${k2}">${lab}${RV.sort === k2 ? (RV.dir > 0 ? ' ▲' : ' ▼') : ''}</button></th>`;
-    h += `<div class="csearch"><input id="rq" class="vq" type="search" placeholder="🔍 Buscar por nombre o rol" autocomplete="off" value="${esc(RV.q)}" aria-label="Buscar por nombre o rol"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn">${L.length} de ${n}</span></div>${RV.st ? `<p class="cs">Filtro: <b>${esc(RV.st)}</b> · <button type="button" class="lnk" data-rst="${esc(RV.st)}" style="all:unset;cursor:pointer;color:var(--green);font-weight:700;text-decoration:underline">quitar filtro</button></p>` : ''}
+    h += `${RV.st ? `<p class="cs">Filtro: <b>${esc(RV.st)}</b> · <button type="button" class="lnk" data-rst="${esc(RV.st)}" style="all:unset;cursor:pointer;color:var(--green);font-weight:700;text-decoration:underline">quitar filtro</button></p>` : ''}
       <div class="ktable-wrap"><table class="rtab"><thead><tr>${th('n', 'Nombre')}${th('tarifa', 'Tarifa', 'hm')}${th('iva', 'IVA', 'hm')}${th('otros', 'Otros imp.', 'hm')}${th('total', 'Total')}</tr></thead>
-      <tbody>${L.map(x => { const [, bg, fg] = stc(x.st); return `<tr><td><b>${esc(tcase(x.n))}</b><br><span class="rs" style="background:${bg};color:${fg}">${esc(x.st || 'SIN ESTATUS')}</span> <small style="color:var(--muted)">${esc(rolVer(x.rol))}</small></td><td class="hm">${mxn(x.tarifa)}</td><td class="hm">${mxn(x.iva)}</td><td class="hm">${mxn(x.otros)}</td><td><b>${mxn(x.total)}</b></td></tr>`; }).join('')}</tbody>
+      <tbody>${L.map(x => { const [, bg, fg] = stc(x.st); return `<tr><td><b>${esc(tcase(x.n))}</b> <span class="rs" style="background:${bg};color:${fg}">${esc(x.st || 'SIN ESTATUS')}</span> <small style="color:var(--muted)">${esc(rolVer(x.rol))}</small></td><td class="hm">${mxn(x.tarifa)}</td><td class="hm">${mxn(x.iva)}</td><td class="hm">${mxn(x.otros)}</td><td><b>${mxn(x.total)}</b></td></tr>`; }).join('')}</tbody>
       <tfoot><tr><td>Total (${L.length})</td><td class="hm">${mxn(t.tarifa)}</td><td class="hm">${mxn(t.iva)}</td><td class="hm">${mxn(t.otros)}</td><td>${mxn(t.total)}</td></tr></tfoot></table></div>
       ${repNotaHTML()}<div class="ctools"><button type="button" class="rdl">⬇️ Descargar reporte en Excel</button></div>`;
   }
@@ -2275,25 +2283,8 @@ document.addEventListener('click', e => {
   const ok = () => { $('#rmsg').textContent = cp.id === 'rxls' ? 'Tabla copiada: pégala en Excel.' : 'Resumen copiado: pégalo en WhatsApp o correo.'; };
   Promise.resolve().then(() => navigator.clipboard.writeText(t)).then(ok).catch(() => { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); ok(); });
 });
-/* ---------- Reporte en Excel (.xlsx) con formato profesional y gráficas ---------- */
+/* ---------- Reporte en Excel (.xlsx) con formato profesional ---------- */
 let xlP = null; const loadXL = () => window.ExcelJS ? Promise.resolve(window.ExcelJS) : (xlP = xlP || new Promise((ok, ko) => { const sc = document.createElement('script'); sc.src = 'exceljs.min.js?v=' + APP_V; sc.onload = () => ok(window.ExcelJS); sc.onerror = ko; document.head.appendChild(sc); }));
-function grafPNG(tipo, datos, titulo){ // gráfica en imagen para insertar en el Excel
-  const W = 1200, H = 560, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
-  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.fillStyle = '#136c34'; g.font = 'bold 28px Arial'; g.fillText(titulo, 30, 48);
-  const D = datos.filter(d => d.v > 0), tot = D.reduce((a, d) => a + d.v, 0) || 1;
-  if(tipo === 'dona'){ const cx = 250, cy = 290, R = 190, r = 105; let a0 = -Math.PI / 2;
-    D.forEach(d => { const a1 = a0 + d.v / tot * 2 * Math.PI; g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R, a0, a1); g.closePath(); g.fillStyle = d.c; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 3; g.stroke(); a0 = a1; });
-    g.beginPath(); g.arc(cx, cy, r, 0, 2 * Math.PI); g.fillStyle = '#fff'; g.fill();
-    g.fillStyle = '#16301F'; g.textAlign = 'center'; g.font = 'bold 54px Arial'; g.fillText(String(tot), cx, cy + 10); g.font = '20px Arial'; g.fillText('personas', cx, cy + 40); g.textAlign = 'left';
-    D.forEach((d, i) => { const y = 170 + i * 80; g.fillStyle = d.c; g.fillRect(500, y - 24, 34, 34); g.strokeStyle = '#999'; g.lineWidth = 1; g.strokeRect(500, y - 24, 34, 34);
-      g.fillStyle = '#16301F'; g.font = 'bold 22px Arial'; g.fillText(d.l, 550, y - 2); g.font = '21px Arial'; g.fillText(`${d.v} personas · ${(d.v * 100 / tot).toFixed(1)}%`, 550, y + 26); }); }
-  else { const x0 = 340, x1 = W - 40, bh = 60, mx = Math.max(...D.map(d => d.v), 1);
-    D.forEach((d, i) => { const y = 100 + i * 90, w = (x1 - x0 - 150) * d.v / mx;
-      g.fillStyle = '#16301F'; g.font = 'bold 18px Arial'; const L = d.l.length > 30 ? d.l.slice(0, 29) + '…' : d.l; g.fillText(L, 30, y + bh / 2 + 6);
-      g.fillStyle = d.c; g.fillRect(x0, y, Math.max(w, 2), bh); g.strokeStyle = '#999'; g.lineWidth = 1; g.strokeRect(x0, y, Math.max(w, 2), bh);
-      g.fillStyle = '#16301F'; g.font = 'bold 19px Arial'; g.fillText(mxn(d.v), x0 + Math.max(w, 2) + 10, y + bh / 2 + 7); }); }
-  return c.toDataURL('image/png');
-}
 async function repExcel(btn){
   if(!REP) return; const t0 = btn.textContent; btn.disabled = true; btn.textContent = 'Generando Excel…'; DLG = true;
   try{
@@ -2329,11 +2320,6 @@ async function repExcel(btn){
     [['Tarifa', tot.tarifa], ['IVA', tot.iva], ['Otros impuestos', tot.otros]].forEach(([l, v]) => { const row = ws.getRow(r++); row.values = [l, v]; borde(row.getCell(1)); borde(row.getCell(2)); row.getCell(2).numFmt = MON; });
     { const row = ws.getRow(r++); row.values = ['TOTAL', tot.total]; [1, 2].forEach(j => { const x = row.getCell(j); x.font = {bold:true, size:12, color:{argb:'FFFFFFFF'}}; x.fill = {type:'pattern', pattern:'solid', fgColor:{argb:G}}; borde(x); }); row.getCell(2).numFmt = MON; }
     { ws.mergeCells(r, 1, r, 8); const c = ws.getCell(r, 1); c.value = REP_NOTA; c.font = {italic:true, bold:true, size:11, color:{argb:'FF6B4A00'}}; c.fill = {type:'pattern', pattern:'solid', fgColor:{argb:'FFFFF7E6'}}; c.alignment = {wrapText:true, vertical:'middle', indent:1}; ws.getRow(r).height = 24; r++; }
-    // gráficas
-    r++; ws.getCell(r, 1).value = 'GRÁFICAS'; ws.getCell(r, 1).font = {bold:true, size:12, color:{argb:G}}; r++;
-    const im1 = wb.addImage({base64: grafPNG('dona', REP_ST.map(([l, bg]) => ({l, v: F.filter(x => stKey(x.st) === stKey(l)).length, c: bg})), 'Personas por estatus'), extension:'png'});
-    const im2 = wb.addImage({base64: grafPNG('barras', REP_ST.map(([l, bg]) => ({l, v: sumR(F.filter(x => stKey(x.st) === stKey(l))).total, c: bg})), 'Presupuesto aéreo por estatus (total)'), extension:'png'});
-    ws.addImage(im1, {tl:{col:0, row:r}, ext:{width:840, height:392}}); ws.addImage(im2, {tl:{col:0, row:r + 21}, ext:{width:840, height:392}});
     // ===== Hoja 2: Detalle por nombre =====
     const wd = wb.addWorksheet('Por nombre', {views:[{state:'frozen', ySplit:4, showGridLines:false}], pageSetup:{orientation:'landscape', fitToPage:true, fitToWidth:1, fitToHeight:0, paperSize:1}});
     wd.columns = [{width:6}, {width:40}, {width:22}, {width:38}, {width:15}, {width:14}, {width:17}, {width:16}];
@@ -2376,7 +2362,7 @@ document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.addEventListe
   else if(b.dataset.tab !== 'man' && ['man', 'rep'].includes(CTL.tab) && !(await conGate())) return; ctlTab(b.dataset.tab); }));
 /* VECI: una sola pestaña con contraseña que agrupa Llegadas, Salidas, Traslados y pernoctas, Concentrado y Claves. */
 document.querySelector('.tabs [data-veci]').addEventListener('click', async () => {
-  if(CTL.tab !== 'man' && CTL.tab !== 'rep') return; if(!(await conGate())) return; ctlTab('lle'); });
+  if(CTL.tab !== 'man' && CTL.tab !== 'rep') return; if(!(await conGate())) return; ctlTab('cla'); }); // VECI abre en Claves
 document.querySelectorAll('.cstat').forEach(b => b.addEventListener('click', () => {
   CTL.filter = b.dataset.f; document.querySelectorAll('.cstat').forEach(x => x.setAttribute('aria-pressed', x === b)); ctlRender(); }));
 $('#cout').addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if(!b) return;
@@ -2441,7 +2427,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 334;
+const APP_V = 344;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
