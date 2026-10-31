@@ -642,6 +642,8 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 #rep .ct{font-size:clamp(20px,5vw,28px);margin-bottom:2px}#rep .rh{margin:10px 0 4px;font-size:14px}#rep .rkpi{gap:5px;margin:4px 0 8px}#rep .rkpi div{padding:5px 6px;border-radius:8px}#rep .rkpi b{font-size:15px}#rep .rkpi span{font-size:11px}#rep .cs{margin:4px 0}#rep .rmode{margin:4px 0 6px}#rep .rmode button{padding:6px 10px;font-size:13px}#rep .rnota{margin:8px 0 2px;padding:6px 10px;font-size:13px}#rep .ctools{margin-top:8px}
 @media (max-width:560px){.rtab th,.rtab td{padding:3px 4px;font-size:11.5px}}
 .cfh .cpe{display:inline-block;font:700 11px/1.2 var(--body);background:#FFF1D6;color:#7A4E00;border:1px solid #EBCB72;border-radius:999px;padding:3px 9px;margin-left:6px}.cnames .csig{display:inline-block;margin-left:8px;font-size:12px;color:var(--muted)}
+.cfase{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 4px}.cfase button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 6px;cursor:pointer;font:600 14px var(--body);color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px}.cfase button b{font:600 12px var(--body);color:var(--muted)}.cfase button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}.cfase button[aria-selected="true"] b{color:#D7EBDD}.cfase .cfn{grid-column:1/-1;margin:2px 0 0;font-size:12px;color:var(--muted)}
+@media (max-width:560px){.cfase button{font-size:12.5px;padding:7px 4px}.cfase button b{font-size:11px}}
 </style>
 </head>
 <body>
@@ -732,6 +734,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
   <h2 class="ct" id="ct-t"></h2>
   <p class="cs" id="ct-s"></p>
   <div class="csearch"><input id="lq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn"></span></div>
+  <div class="cfase" id="cfase" role="tablist" aria-label="Estado de los vuelos"></div>
   <div class="cstats" role="group" aria-label="Filtrar" hidden>
     <button class="cstat" data-f="all" aria-pressed="true"><b id="cs-all">0</b><span>Total</span></button>
     <button class="cstat ok" data-f="ok" aria-pressed="false"><b id="cs-ok">0</b><span>Check-in</span></button>
@@ -1806,9 +1809,35 @@ function tierraLeg(r, lle){
 const ctlLeg = r => { const lle = CTL.tab === 'lle'; return (lle ? r.ida : r.reg) || tierraLeg(r, lle); };
 const ctlHora = l => { const v = String((CTL.tab === 'lle' ? l.l : l.s) || ''); return v === '—' ? '—' : v.padStart(5,'0'); };
 const ctlSt = n => (CTL.marks[CTL.tab] || {})[n] || 'pe';
+/* Traslados terrestres considerados (punto de encuentro, domicilio, aeropuerto, regreso a su ciudad) como "vuelos" de Llegadas/Salidas,
+   con hora de salida y llegada estimada para que también pasen a En ruta y a Llegados. */
+const TR_TZ = t => /san carlos|marinaterra|hermosillo|sede|los mochis/i.test(t) ? -7 : -6;
+function trDur(r, t){ if(/metepec|toluca/i.test(t)) return 120; if(/puebla|triángulo/i.test(t)) return 150; if(/los mochis/i.test(r.cd || '') || /los mochis/i.test(t)) return 300;
+  if(/aeropuerto de hermosillo/i.test(t)) return 120; if(/domicilio/i.test(t)) return 90; return 120; }
+function trLegs(r){ const lle = CTL.tab === 'lle', out = [], val = (R, k) => ((R || []).find(x => x[0] === k) || [])[1] || '';
+  notaBloques(r).forEach(b => { const R = b.rows || [], txt = R.map(x => x[1]).join(' ');
+    let f = '', h = '';
+    if(lle && b.t === 'Traslado de ida'){ const fh = val(R, 'Fecha y hora'); f = isoDe(fh); h = (fh.split('·')[1] || '').trim().replace(/\s*h$/, ''); }
+    else if(!lle && /^Traslado de regreso/.test(b.t)){ const fh = val(R, 'Fecha y hora'), vu = val(R, 'Vuelo');
+      if(fh){ f = isoDe(fh); h = (fh.split('·')[1] || '').trim().replace(/\s*h$/, ''); }
+      else if(/llegada/.test(vu)){ f = isoDe(val(R, 'Fecha')); h = (vu.split('llegada')[1] || '').trim().replace(/\s*h$/, ''); }
+      else if(/salida/.test(vu)) return; // traslado hotel → aeropuerto de Hermosillo: el pick up se publica en sitio
+      else f = isoDe(val(R, 'Fecha')) || HOTEL.co; }
+    else return;
+    if(!f) return;
+    const ori = val(R, 'Punto de encuentro') || val(R, 'Recogida') || 'Recogida', des = val(R, 'Destino').replace(/^Mismo punto de encuentro: /, '').replace(/\s*\([^)]*#[^)]*\)/, '');
+    const m = /^(\d{1,2}):(\d{2})$/.exec(h), tz = TR_TZ(ori), [y, mo, d] = f.split('-').map(Number);
+    const ini = m ? new Date(Date.UTC(y, mo - 1, d, +m[1] - tz, +m[2])) : null, fin = ini ? new Date(ini.getTime() + trDur(r, ori + ' ' + des + ' ' + txt) * 60000) : null;
+    const lleg = fin ? new Date(fin.getTime() + tz * 3600e3) : null, hl = lleg ? String(lleg.getUTCHours()).padStart(2, '0') + ':' + String(lleg.getUTCMinutes()).padStart(2, '0') : '';
+    out.push({terr: true, tr: true, f, l: m ? h.padStart(5, '0') : '—', s: m ? h.padStart(5, '0') : '—', v: '🚐 Traslado terrestre', ini, fin,
+      route: `${ori.replace(/^Salida de vuelos nacionales del /, '')} → ${des}${hl ? ` · llegada estimada ${hl} h` : ''}`}); });
+  return out; }
 function ctlGroups(){
   const g = {};
-  DATA.forEach(r => { const l = ctlLeg(r); if(!l || !l.f) return;
+  DATA.forEach(r => { const TR = trLegs(r);
+    TR.forEach(l => { const k = l.f + '|' + ctlHora(l) + '|' + l.v + '|' + l.route; (g[k] = g[k] || {l, pax: []}).pax.push(r); });
+    let l = ctlLeg(r); if(l && l.terr && TR.length) l = null; // si ya tiene su traslado detallado, no se repite el genérico
+    if(!l || !l.f) return;
     const k = l.f + '|' + ctlHora(l) + '|' + l.v; (g[k] = g[k] || {l, pax: []}).pax.push(r);
     // Llegadas: quien vuela desde otra ciudad un día antes y pernocta en México también aparece en la fecha de ese vuelo
     if(CTL.tab === 'lle' && r.c1 && r.c1.f && r.ida && r.c1.f !== r.ida.f){ const c = r.c1, kc = c.f + '|' + ctlHora(c) + '|' + c.v;
@@ -1818,6 +1847,20 @@ function ctlGroups(){
       (g[kc] = g[kc] || {l: c, pax: [], cx: c.f !== r.reg.f ? 'sig' : 'mismo'}).pax.push(r); } });
   return Object.keys(g).sort().map(k => { g[k].pax.sort((a,b) => a.n.localeCompare(b.n,'es')); return g[k]; });
 }
+/* Estado de cada vuelo según su horario programado (hora local de cada aeropuerto): programado → en ruta (despegó) → aterrizado */
+const ahora = () => window.__NOW ? new Date(window.__NOW) : new Date();
+function faseVuelo(l){
+  const now = ahora();
+  if(l.tr && l.ini){ return now < l.ini ? 'prog' : now < l.fin ? 'ruta' : 'ater'; }
+  if(l.terr){ const h = (CTL.tab === 'lle' ? l.l : l.s) || ''; const m = /^(\d{1,2}):(\d{2})$/.exec(h), [y, mo, d] = l.f.split('-').map(Number);
+    const t = m ? Date.UTC(y, mo - 1, d, +m[1] + 7, +m[2]) : Date.UTC(y, mo - 1, d, 23 + 7, 59); return now < t ? 'prog' : 'ater'; }
+  const dep = l.s ? when(l, 's') : null; let arr = l.l ? when(l, 'l') : null;
+  if(dep && arr && arr < dep) arr = new Date(arr.getTime() + 864e5);
+  if(dep && now < dep) return 'prog'; if(arr && now < arr) return 'ruta'; return 'ater';
+}
+const FASES = [['prog', '🕒 Programados'], ['ruta', '✈️ En ruta · despegado'], ['ater', '🛬 Aterrizados · llegados']];
+document.addEventListener('click', e => { const b = e.target.closest('#cfase [data-fase]'); if(!b) return; CTL.fase = b.dataset.fase; ctlRender(); });
+setInterval(() => { if(['lle', 'sal'].includes(CTL.tab) && !document.hidden && !$('#ctl').hidden) ctlRender(); }, 60000); // los vuelos cambian de apartado solos
 function ctlRender(){
   const lle = CTL.tab === 'lle';
   $('#ct-t').textContent = lle ? 'Llegadas' : 'Salidas';
@@ -1826,7 +1869,12 @@ function ctlRender(){
   all.forEach(r => c[ctlSt(r.n)]++);
   $('#cs-all').textContent = all.length; $('#cs-ok').textContent = c.ok; $('#cs-ns').textContent = c.ns; $('#cs-pe').textContent = c.pe;
   let html = '', day = '';
-  ctlGroups().forEach(G => {
+  const GR = ctlGroups(); GR.forEach(G => G.fase = faseVuelo(G.l));
+  const cnt = k => GR.filter(G => G.fase === k), pp = L => L.reduce((a, G) => a + G.pax.length, 0);
+  if(CTL.faseTab !== CTL.tab){ CTL.faseTab = CTL.tab; CTL.fase = (FASES.find(([k]) => cnt(k).length) || FASES[0])[0]; } // al entrar: el primer apartado con vuelos
+  $('#cfase').innerHTML = FASES.map(([k, t]) => `<button type="button" role="tab" data-fase="${k}" aria-selected="${CTL.fase === k}"><span>${t}</span><b>${cnt(k).length} ${cnt(k).length === 1 ? 'vuelo' : 'vuelos'} · ${pp(cnt(k))} pax</b></button>`).join('')
+    + '<p class="cfn">Según el horario programado de cada vuelo y la hora estimada de cada traslado; los retrasos de vuelos se confirman en “Estatus ↗”.</p>';
+  GR.filter(G => G.fase === CTL.fase).forEach(G => {
     const pax = G.pax.filter(r => CTL.filter === 'all' || ctlSt(r.n) === CTL.filter); if(!pax.length) return;
     const l = G.l, ok = G.pax.filter(r => ctlSt(r.n) === 'ok').length;
     if(l.f !== day){ html += `<h3 class="cday">${esc(fmtDate(l.f))}</h3>`; day = l.f; }
@@ -1840,7 +1888,7 @@ function ctlRender(){
           : G.cx && r.reg ? `<small class="csig">viene de ${esc(fmtDate(r.reg.f))} · ${esc(r.reg.v)} ${esc(r.reg.o)} → ${esc(r.reg.d)} ${esc(r.reg.l)}</small>` : '';
         return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${sig}</li>`; }).join('') + '</ul></section>';
   });
-  $('#cout').innerHTML = html || '<p class="cnote">No hay invitados en este filtro.</p>';
+  $('#cout').innerHTML = html || `<p class="cnote">${CTL.fase === 'ruta' ? 'No hay vuelos en ruta en este momento.' : CTL.fase === 'ater' ? 'Todavía no ha aterrizado ningún vuelo.' : 'No quedan vuelos programados.'}</p>`;
 }
 /* ---------- Estatus de vuelos (FlightAware) ---------- */
 const ICAO = {'VOLARIS':'VOI','AEROMEXICO':'AMX','VIVA AEROBUS':'VIV'};
@@ -2427,7 +2475,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 344;
+const APP_V = 346;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
