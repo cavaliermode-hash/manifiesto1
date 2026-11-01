@@ -67,7 +67,7 @@ document.getElementById('f').addEventListener('change', async e => {
     const rows = parseConcentrado(grid);
     const now = new Date();
     out = { actualizado: `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`,
-            app: 346, evento: clean(document.getElementById('ev').value) || 'Manifiesto Evento CC IP Foráneo', filas: rows };
+            app: 347, evento: clean(document.getElementById('ev').value) || 'Manifiesto Evento CC IP Foráneo', filas: rows };
     const conf = rows.filter(r => /CONFIRM/.test(r.st)).length;
     msg.className = 'ok'; msg.textContent = `Listo: ${rows.length} invitados (${conf} confirmados, ${rows.length-conf} pendientes), hoja "${name}".`;
     document.getElementById('go').disabled = false;
@@ -78,7 +78,7 @@ document.getElementById('go').addEventListener('click', async () => {
   const pin = document.getElementById('pin').value.trim(), msg = document.getElementById('msg');
   if (!pin) { msg.className = 'bad'; msg.textContent = 'Escribe el PIN de acceso para cifrar los datos.'; return; }
   const ev = clean(document.getElementById('ev').value); if (ev) out.evento = ev;
-  const pack = { actualizado: out.actualizado, app: out.app, evento: out.evento, enc: await Cifra.cifrar({filas: out.filas}, pin) };
+  const pack = { actualizado: out.actualizado, app: out.app, evento: out.evento, enc: await Cifra.cifrar({filas: out.filas}, pin, 1000) };
   const blob = new Blob([JSON.stringify(pack)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'data.json'; a.click();
 });

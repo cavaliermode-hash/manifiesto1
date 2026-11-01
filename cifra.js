@@ -8,10 +8,11 @@
     const base = await C.subtle.importKey('raw', new TextEncoder().encode(norm(pin)), 'PBKDF2', false, ['deriveKey']);
     return C.subtle.deriveKey({name:'PBKDF2', salt, iterations: iter, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
   }
-  async function cifrar(obj, pin){
+  async function cifrar(obj, pin, iter){
+    iter = iter || ITER;
     const salt = C.getRandomValues(new Uint8Array(16)), iv = C.getRandomValues(new Uint8Array(12));
-    const ct = await C.subtle.encrypt({name:'AES-GCM', iv}, await key(pin, salt, ITER), new TextEncoder().encode(JSON.stringify(obj)));
-    return {n: ITER, s: b64(salt), i: b64(iv), c: b64(new Uint8Array(ct))};
+    const ct = await C.subtle.encrypt({name:'AES-GCM', iv}, await key(pin, salt, iter), new TextEncoder().encode(JSON.stringify(obj)));
+    return {n: iter, s: b64(salt), i: b64(iv), c: b64(new Uint8Array(ct))};
   }
   async function descifrar(enc, pin){
     const pt = await C.subtle.decrypt({name:'AES-GCM', iv: unb(enc.i)}, await key(pin, unb(enc.s), enc.n), unb(enc.c));

@@ -18,7 +18,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Manifiesto · Segunda Cumbre Universales</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap"></noscript>
 <style>
 :root{
   color-scheme:light;
@@ -839,8 +841,8 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
     <div class="pwm-b"><button type="button" id="pwm-c" class="sec">Cancelar</button><button type="submit">Entrar</button></div>
   </form>
 </div>
-<script src="parse.js"></script>
-<script src="cifra.js"></script>
+<script src="parse.js?v=347"></script>
+<script src="cifra.js?v=347"></script>
 <script>
 let DATA = [];
 const $ = s => document.querySelector(s);
@@ -2475,7 +2477,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 346;
+const APP_V = 347;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
@@ -2511,13 +2513,12 @@ function freshReload(){
 }
 function leave(){ if(!DLG && PACK) awaySince = awaySince || Date.now(); }
 function back(){ if(DLG || !awaySince) return; const fuera = Date.now() - awaySince; awaySince = 0; if(fuera <= 1000) return;
-  if(CTL.tab === 'man') return freshReload();
   fetch('data.json?v=' + Date.now(), {cache:'no-store'}).then(r => r.json()).then(j => { if(PACK && ((j.app && j.app > APP_V) || (j.actualizado && j.actualizado !== PACK.actualizado))) freshReload(); }).catch(() => {}); }
 document.addEventListener('visibilitychange', () => { if(document.hidden) leave(); else back(); });
 window.addEventListener('blur', leave);
 window.addEventListener('focus', back);
-window.addEventListener('pageshow', e => { if(e.persisted) freshReload(); });
-document.addEventListener('resume', () => { if(CTL.tab === 'man') freshReload(); else { awaySince = awaySince || Date.now() - 2000; back(); } }); // Android: la app vuelve del segundo plano
+window.addEventListener('pageshow', e => { if(e.persisted){ awaySince = awaySince || Date.now() - 2000; back(); } });
+document.addEventListener('resume', () => { awaySince = awaySince || Date.now() - 2000; back(); }); // Android: la app vuelve del segundo plano
 document.addEventListener('freeze', () => { awaySince = awaySince || Date.now(); });
 /* Respaldo: mientras la página está abierta revisa cada minuto si hay versión o datos nuevos; si los hay, recarga. */
 setInterval(async () => {
@@ -2539,7 +2540,18 @@ function restoreView(){
     if(await conGate(vencio ? `Pasaron ${VECI_MIN} minutos fuera de VECI. Escribe la contraseña para continuar:` : '')) { ctlTab(r.tab); setTimeout(() => window.scrollTo({top: r.y || 0}), 80); } })();
   setTimeout(() => window.scrollTo({top: r.y || 0}), 60);
 }
-fetch('data.json?v='+Date.now(), {cache:'no-store'}).then(r=>r.json()).then(j=>{
+/* Carga inicial tolerante a datos móviles lentos: espera hasta 15 s por intento y reintenta 3 veces. */
+async function cargaData(){
+  for(let k = 0; k < 3; k++){
+    const ac = window.AbortController ? new AbortController() : null, t = ac ? setTimeout(() => ac.abort(), 15000) : 0;
+    try{ const r = await fetch(k ? 'data.json?v=' + Date.now() : 'data.json', {cache: k ? 'no-store' : 'no-cache', signal: ac && ac.signal}); clearTimeout(t); if(r.ok) return await r.json(); }
+    catch(e){ clearTimeout(t); }
+    const o = $('#out'); if(o) o.innerHTML = '<div class="empty">La conexión está lenta, reintentando…</div>';
+    await new Promise(z => setTimeout(z, 1200));
+  }
+  throw new Error('sin datos');
+}
+cargaData().then(j=>{
   if(j.app && j.app > APP_V){ let tried=false; try{ tried=sessionStorage.getItem('reload'+j.app)==='1'; sessionStorage.setItem('reload'+j.app,'1'); }catch(e){}
     if(!tried){ location.replace(location.pathname+'?v='+j.app+Date.now()); return; } }
   PACK = j; if(OPEN_PIN) unlock(OPEN_PIN); else showGate(''); })
