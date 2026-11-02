@@ -370,6 +370,9 @@ body.tierra .solo-vuelo,body.tierra [data-solo-vuelo]{display:none!important}
 @media (max-width:480px){.ag-dl{grid-template-columns:84px 1fr}.ag-thumb img{width:84px}}
 .ag-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
 .ag-pdf{flex:none;font:700 14px var(--body);background:#fff;color:var(--green);text-decoration:none;border-radius:8px;padding:9px 14px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.ag-btns{display:flex;flex-wrap:wrap;gap:8px}
+.ag-t .ag-dc{display:block;margin-top:5px;font-size:13px;line-height:1.4;color:var(--ink)}
+.ag-t .ag-dc b{display:inline;font:700 13px var(--body);color:var(--green)}
 .ag-pdf:hover{background:var(--green-soft)}
 .nota p b.sede{font-weight:800;color:var(--ink)}
 
@@ -761,7 +764,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
   <div class="wrap">
     <div class="search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Escribe tu nombre…" autocomplete="off" aria-label="Buscar por nombre">
+      <input id="q" type="search" placeholder="Escribe tu nombre…" autocomplete="off" enterkeyhint="go" aria-label="Buscar por nombre">
       <button class="clear" id="clear" aria-label="Borrar búsqueda" hidden>×</button>
     </div>
     <div class="row" hidden>
@@ -789,7 +792,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
     </div>
   </section>
   <section class="agenda ag-compact" id="agenda" aria-labelledby="ag-t">
-    <div class="ag-head"><div><h2 id="ag-t">Agenda del evento</h2><p>Segunda Cumbre Universales · San Carlos, Sonora · Horarios en hora local de Sonora</p></div><a class="ag-pdf" href="agenda-cumbre.jpg?v=306" id="ag-open">📄 Ver agenda completa</a></div>
+    <div class="ag-head"><div><h2 id="ag-t">Agenda del evento</h2><p>Segunda Cumbre Universales · San Carlos, Sonora · Horarios en hora local de Sonora · Clima ☀️ 31° / 23°</p></div><div class="ag-btns"><a class="ag-pdf" href="agenda-cumbre.jpg?v=349" id="ag-open">📄 Ver agenda completa</a><a class="ag-pdf" href="dresscode-cumbre.jpg?v=349" data-agv="dc">👕 Dress code y recomendaciones</a></div></div>
     <div class="ag-tabs" role="tablist" aria-label="Días del evento">
       <button role="tab" id="tab-3" aria-controls="day-3" data-day="3"><b>3</b><span>Martes</span></button>
       <button role="tab" id="tab-4" aria-controls="day-4" data-day="4"><b>4</b><span>Miércoles</span></button>
@@ -1316,7 +1319,8 @@ function waTxt(r){
   if(!tierra) L.push('_Horarios de vuelo en hora local de cada aeropuerto._');
   if(!tierra){ L.push('', '📌 *PUNTOS IMPORTANTES DE SU VUELO*'); document.querySelectorAll('section.important li').forEach(li => L.push('• ' + li.innerText.trim())); }
   L.push('',
-    '🗓️ *Agenda del evento:*', base + 'agenda-cumbre.jpg?v=306', '',
+    '🗓️ *Agenda del evento:*', base + 'agenda-cumbre.jpg?v=349', '',
+    '👕 *Dress code y recomendaciones:*', base + 'dresscode-cumbre.jpg?v=349', '',
     '🔎 *Consulta tu reserva cuando quieras:*', base, '',
     '*Importante.-* Le recordamos que *MetLife* cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.', '',
     'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', '*_Viajes El Corte Inglés_*');
@@ -1691,6 +1695,11 @@ async function findKeys(q){
   if(my!==seq) return; state.hits=hits; render();
 }
 $('#q').addEventListener('input', e=>{clearTimeout(t); t=setTimeout(()=>{state.q=e.target.value.trim(); state.hits=new Map(); render();},150)});
+/* Enter (o "Ir" en el teclado del celular): abre la reserva que aparece en el resultado */
+$('#q').addEventListener('keydown', e => { if(e.key !== 'Enter' || e.isComposing) return; e.preventDefault();
+  const v = e.target.value.trim(); if(!v) return;
+  if(v !== state.q){ clearTimeout(t); state.q = v; state.hits = new Map(); render(); }
+  let n = 0; (function abre(){ const o = document.querySelector('#out [data-open]'); if(o){ e.target.blur(); openPax(+o.dataset.open); return; } if(++n < 20) setTimeout(abre, 100); })(); });
 $('#clear').addEventListener('click', ()=>{$('#q').value=''; state.q=''; state.hits=new Map(); seq++; render(); $('#q').focus()});
 $('#fida').addEventListener('change', e=>{state.ida=e.target.value; render()});
 $('#freg').addEventListener('change', e=>{state.reg=e.target.value; render()});
@@ -1737,9 +1746,10 @@ $('#agv-dl').addEventListener('click', async () => { const r = AGV_R, b = $('#ag
   finally{ b.disabled = false; b.textContent = t0; setTimeout(() => { DLG = false; awaySince = 0; }, 1500); } });
 function agvClose(){ AGV_R = null; $('#agv').hidden = true; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; $('#agv-img').hidden = false; document.body.style.overflow = ''; const o = $('#ag-open'); if(o) o.focus({preventScroll:true}); }
 document.addEventListener('click', e => { const a = e.target.closest('#ag-open, [data-agv]'); if(!a) return; e.preventDefault();
-  const img = $('#agv-img'); AGV_R = null; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; img.hidden = false;
-  img.alt = 'Agenda de la Segunda Cumbre Universales: actividades del 3 al 5 de noviembre, dress code y recomendaciones'; img.src = 'agenda-cumbre.jpg?v=306';
-  agvShow('Agenda del evento'); });
+  const img = $('#agv-img'), dc = a.dataset.agv === 'dc'; AGV_R = null; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; img.hidden = false;
+  img.alt = dc ? 'Dress code y recomendaciones de la Segunda Cumbre Universales' : 'Agenda de la Segunda Cumbre Universales: actividades del 3 al 5 de noviembre';
+  img.src = dc ? 'dresscode-cumbre.jpg?v=349' : 'agenda-cumbre.jpg?v=349';
+  agvShow(dc ? 'Dress code y recomendaciones' : 'Agenda del evento'); });
 $('#agv-img').addEventListener('click', e => { const bd = $('.agv-body'), r = e.target.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
   bd.classList.toggle('zoom'); if(bd.classList.contains('zoom')){ const im = e.target; bd.scrollLeft = fx * im.offsetWidth - bd.clientWidth / 2; bd.scrollTop = fy * im.offsetHeight - bd.clientHeight / 2; } });
 $('#agv-back').addEventListener('click', () => { if(history.state && history.state.agv) history.back(); else agvClose(); });
@@ -1747,22 +1757,22 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape' && !$('#agv').
 /* ---------- Agenda ---------- */
 const AGENDA = {
   3:{d:'Martes 3 de noviembre', f:'2026-11-03', it:[
-    ['','','Llegadas','Aeropuerto de Hermosillo','', 'Durante la mañana'],
+    ['','','Llegadas','Aeropuerto de Hermosillo · localiza el logo de MetLife para trasladarte al hotel sede Marinaterra','', 'Durante la mañana'],
     ['11:30','13:30','Traslado aeropuerto de Hermosillo a Hotel Marinaterra','',1],
     ['13:30','14:30','Llegada al hotel','Resguardo de equipaje'],
     ['14:30','14:45','Traslado a tour','',1],
-    ['15:00','18:00','Tour catamarán','Ropa cómoda de playa y bolsa pequeña impermeable'],
+    ['15:00','18:00','Tour catamarán','','','', 'Ropa cómoda de playa, traje de baño (si lo deseas), calzado cómodo antiderrapante, sombrero o gorra, lentes de sol y protector solar.', 'Bolsa pequeña impermeable para objetos personales.'],
     ['18:00','18:15','Traslado al hotel','',1],
-    ['20:00','22:30','Cena de bienvenida','Palapa Alberca · casual · considera chamarra ligera']]},
+    ['20:00','22:30','Cena de bienvenida','Palapa Alberca','','', 'Casual playa.', 'Chamarra ligera.']]},
   4:{d:'Miércoles 4 de noviembre', f:'2026-11-04', it:[
     ['','','Desayuno','Hotel sede','', 'Durante la mañana'],
     ['11:00','','Shuttles Club de playa / Hotel','',1],
-    ['11:15','15:15','Estancia Club de playa','Incluye comida'],
+    ['11:15','15:15','Estancia Club de playa','Incluye comida','','', 'Ropa cómoda de playa, traje de baño (si lo deseas), sandalias y/o calzado cómodo, sombrero o gorra, lentes de sol y protector solar.'],
     ['15:15','15:35','Shuttles Club de playa / Hotel','',1],
     ['17:00','','Traslado a Mirador San Carlos','',1],
     ['17:20','17:50','Fotografía grupal','Mirador San Carlos'],
     ['17:50','18:00','Traslado a cena','',1],
-    ['18:00','22:00','Cena de premiación','Boho costero (lino y/o algodón) · considera chamarra ligera'],
+    ['18:00','22:00','Cena de premiación','','','', 'Boho costero (lino y/o algodón), zapato cómodo.', 'Chamarra ligera.'],
     ['22:00','22:30','Shuttles al hotel','',1]]},
   5:{d:'Jueves 5 de noviembre', f:'2026-11-05', it:[
     ['','','Desayuno','Hotel sede','', 'Durante la mañana'],
@@ -1793,9 +1803,9 @@ function agItems(D){
 function renderAgenda(day){
   AG_DAY = day; const D=AGENDA[day], now=nowEns();
   document.querySelectorAll('.ag-tabs [data-day]').forEach(b=>{ const on=b.dataset.day==day; b.setAttribute('aria-selected',on); b.tabIndex=on?0:-1; });
-  document.getElementById('ag-days').innerHTML = `<div class="ag-day" role="tabpanel" id="day-${day}" aria-labelledby="tab-${day}"><h3>${D.d}</h3><ol class="ag-list">${agItems(D).map(([a,b,t,s,tr,lab])=>{
+  document.getElementById('ag-days').innerHTML = `<div class="ag-day" role="tabpanel" id="day-${day}" aria-labelledby="tab-${day}"><h3>${D.d}</h3><ol class="ag-list">${agItems(D).map(([a,b,t,s,tr,lab,dc,rec])=>{
     const end = b || a, live = now.f===D.f && a && now.h>=a && (b ? now.h<b : false), past = now.f>D.f || (now.f===D.f && end && now.h>=(b||'99'));
-    return `<li class="${tr?'tr':''}${live?' live':''}${past?' past':''}"><span class="ag-h">${lab?lab:(b?`${a}<i>–${b}</i>`:a)}</span><span class="ag-t"><b>${t}</b>${s?`<small>${s}</small>`:''}${live?'<em>Ahora</em>':''}</span></li>`; }).join('')}</ol></div>`;
+    return `<li class="${tr?'tr':''}${live?' live':''}${past?' past':''}"><span class="ag-h">${lab?lab:(b?`${a}<i>–${b}</i>`:a)}</span><span class="ag-t"><b>${t}</b>${s?`<small>${s}</small>`:''}${dc?`<span class="ag-dc"><b>👕 Dress code:</b> ${dc}</span>`:''}${rec?`<span class="ag-dc"><b>💡 Recomendación:</b> ${rec}</span>`:''}${live?'<em>Ahora</em>':''}</span></li>`; }).join('')}</ol></div>`;
 }
 (function(){ const today=nowEns().f; const d = today>='2026-11-05' ? 5 : today==='2026-11-04' ? 4 : 3;
   document.querySelector('.ag-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-day]'); if(b) renderAgenda(b.dataset.day);});
@@ -2269,7 +2279,8 @@ async function veciTel(pw){ if(PACK && PACK.tel && !Object.keys(TEL).length){ tr
 const stTag = n => { const r = DATA.find(x => x.staff && x.n === n); return r ? rolTag(r.rol || 'STAFF') : ''; }; // staff: mismo formato que los demás roles
 function staffAdd(L){ DATA = DATA.filter(r => !r.staff); L.forEach(r => { r.staff = true; r._w = new Set(norm(r.n).split(/\s+/).filter(Boolean)); r._n = norm(r.n); DATA.push(r); }); }
 async function conGate(msg){
-  const ses = veciSes(); if(ses && ses.pw){ await veciTel(ses.pw); veciSave(ses.pw); return true; }
+  const ses = veciSes(); if(ses && ses.pw && await sha256(ses.pw.trim().toLowerCase()) === RESET_H){ await veciTel(ses.pw); veciSave(ses.pw); return true; }
+  if(ses) veciEnd(); // sesión con la contraseña anterior: se vuelve a pedir
   const pw = await askPw(msg || 'Para abrir esta sección escribe la contraseña:'); if(pw === null) return false;
   if(await sha256(pw.trim().toLowerCase()) !== RESET_H){ alert('Contraseña incorrecta.'); return false; }
   veciSave(pw);
@@ -2488,7 +2499,7 @@ $('#ccopy').addEventListener('click', async () => { const t = ctlResumen();
   catch(e){ const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); }
   $('#cmsg').textContent = 'Resumen copiado. Pégalo en WhatsApp.'; });
 $('#cprint').addEventListener('click', () => window.print());
-const RESET_H = 'b657566bf67734e25c3c22b2750003d3b4655b05c8e0524d511847b214e97b73'; // contraseña del equipo VECI (se compara sin mayúsculas)
+const RESET_H = '08eefd8fb75d26d53d50caa85b482d550ce8122d405b632294102ddd4f0e6f35'; // contraseña del equipo VECI (se compara sin mayúsculas)
 async function sha256(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join(''); }
 $('#creset').addEventListener('click', async () => {
   const pw = await askPw('Para borrar las marcas de ' + (CTL.tab === 'lle' ? 'Llegadas' : 'Salidas') + ' escribe la contraseña:');
@@ -2502,7 +2513,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 348;
+const APP_V = 351;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
