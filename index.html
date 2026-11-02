@@ -576,6 +576,8 @@ body.vctl .qhint-w{display:none}
 .agv-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#eef1ef;padding:10px 10px calc(env(safe-area-inset-bottom,0px) + 16px)}
 .agv-body img{display:block;width:100%;max-width:1100px;height:auto;margin:0 auto;border-radius:6px;box-shadow:0 1px 6px rgba(0,0,0,.12);cursor:zoom-in}
 .agv-body.zoom img{width:250%;max-width:none;cursor:zoom-out}
+.agv-bar .agv-dl{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.85);font-size:14px;padding:9px 12px}
+.agv-wait{margin:40px 16px;text-align:center;font:600 16px/1.5 var(--body);color:var(--green)}
 .agv-tip{margin:0;padding:6px 14px;font-size:12.5px;color:var(--muted);background:#eef1ef;text-align:center}
 body.locked>*{visibility:hidden}
 
@@ -829,8 +831,9 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 </main>
 
 <div id="agv" class="agv" role="dialog" aria-modal="true" aria-label="Agenda del evento" hidden>
-  <div class="agv-bar"><button id="agv-back" type="button">‹ Regresar</button></div>
+  <div class="agv-bar"><button id="agv-back" type="button">‹ Regresar</button><button id="agv-dl" class="agv-dl" type="button" hidden>⬇️ Guardar PDF</button></div>
   <p class="agv-tip">Toca la imagen para acercar o alejar.</p>
+  <p id="agv-wait" class="agv-wait" hidden>Generando tus vuelos…</p>
   <div class="agv-body"><img id="agv-img" alt="Agenda de la Segunda Cumbre Universales: actividades del 3 al 5 de noviembre, dress code y recomendaciones"></div>
 </div>
 <div id="pwm" class="pwm" role="dialog" aria-modal="true" aria-labelledby="pwm-t" hidden>
@@ -1504,19 +1507,25 @@ function vueloHTML(r, pie){ /* despedida ECI siempre al final (búsqueda, VECI y
     ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<i style="font-weight:bold;color:${G}">Viajes El Corte Inglés</i></div>` : ''}
   </div>`;
 }
-async function vueloPDF(r, pie){
-  const [{ jsPDF }, h2c] = await Promise.all([loadJsPDF(), loadH2C()]);
+async function vueloCanvas(r, pie){
+  const h2c = await loadH2C();
   const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-10000px;top:0;background:#fff';
   box.innerHTML = vueloHTML(r, pie); document.body.appendChild(box);
   try{
     await Promise.all([...box.querySelectorAll('img')].map(im => im.complete ? 0 : new Promise(ok => { im.onload = im.onerror = ok; })));
     const el = box.firstElementChild, canvas = await h2c(el, {scale:2, backgroundColor:'#ffffff', useCORS:true, logging:false});
+    return {canvas, w: el.offsetWidth, h: el.offsetHeight};
+  } finally { box.remove(); }
+}
+async function vueloPDF(r, pie){
+  const [{ jsPDF }, c] = await Promise.all([loadJsPDF(), vueloCanvas(r, pie)]); const canvas = c.canvas, el = {offsetWidth: c.w, offsetHeight: c.h};
+  {
     const doc = new jsPDF({unit:'pt', format:'letter'}), W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 24;
     const k = (W - 2*M) / el.offsetWidth, h = el.offsetHeight * k;
     if(h <= H - 2*M) doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', M, M, W - 2*M, h);
     else { const kk = (H - 2*M) / el.offsetHeight, w = el.offsetWidth * kk; doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', (W - w)/2, M, w, H - 2*M); }
     return doc.output('blob');
-  } finally { box.remove(); }
+  }
 }
 document.addEventListener('click', async e => { const b = e.target.closest('[data-vpdf]'); if(!b) return; e.preventDefault();
   const r = DATA[+b.dataset.vpdf]; DLG = true; setTimeout(() => { DLG = false; awaySince = 0; }, 3000);
@@ -1527,7 +1536,7 @@ document.addEventListener('click', async e => { const b = e.target.closest('[dat
     catch(er){ b.textContent = t0; alert('No se pudo generar el PDF. Revisa tu conexión e inténtalo de nuevo.'); }
     finally{ b.disabled = false; setTimeout(() => { DLG = false; awaySince = 0; }, 1500); }
     return; }
-  window.open(location.pathname + '?vpdf=' + encodeURIComponent(r.n) + (b.dataset.solover ? '&ver=1' : '') + '&v=' + APP_V + '.' + Date.now(), '_blank'); });
+  setTimeout(() => { DLG = false; awaySince = 0; }, 300); agvVuelos(r); });
 /* ---------- Descargar todos los PDF en un ZIP (un PDF por persona, con su nombre). Respeta el buscador de Claves. ---------- */
 let zipP; function loadZip(){ if(window.JSZip) return Promise.resolve(window.JSZip);
   return zipP = zipP || new Promise((ok, ko) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; sc.onload = () => ok(window.JSZip); sc.onerror = ko; document.head.appendChild(sc); }); }
@@ -1587,7 +1596,7 @@ function mailBox(r){
   const i = DATA.indexOf(r);
   return `  ${[r.c1, r.ida, r.reg, r.c2].some(Boolean) ? `<section class="mailbox pdfbox" aria-labelledby="pdf-t">
     <h3 id="pdf-t">✈️ Ver mis vuelos en PDF</h3>
-    <p>Abre en otra pestaña el PDF con <b>tus vuelos</b>: tus claves de reserva, aerolínea, número de vuelo, horarios de salida y llegada, y los puntos importantes de tu vuelo. Desde ahí lo puedes guardar, imprimir o compartir.</p>
+    <p>Consulta aquí mismo <b>tus vuelos</b>: tus claves de reserva, aerolínea, número de vuelo, horarios de salida y llegada, y los puntos importantes de tu vuelo. Con el botón <b>Guardar PDF</b> lo puedes guardar, imprimir o compartir, y con <b>Regresar</b> vuelves a tu reserva.</p>
     <button class="abtn2" type="button" data-vpdf="${i}" data-solover="1">Ver en PDF</button>
   </section>` : ''}`;
 }
@@ -1710,11 +1719,27 @@ function volverConcentrado(){ const v = VOLVER_A; VOLVER_A = null; state.sel = n
 function closePax(){ if(VOLVER_A) return volverConcentrado(); state.sel = null; render(); const q=document.getElementById('q'); if(q) q.focus({preventScroll:true}); }
 window.addEventListener('popstate', e => { if(!$('#agv').hidden){ agvClose(); return; } if(VOLVER_A && !(e.state && e.state.sel!=null)) return volverConcentrado(); state.sel = e.state && e.state.sel!=null ? e.state.sel : null; render(); });
 /* ---------- Visor de agenda con botón Regresar ---------- */
-function agvClose(){ $('#agv').hidden = true; document.body.style.overflow = ''; const o = $('#ag-open'); if(o) o.focus({preventScroll:true}); }
+let AGV_R = null; // reserva cuyo PDF de vuelos se está viendo (null = agenda)
+function agvShow(label){ $('#agv').setAttribute('aria-label', label); $('.agv-body').classList.remove('zoom'); $('#agv').hidden = false; document.body.style.overflow = 'hidden'; $('.agv-body').scrollTop = 0;
+  history.pushState(Object.assign({}, history.state, {agv:1}), ''); $('#agv-back').focus(); }
+/* Ver mis vuelos: se muestra dentro de la página, igual que la agenda, con botón Regresar y opción de guardar el PDF */
+async function agvVuelos(r){
+  AGV_R = r; const img = $('#agv-img'), w = $('#agv-wait'); img.removeAttribute('src'); img.hidden = true; w.hidden = false; w.textContent = 'Generando tus vuelos…'; $('#agv-dl').hidden = false;
+  img.alt = 'Vuelos de ' + tcase(r.n); agvShow('Mis vuelos');
+  try{ const c = await vueloCanvas(r, true); if(AGV_R !== r) return; img.src = c.canvas.toDataURL('image/jpeg', 0.92); img.hidden = false; w.hidden = true; }
+  catch(e){ if(AGV_R === r) w.textContent = 'No se pudo generar. Revisa tu conexión e inténtalo de nuevo.'; }
+}
+$('#agv-dl').addEventListener('click', async () => { const r = AGV_R, b = $('#agv-dl'); if(!r || b.disabled) return; const t0 = b.textContent; b.disabled = true; b.textContent = '⏳ Generando…'; DLG = true;
+  try{ const blob = await vueloPDF(r, true), nombre = tcase(r.n) + '.pdf', f = new File([blob], nombre, {type:'application/pdf'});
+    if(navigator.canShare && navigator.canShare({files:[f]}) && /iPhone|iPad|Android/i.test(navigator.userAgent)){ try{ await navigator.share({files:[f], title: nombre}); }catch(e){} }
+    else { const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = nombre; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); } }
+  catch(e){ alert('No se pudo generar el PDF. Revisa tu conexión e inténtalo de nuevo.'); }
+  finally{ b.disabled = false; b.textContent = t0; setTimeout(() => { DLG = false; awaySince = 0; }, 1500); } });
+function agvClose(){ AGV_R = null; $('#agv').hidden = true; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; $('#agv-img').hidden = false; document.body.style.overflow = ''; const o = $('#ag-open'); if(o) o.focus({preventScroll:true}); }
 document.addEventListener('click', e => { const a = e.target.closest('#ag-open, [data-agv]'); if(!a) return; e.preventDefault();
-  const img = $('#agv-img'); if(!img.src) img.src = 'agenda-cumbre.jpg?v=306';
-  $('.agv-body').classList.remove('zoom'); $('#agv').hidden = false; document.body.style.overflow = 'hidden'; $('.agv-body').scrollTop = 0;
-  history.pushState(Object.assign({}, history.state, {agv:1}), ''); $('#agv-back').focus(); });
+  const img = $('#agv-img'); AGV_R = null; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; img.hidden = false;
+  img.alt = 'Agenda de la Segunda Cumbre Universales: actividades del 3 al 5 de noviembre, dress code y recomendaciones'; img.src = 'agenda-cumbre.jpg?v=306';
+  agvShow('Agenda del evento'); });
 $('#agv-img').addEventListener('click', e => { const bd = $('.agv-body'), r = e.target.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
   bd.classList.toggle('zoom'); if(bd.classList.contains('zoom')){ const im = e.target; bd.scrollLeft = fx * im.offsetWidth - bd.clientWidth / 2; bd.scrollTop = fy * im.offsetHeight - bd.clientHeight / 2; } });
 $('#agv-back').addEventListener('click', () => { if(history.state && history.state.agv) history.back(); else agvClose(); });
@@ -2477,7 +2502,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 347;
+const APP_V = 348;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
