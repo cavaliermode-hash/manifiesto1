@@ -649,6 +649,12 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 #rep .ct{font-size:clamp(20px,5vw,28px);margin-bottom:2px}#rep .rh{margin:10px 0 4px;font-size:14px}#rep .rkpi{gap:5px;margin:4px 0 8px}#rep .rkpi div{padding:5px 6px;border-radius:8px}#rep .rkpi b{font-size:15px}#rep .rkpi span{font-size:11px}#rep .cs{margin:4px 0}#rep .rmode{margin:4px 0 6px}#rep .rmode button{padding:6px 10px;font-size:13px}#rep .rnota{margin:8px 0 2px;padding:6px 10px;font-size:13px}#rep .ctools{margin-top:8px}
 @media (max-width:560px){.rtab th,.rtab td{padding:3px 4px;font-size:11.5px}}
 .cfh .cpe{display:inline-block;font:700 11px/1.2 var(--body);background:#FFF1D6;color:#7A4E00;border:1px solid #EBCB72;border-radius:999px;padding:3px 9px;margin-left:6px}.cnames .csig{display:inline-block;margin-left:8px;font-size:12px;color:var(--muted)}
+.calert{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:6px 0 8px;padding:8px 10px;border:1.5px dashed var(--line);border-radius:10px;font-size:13px;color:var(--muted)}
+.calert b{color:var(--ink)}.calert button{font:700 13px var(--body);border:0;border-radius:8px;padding:8px 12px;cursor:pointer;background:var(--green);color:#fff}
+.calert button.off{background:#fff;color:var(--green);border:1.5px solid var(--green)}.calert small{flex-basis:100%;font-size:12px}
+#atoast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:3000;display:grid;gap:8px;width:min(94vw,460px);pointer-events:none}
+#atoast div{pointer-events:auto;background:#0C4F23;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 6px 18px rgba(0,0,0,.25);font:500 14px/1.4 var(--body);cursor:pointer;animation:rise .25s ease both}
+#atoast div b{display:block;font-weight:700;font-size:15px}
 .cfase{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 4px}.cfase button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 6px;cursor:pointer;font:600 14px var(--body);color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px}.cfase button b{font:600 12px var(--body);color:var(--muted)}.cfase button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}.cfase button[aria-selected="true"] b{color:#D7EBDD}.cfase .cfn{grid-column:1/-1;margin:2px 0 0;font-size:12px;color:var(--muted)}
 @media (max-width:560px){.cfase button{font-size:12.5px;padding:7px 4px}.cfase button b{font-size:11px}}
 </style>
@@ -742,6 +748,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
   <p class="cs" id="ct-s"></p>
   <div class="csearch"><input id="lq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn"></span></div>
   <div class="cfase" id="cfase" role="tablist" aria-label="Estado de los vuelos"></div>
+  <div class="calert" id="calert"></div>
   <div class="cstats" role="group" aria-label="Filtrar" hidden>
     <button class="cstat" data-f="all" aria-pressed="true"><b id="cs-all">0</b><span>Total</span></button>
     <button class="cstat ok" data-f="ok" aria-pressed="false"><b id="cs-ok">0</b><span>Check-in</span></button>
@@ -819,7 +826,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
       <li><b>Qué necesita llevar:</b> una <b>identificación oficial vigente</b> (INE o pasaporte) <b>con el mismo nombre de su reserva</b>, y su <b>clave de reserva o pase de abordar</b>.</li>
     </ul>
   </section>
-  <div class="dcierre" id="cierre" hidden><p class="dimp"><b>Importante.- Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.</b></p>
+  <div class="dcierre" id="cierre" hidden><p class="dimp"><b id="dimp-t">Importante.- Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.</b></p>
     <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Viajes El Corte Inglés</i></b></p></div>
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
@@ -946,6 +953,9 @@ const NOTA = {
 const HOTEL = {n:'Hotel Marinaterra', dir:'Blvr. Gabriel Estrada, Sector La Herradura, 85506 San Carlos, Son.', ci:'2026-11-03', co:'2026-11-05'};
 const MESL = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'], DIAL = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const fLarga = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if(!m) return iso || ''; const d = new Date(Date.UTC(+m[1], m[2]-1, +m[3])); return `${DIAL[d.getUTCDay()]} ${+m[3]} de ${MESL[m[2]-1]}`; };
+/* Locales de Hermosillo que llegan por su cuenta (con estacionamiento): MetLife solo cubre las noches de hotel */
+const esLocal = r => (r.notas || []).some(n => n.k === 'tr' && /por tu cuenta/i.test(n.t) && /estacionamiento/i.test(n.t));
+const impTxt = r => esLocal(r) ? 'Le recordamos que MetLife cubre únicamente las noches de hotel.' : 'Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.';
 const MET = 'Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento.';
 // Excepciones confirmadas por el equipo (noches adicionales pagadas por el invitado, etc.)
 const HOTEL_EXC = {
@@ -974,7 +984,7 @@ function hotelInfo(r){
   if(lleg && lleg.f < HOTEL.ci) notas.push(`Su vuelo llega a Hermosillo el ${fLarga(lleg.f)} a las ${lleg.l} h, antes del check in del hotel (03 de noviembre).`);
   if(sal && sal.f > HOTEL.co) notas.push(`Su vuelo de regreso sale de Hermosillo el ${fLarga(sal.f)} a las ${sal.s} h, después del check out del hotel (05 de noviembre).`);
   // dentro de las fechas del evento (3 al 5 nov) todo aplica: solo se avisa si llega antes del 3 o regresa después del 5
-  return {lines, nota: notas.length ? notas.join(' ') + ' ' + MET : ''};
+  return {lines, nota: notas.length ? notas.join(' ') + ' ' + (esLocal(r) ? impTxt(r) : MET) : ''};
 }
 function hotelHTML(r){ const h = hotelInfo(r);
   return `<section class="notas hotelbox" aria-label="Hospedaje"><h3>🏨 Hospedaje en el hotel sede</h3><ul>${h.lines.map(t => `<li>${esc(t).replace(HOTEL.n, `<b class="sede">${HOTEL.n}</b>`)}</li>`).join('')}</ul>${h.nota ? `<p class="hnota">⚠️ ${esc(h.nota)}</p>` : ''}</section>`; }
@@ -1185,7 +1195,7 @@ function mailTxt(r){
     if(x.tipo === 'hotel'){ x.lines.forEach(t => L.push('- ' + t)); if(x.nota) L.push('IMPORTANTE: ' + x.nota); }
     else if(x.rows) x.rows.forEach(([k, v]) => L.push(`- ${k}: ${v}`)); else if(x.text) L.push(x.text); if(x.nb) L.push(x.nb); });
   if(!tierra){ L.push('', 'PUNTOS IMPORTANTES DE SU VUELO'); document.querySelectorAll('section.important li').forEach(li => L.push('- ' + li.innerText.trim())); }
-  L.push('', 'Importante.- Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.',
+  L.push('', 'Importante.- ' + impTxt(r),
     '', 'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', 'Viajes El Corte Inglés');
   return L.join('\n');
 }
@@ -1255,7 +1265,7 @@ function mailHTML(r, enPDF){
   if(!tierra){ b += h2('Puntos importantes de su vuelo');
     const pts = [...document.querySelectorAll('section.important li')].map(li => `<tr><td valign="top" style="padding:${C ? '1px 6px 1px 0' : '3px 6px 3px 0'}">${T('•', C ? 11 : fs, G, 'bold')}</td><td style="padding:${C ? '1px 0;line-height:1.25' : '3px 0'}">${T(li.innerHTML.replace(/<b>/g, `<b style="color:${INK}">`), C ? 11 : fs)}</td></tr>`).join('');
     b += `<tr><td bgcolor="#F0F8F2" style="background:#F0F8F2;border-left:4px solid ${G};padding:${C ? '5px 12px' : '10px 14px'}"><table cellpadding="0" cellspacing="0">${pts}</table></td></tr>`; }
-  b += `<tr><td style="padding-top:${C ? 6 : 12}px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFF7E6" style="background:#FFF7E6;border-left:4px solid #E0A100;padding:${C ? '5px 12px;line-height:1.25' : '10px 14px'}">${T('Importante.- Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.', C ? 11 : fs, INK, 'bold')}</td></tr></table></td></tr>`;
+  b += `<tr><td style="padding-top:${C ? 6 : 12}px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFF7E6" style="background:#FFF7E6;border-left:4px solid #E0A100;padding:${C ? '5px 12px;line-height:1.25' : '10px 14px'}">${T('Importante.- ' + impTxt(r), C ? 11 : fs, INK, 'bold')}</td></tr></table></td></tr>`;
   // (sin botón de PDF en el correo)
   if(C) b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', 11) + '&nbsp;&nbsp;' + T('Viajes El Corte Inglés', 11, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:4px');
   else b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.')) + p(T('Viajes El Corte Inglés', fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), C ? 'padding-top:2px;padding-bottom:4px' : 'padding-top:6px;padding-bottom:10px');
@@ -1322,7 +1332,7 @@ function waTxt(r){
     '🗓️ *Agenda del evento:*', base + 'agenda-cumbre.jpg?v=349', '',
     '👕 *Dress code y recomendaciones:*', base + 'dresscode-cumbre.jpg?v=349', '',
     '🔎 *Consulta tu reserva cuando quieras:*', base, '',
-    '*Importante.-* Le recordamos que *MetLife* cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.', '',
+    '*Importante.-* ' + impTxt(r).replace('MetLife', '*MetLife*'), '',
     'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', '*_Viajes El Corte Inglés_*');
   return L.join('\n');
 }
@@ -1450,7 +1460,7 @@ async function itinPDFtexto(r){
       y += 3; }); }
   if(!tierra){ head('Puntos importantes de su vuelo');
     document.querySelectorAll('section.important li').forEach(li => bul(li.innerText)); }
-  y += 4; para('Importante.- Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.', {b:1});
+  y += 4; para('Importante.- ' + impTxt(r), {b:1});
   y += 2; para('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.');
   para('Viajes El Corte Inglés', {b:1, c:G});
   return doc.output('blob');
@@ -1788,7 +1798,7 @@ function agItems(D){
   // Pantalla principal: encabezado de agenda y tarjetas de servicios. Dentro de la reserva: agenda por día e información general.
   const ag = document.getElementById('agenda'); if(ag) ag.classList.toggle('ag-compact', !sel);
   const inf = document.getElementById('info'); if(inf) inf.hidden = !sel;
-  const sv = document.getElementById('services'); if(sv) sv.hidden = !!sel; document.querySelectorAll('section.important, #cierre').forEach(x => x.hidden = !sel); // puntos importantes y cierre: solo dentro de la reserva
+  const sv = document.getElementById('services'); if(sv) sv.hidden = !!sel; document.querySelectorAll('section.important, #cierre').forEach(x => x.hidden = !sel); { const di = document.getElementById('dimp-t'); if(di && sel) di.textContent = 'Importante.- ' + impTxt(sel); } // puntos importantes y cierre: solo dentro de la reserva
   if(sel && !tierra){ // con vuelo: traslado hotel → aeropuerto de Hermosillo antes del regreso; el pick up se comparte en sitio
     const v = sel.reg, out = [];
     D.it.forEach(x => { if(/^Regreso a tu ciudad/.test(x[2]) && v){
@@ -1896,6 +1906,68 @@ function faseVuelo(l){
   if(dep && now < dep) return 'prog'; if(arr && now < arr) return 'ruta'; return 'ater';
 }
 const FASES = [['prog', '🕒 Programados'], ['ruta', '✈️ En ruta · despegado'], ['ater', '🛬 Aterrizados · llegados']];
+/* ---------- Alertas de Llegadas y Salidas (notificaciones del celular / computadora) ----------
+   Avisa: 🕒 resumen de programados del día y 60 min antes de cada salida · ✈️ cuando despega o sale el traslado · 🛬 cuando aterriza o llega.
+   Funcionan mientras la página o la app esté abierta (también en segundo plano un rato). Se guardan en este dispositivo. */
+const AL = {on:false, sent:{}};
+try{ Object.assign(AL, JSON.parse(localStorage.getItem('alertas-cumbre') || '{}')); }catch(e){}
+const alSave = () => { try{ localStorage.setItem('alertas-cumbre', JSON.stringify(AL)); }catch(e){} };
+const AL_PREV = 60, AL_VIEJO = 45; // aviso previo (min) · no avisar de cambios de hace más de 45 min (al reabrir la app)
+function alGrupos(tab){ const t0 = CTL.tab; CTL.tab = tab;
+  try{ return ctlGroups().map(G => { const l = G.l, h = ctlHora(l); let ini = null, fin = null;
+    if(l.tr && l.ini){ ini = l.ini; fin = l.fin; }
+    else if(l.terr){ const m = /^(\d{1,2}):(\d{2})$/.exec((tab === 'lle' ? l.l : l.s) || ''), [y, mo, d] = l.f.split('-').map(Number); ini = fin = m ? new Date(Date.UTC(y, mo - 1, d, +m[1] + 7, +m[2])) : null; }
+    else { ini = l.s ? when(l, 's') : null; fin = l.l ? when(l, 'l') : null; if(ini && fin && fin < ini) fin = new Date(fin.getTime() + 864e5); }
+    return {tab, key: tab + '|' + l.f + '|' + h + '|' + l.v + '|' + (l.route || ''), l, h, pax: G.pax, fase: faseVuelo(l), ini, fin}; }); }
+  finally{ CTL.tab = t0; } }
+function alDesc(G){ const l = G.l, n = G.pax.length, nom = G.pax.slice(0, 3).map(r => tcase(r.n)).join(', ') + (n > 3 ? ` y ${n - 3} más` : '');
+  return `${l.terr ? l.route : `${l.v} · ${l.o} ${l.s} → ${l.d} ${l.l}`}\n${n} ${n === 1 ? 'pasajero' : 'pasajeros'}: ${nom}`; }
+function alToast(t, b, tab){ let box = document.getElementById('atoast'); if(!box){ box = document.createElement('div'); box.id = 'atoast'; box.setAttribute('role', 'status'); document.body.appendChild(box); }
+  const d = document.createElement('div'); d.innerHTML = `<b>${esc(t)}</b>${esc(b).replace(/\n/g, '<br>')}`; d.onclick = () => { d.remove(); if(veciSes()) ctlTab(tab); };
+  box.appendChild(d); while(box.children.length > 3) box.firstChild.remove(); setTimeout(() => d.remove(), 12000);
+  try{ const a = new (window.AudioContext || window.webkitAudioContext)(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; g.gain.value = .08; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + .18); }catch(e){} }
+async function alNotif(t, b, tab, tag){
+  alToast(t, b, tab);
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const op = {body: b, tag, icon: 'icon-192.png', badge: 'icon-192.png', data: {tab}, renotify: true};
+  try{ const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if(reg){ await reg.showNotification(t, op); return; } }catch(e){}
+  try{ new Notification(t, op); }catch(e){} }
+const alHoy = () => { const n = ahora(), p = x => String(x).padStart(2, '0'); return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`; };
+const alSirve = G => !/por su cuenta/i.test(G.l.v) && G.h !== '—'; // sin avisos para quien llega por su cuenta o sin hora
+function alResumen(force){ const hoy = alHoy(), k = 'dia|' + hoy; if(AL.sent[k] && !force) return; AL.sent[k] = 1;
+  const parte = tab => { const L = alGrupos(tab).filter(G => alSirve(G) && G.l.f === hoy && G.fase === 'prog'); if(!L.length) return ''; const px = L.reduce((a, G) => a + G.pax.length, 0);
+    return `${tab === 'lle' ? 'Llegadas' : 'Salidas'}: ${L.length} ${L.length === 1 ? 'vuelo/traslado' : 'vuelos/traslados'} · ${px} pax (primero ${L[0].h} h ${L[0].l.v.replace(/^🚐 /, '')})`; };
+  const t = [parte('lle'), parte('sal')].filter(Boolean);
+  alNotif('🕒 Programados de hoy', t.length ? t.join('\n') : 'No quedan vuelos ni traslados programados para hoy.', 'lle', 'dia'); }
+function alCheck(silencio){
+  if(!AL.on || !PACK || !DATA.length) return;
+  const now = ahora().getTime(), cola = [];
+  ['lle', 'sal'].forEach(tab => alGrupos(tab).filter(alSirve).forEach(G => { const lle = tab === 'lle', tr = !!G.l.terr, pre = (lle ? 'Llegadas' : 'Salidas') + ' · ';
+    const ev = (tipo, t, cuando, titulo) => { const k = tipo + '|' + G.key; if(AL.sent[k] || (silencio && tipo === 'pre')) return; AL.sent[k] = 1;
+      if(!silencio && t && now - t.getTime() < AL_VIEJO * 60000) cola.push([pre + titulo, alDesc(G), tab, k]); };
+    if(G.fase === 'prog' && G.ini && G.ini.getTime() - now <= AL_PREV * 60000 && G.ini.getTime() > now)
+      ev('pre', G.ini, 0, `🕒 ${tr ? 'Sale traslado' : 'Despega'} en ${Math.max(1, Math.round((G.ini.getTime() - now) / 60000))} min (${G.h} h)`);
+    if(G.fase === 'ruta' || G.fase === 'ater'){ if(G.fin && G.ini && G.fin.getTime() !== G.ini.getTime()) ev('ruta', G.ini, 0, tr ? '🚐 Salió el traslado' : '✈️ Despegó · en ruta'); else AL.sent['ruta|' + G.key] = 1; }
+    if(G.fase === 'ater') ev('ater', G.fin, 0, tr ? (G.l.tr ? '🏁 Llegó el traslado (estimado)' : '🏁 Llegada registrada') : '🛬 Aterrizó'); }));
+  if(!silencio && alHoy() >= '2026-11-02') { const h = ahora().getHours(); if(h >= 6) alResumen(); }
+  if(cola.length && ['lle', 'sal'].includes(CTL.tab) && !$('#ctl').hidden) ctlRender(); // los vuelos cambian de apartado al momento del aviso
+  alSave(); cola.slice(0, 6).forEach(([t, b, tab, k], i) => setTimeout(() => alNotif(t, b, tab, k), i * 400));
+  if(cola.length > 6) alNotif(`+${cola.length - 6} avisos más`, 'Revisa Llegadas y Salidas.', 'lle', 'mas'); }
+function alUI(){ const el = document.getElementById('calert'); if(!el) return;
+  const sop = 'Notification' in window, perm = sop ? Notification.permission : 'no', ios = /iPhone|iPad/i.test(navigator.userAgent), pwa = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  el.innerHTML = AL.on
+    ? `<span>🔔 <b>Alertas activadas</b> en este dispositivo${perm === 'granted' ? '' : ' (solo dentro de la página)'}</span><button type="button" class="off" data-al="off">Desactivar</button><button type="button" class="off" data-al="test">Probar</button>`
+    : `<span>🔕 <b>Alertas desactivadas</b></span><button type="button" data-al="on">🔔 Activar alertas</button>`;
+  el.innerHTML += `<small>Avisa con notificación: resumen de programados del día, 60 min antes de cada salida, cuando despega o sale el traslado y cuando aterriza o llega. Funcionan con la página o la app abierta.${sop || !ios ? '' : pwa ? '' : ' En iPhone: toca Compartir → “Agregar a inicio”, abre la app desde ese ícono y activa las alertas ahí.'}${perm === 'denied' ? ' Las notificaciones están bloqueadas: permítelas en los ajustes del navegador para este sitio.' : ''}</small>`; }
+document.addEventListener('click', async e => { const b = e.target.closest('[data-al]'); if(!b) return; const a = b.dataset.al;
+  if(a === 'off'){ AL.on = false; alSave(); alUI(); return; }
+  if(a === 'test'){ alNotif('🔔 Prueba de alerta', 'Así llegarán los avisos de Llegadas y Salidas.', CTL.tab, 'prueba'); return; }
+  if('Notification' in window && Notification.permission === 'default'){ DLG = true; try{ await Notification.requestPermission(); }catch(er){} setTimeout(() => { DLG = false; awaySince = 0; }, 800); }
+  if('serviceWorker' in navigator){ try{ await navigator.serviceWorker.register('sw.js?v=1', {scope: './'}); }catch(er){} }
+  AL.on = true; AL.sent = {}; alCheck(true); alSave(); alUI(); alResumen(true); alSave(); });
+if(navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if(e.data && e.data.alerta && veciSes()) ctlTab(e.data.alerta); });
+setInterval(() => alCheck(), 30000);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) alCheck(); });
 document.addEventListener('click', e => { const b = e.target.closest('#cfase [data-fase]'); if(!b) return; CTL.fase = b.dataset.fase; ctlRender(); });
 setInterval(() => { if(['lle', 'sal'].includes(CTL.tab) && !document.hidden && !$('#ctl').hidden) ctlRender(); }, 60000); // los vuelos cambian de apartado solos
 function ctlRender(){
@@ -1925,6 +1997,7 @@ function ctlRender(){
           : G.cx && r.reg ? `<small class="csig">viene de ${esc(fmtDate(r.reg.f))} · ${esc(r.reg.v)} ${esc(r.reg.o)} → ${esc(r.reg.d)} ${esc(r.reg.l)}</small>` : '';
         return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${sig}</li>`; }).join('') + '</ul></section>';
   });
+  alUI();
   $('#cout').innerHTML = html || `<p class="cnote">${CTL.fase === 'ruta' ? 'No hay vuelos en ruta en este momento.' : CTL.fase === 'ater' ? 'Todavía no ha aterrizado ningún vuelo.' : 'No quedan vuelos programados.'}</p>`;
 }
 /* ---------- Estatus de vuelos (FlightAware) ---------- */
@@ -2513,7 +2586,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 351;
+const APP_V = 355;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
