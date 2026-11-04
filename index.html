@@ -672,19 +672,111 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 .kfil button b{font-weight:800;color:var(--green);margin-left:3px}.kfil button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}.kfil button[aria-pressed="true"] b{color:#fff}
 .kfil button:disabled{opacity:.4;cursor:default}.kfil select{font:600 13px var(--body);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff;color:var(--ink);min-width:0;width:0;flex:1 1 auto}.kfil{min-width:0;max-width:100%}.kfil .kfr{min-width:0}
 .ktag{display:block;margin-top:3px;font:600 11.5px var(--body);color:#8A5A00}
+
+/* ===================== Diseño visual 2026: mar de Cortés al atardecer ===================== */
+:root{--sea:#0A2540;--sea2:#0E3A5F;--teal:#14B8C4;--coral:#FF6B4A;--sun:#FFB547;--sand:#F6EEE3;--ondk:#F4FAFB;--ondk2:#B9CFDD}
+header.board{background:linear-gradient(120deg,var(--sea) 0%,var(--sea2) 60%,#0F5E7A 100%)!important;color:var(--ondk);border-bottom:0!important;box-shadow:0 8px 24px rgba(3,15,28,.22);transition:padding .3s}
+header.board .eyebrow{color:var(--sun)}
+header.board h1{color:#fff;letter-spacing:.01em}
+header.board h1 .g{background:linear-gradient(90deg,var(--teal),var(--sun) 55%,var(--coral));-webkit-background-clip:text;background-clip:text;color:transparent}
+header.board .sub{color:var(--ondk2)}
+header.board .tabs button{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);color:var(--ondk);transition:background .2s,border-color .2s,transform .2s}
+header.board .tabs button:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+header.board .tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:var(--sea)}
+header.board .tabs.vsub{border-top-color:rgba(255,255,255,.2)}
+header.board .tabs.vsub button[aria-selected="true"]{background:var(--sun);border-color:var(--sun);color:var(--sea)}
+header.board.solid{padding-block:6px 6px!important}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+header.board{padding-block:10px 10px!important}
+.hbar{display:flex;align-items:center;gap:10px 14px;min-width:0}
+.hbar .tabs{padding-top:0!important;min-width:0}
+.hlogo{flex:none;display:block;max-width:170px;overflow:hidden;opacity:1;transition:max-width .35s ease,opacity .3s ease;border-radius:8px}
+.hlogo img{display:block;height:44px;width:auto;-webkit-mask-image:radial-gradient(130% 125% at 50% 50%,#000 60%,transparent 100%);mask-image:radial-gradient(130% 125% at 50% 50%,#000 60%,transparent 100%)}
+body.heroon .hlogo{max-width:0;opacity:0}
+@media (max-width:440px){.hlogo img{height:34px}.hbar{gap:8px}}
+header.board.solid .eyebrow{display:none}
+/* Héroe */
+.hero2{position:relative;color:var(--ondk);background:radial-gradient(120% 100% at 85% 0%,#1B5F86 0%,var(--sea2) 40%,var(--sea) 78%);overflow:hidden;isolation:isolate}
+body.vctl .hero2{display:none}
+.hero2 canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.hero2 .sol{position:absolute;right:7%;top:16%;width:clamp(90px,17vw,200px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 45%,#FFD9A0,var(--sun) 45%,var(--coral) 82%);box-shadow:0 0 90px 30px rgba(255,140,80,.32);z-index:-1;animation:solflota 9s ease-in-out infinite}
+@keyframes solflota{50%{transform:translateY(12px)}}
+.hero2 .wrap{padding-block:34px 30px;display:grid;gap:16px}
+.h2logo{display:block;width:min(560px,100%);height:auto;border-radius:16px;-webkit-mask-image:radial-gradient(130% 120% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(130% 120% at 50% 50%,#000 62%,transparent 100%);animation:logoentra .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes logoentra{from{opacity:.35;transform:translateY(10px) scale(.98)}}
+.h2eye{display:inline-flex;align-items:center;gap:10px;font:600 12.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--sun)}
+.h2eye::before{content:"";width:26px;height:2px;background:currentColor}
+.hero2 h2{margin:0;font:700 clamp(34px,7vw,68px)/.95 var(--display);text-transform:uppercase;letter-spacing:-.005em;max-width:13ch;text-wrap:balance}
+.hero2 h2 span{background:linear-gradient(90deg,var(--teal),var(--sun) 55%,var(--coral));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero2 p{margin:0;font-size:clamp(16px,2vw,19px);color:var(--ondk2);max-width:48ch}
+.h2chips{display:flex;flex-wrap:wrap;gap:8px}
+.h2chips span{font:600 13.5px var(--body);padding:7px 12px;border-radius:99px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18)}
+.h2cta{justify-self:start;position:relative;display:inline-flex;align-items:center;gap:10px;font:700 17px var(--body);color:#fff;background:linear-gradient(135deg,var(--coral),#FF8A3D);padding:15px 26px;border-radius:99px;border:0;cursor:pointer;overflow:hidden;box-shadow:0 12px 30px rgba(255,107,74,.45);animation:ctapulso 2.6s ease-out infinite;transition:transform .25s}
+.h2cta::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-120%);animation:ctabrillo 3.2s ease-in-out infinite}
+.h2cta:hover{transform:translateY(-3px) scale(1.02)}
+.h2cta:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+@keyframes ctabrillo{60%,100%{transform:translateX(120%)}}
+@keyframes ctapulso{0%{box-shadow:0 12px 30px rgba(255,107,74,.45),0 0 0 0 rgba(255,107,74,.55)}70%{box-shadow:0 12px 30px rgba(255,107,74,.45),0 0 0 16px rgba(255,107,74,0)}100%{box-shadow:0 12px 30px rgba(255,107,74,.45),0 0 0 0 rgba(255,107,74,0)}}
+.h2num{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:6px}
+.h2num div{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px 14px;backdrop-filter:blur(4px)}
+.h2num b{display:block;font:700 clamp(26px,4.5vw,40px)/1 var(--display);color:#fff;font-variant-numeric:tabular-nums}
+.h2num b small{font-size:.55em;color:var(--sun)}
+.h2num div>span{display:block;margin-top:4px;font-size:12.5px;color:var(--ondk2);font-weight:600}
+.hero2 .ola{display:block;width:100%;height:34px;color:var(--bg)}
+@media (max-width:600px){.h2num{gap:6px}.h2num div{padding:8px 8px;border-radius:10px}.h2num b{font-size:24px}.h2num div>span{font-size:10.5px;line-height:1.2}.hero2 .wrap{padding-block:20px 18px;gap:12px}.hero2 .sol{top:8%;right:-6%}.h2chips span{font-size:12.5px;padding:5px 10px}.h2cta{font-size:16px;padding:13px 22px}}
+/* Buscador */
+.controls .search input{border-radius:99px;border-color:#CFE3E8;box-shadow:0 6px 20px rgba(10,37,64,.07);transition:border-color .2s,box-shadow .2s}
+.controls .search input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(20,184,196,.18),0 8px 24px rgba(10,37,64,.1)}
+.controls .search svg{left:18px}.controls .search input{padding-left:50px}
+.prow{transition:transform .25s,box-shadow .25s,border-color .25s}
+.prow:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(10,37,64,.12);border-color:var(--teal)}
+.prow-b{background:linear-gradient(135deg,var(--coral),#FF8A3D)!important;color:#fff!important;border-color:transparent!important}
+/* Servicios */
+body:not(.vctl) .svc{border-radius:16px;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+body:not(.vctl) .svc:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(10,37,64,.14);border-color:var(--teal)}
+body:not(.vctl) .svc-i{background:linear-gradient(135deg,var(--teal),#0E7C93)!important;color:#fff!important;border-radius:14px!important;box-shadow:0 8px 18px rgba(20,184,196,.3);transition:transform .35s}
+body:not(.vctl) .svc:hover .svc-i{transform:rotate(-6deg) scale(1.08)}
+body:not(.vctl) .svc-k{color:var(--coral)!important}
+/* Agenda */
+#agenda{border-radius:20px;overflow:hidden;box-shadow:0 14px 36px rgba(10,37,64,.1)}
+#agenda .ag-head{background:linear-gradient(120deg,var(--sea),var(--sea2) 65%,#0F5E7A)}
+#agenda .ag-pdf{border-radius:99px;transition:transform .2s,box-shadow .2s}
+#agenda .ag-pdf:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.25)}
+#agenda .ag-tabs button[aria-selected="true"]{color:var(--sea);border-bottom-color:var(--coral);background:#EAF7F8}
+#agenda .ag-list li{transition:transform .25s,background .25s}
+#agenda .ag-list li:not(.tr):hover{transform:translateX(5px);background:#E3F4F6}
+#ag-days{touch-action:pan-y}
+#ag-days .ag-day.izq{animation:agizq .35s ease both}#ag-days .ag-day.der{animation:agder .35s ease both}
+@keyframes agizq{from{opacity:.2;transform:translateX(40px)}}@keyframes agder{from{opacity:.2;transform:translateX(-40px)}}
+/* Preguntas */
+.faq h2{font:700 clamp(26px,4vw,36px)/1 var(--display);text-transform:uppercase;color:var(--sea)}
+.faq details{border-radius:14px!important;transition:border-color .25s,box-shadow .25s}
+.faq details[open]{border-color:var(--teal);box-shadow:0 10px 26px rgba(20,184,196,.14)}
+.faq summary::after{content:"+";width:26px;height:26px;border-radius:50%;background:#EAF7F8;color:var(--teal)!important;display:grid;place-items:center;font-size:18px!important}
+.faq details[open] summary::after{background:var(--coral);color:#fff!important}
+.faq details[open] summary{background:transparent!important}
+.faq details[open] > p{animation:faqabre .35s ease both}
+@keyframes faqabre{from{opacity:0;transform:translateY(-6px)}}
+/* Entrada al hacer scroll (solo lo que está debajo de la primera pantalla) */
+.rv{transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.wait{opacity:0;transform:translateY(28px)}
+@media (prefers-reduced-motion:reduce){.hero2 *,.h2cta,.h2cta::after,.rv{animation:none!important;transition:none!important}.rv.wait{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 <header class="board">
   <div class="wrap">
-    <div class="eyebrow" id="ev">Manifiesto de itinerario</div>
-    <h1>SEGUNDA CUMBRE UNIVERSALES</h1>
+    <div class="eyebrow sr" id="ev">Manifiesto de itinerario</div>
+    <h1 class="sr">Segunda Cumbre Universales</h1>
     <div class="sub" id="upd" hidden></div>
+    <div class="hbar">
+    <a class="hlogo" href="#" id="hlogo" aria-label="Ir al inicio"><img src="cumbre-logo.jpg?v=366" alt="Segunda Cumbre Universales" width="649" height="178"></a>
     <nav class="tabs" role="tablist" aria-label="Apartados">
       <button role="tab" data-tab="man" aria-selected="true">Manifiesto</button>
       <button role="tab" data-tab="rep" aria-selected="false">Reporte</button>
       <button role="tab" data-veci="1" aria-selected="false">VECI</button>
     </nav>
+    </div>
     <nav class="tabs vsub" aria-label="Secciones VECI" hidden>
       <button role="tab" data-tab="cla" aria-selected="false">Claves</button>
       <button role="tab" data-tab="lle" aria-selected="false">Llegadas</button>
@@ -783,6 +875,24 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
   <div id="csum" hidden></div>
   </section>
 
+<section class="hero2" id="hero2" aria-labelledby="h2-t">
+  <canvas id="mar" aria-hidden="true"></canvas><div class="sol" aria-hidden="true"></div>
+  <div class="wrap">
+    <img class="h2logo" src="cumbre-logo.jpg?v=366" alt="Segunda Cumbre Universales" width="649" height="178">
+    <span class="h2eye">San Carlos, Sonora · 3 al 5 de noviembre</span>
+    <h2 id="h2-t">Tu viaje, en <span>un solo lugar</span></h2>
+    <p>Vuelos, traslados, hospedaje en el Hotel Marinaterra y la agenda del evento.</p>
+    <div class="h2chips"><span>🏨 Hotel Marinaterra</span><span>☀️ 31° / 23°</span><span>🕐 Hora de Sonora</span></div>
+    <button type="button" class="h2cta" id="h2cta">Consultar mi reserva <span aria-hidden="true">→</span></button>
+    <div class="h2num" aria-label="La cumbre en cifras">
+      <div><b data-count="3">3</b><span>días de cumbre</span></div>
+      <div><b data-count="9">9</b><span>actividades</span></div>
+      <div><b data-count="4">4</b><span>horas de club de playa</span></div>
+      <div><b><span data-count="31">31</span><small>°C</small></b><span>máxima en San Carlos</span></div>
+    </div>
+  </div>
+  <svg class="ola" viewBox="0 0 1440 34" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 20 C 240 40 480 0 720 16 S 1200 36 1440 12 V34 H0 Z"/></svg>
+</section>
 <div class="wrap qhint-w"><div id="qhint" class="empty start qhint" hidden>🔎 <b>Escribe tu nombre completo</b> (nombres y apellidos) para ver tu itinerario y tu reserva.<br>Por seguridad solo aparece tu reserva si el nombre coincide completo. Los acentos no importan.</div></div>
 <div class="controls">
   <div class="wrap">
@@ -1680,6 +1790,7 @@ function filtered(){
 }
 function render(){
   const ctrl = document.querySelector('.controls');
+  { const hz = document.getElementById('hero2'); if(hz) hz.hidden = state.sel != null || !!(state.q || '').trim(); }
   if(typeof renderAgenda === 'function' && document.getElementById('ag-days')) renderAgenda(AG_DAY);
   if(state.sel != null && DATA[state.sel]){
     ctrl.hidden = true; $('#qhint').hidden = true; $('#out').innerHTML = detailView(DATA[state.sel]); return;
@@ -2647,6 +2758,44 @@ $('#creset').addEventListener('click', async () => {
   if(pw === null) return;
   if(await sha256(pw.trim().toLowerCase()) !== RESET_H){ $('#cmsg').textContent = 'Contraseña incorrecta. No se borró nada.'; return; }
   CTL.marks[CTL.tab] = {}; ctlSave(); ctlRender(); syncPush({op:'clear', t:CTL.tab}); $('#cmsg').textContent = 'Marcas borradas.'; });
+/* ---------- Diseño visual: héroe animado, contadores, entrada al hacer scroll, agenda deslizable, preguntas ---------- */
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hb = document.querySelector('header.board'), onS = () => { hb.classList.toggle('solid', scrollY > 40);
+    const hz = document.getElementById('hero2'); document.body.classList.toggle('heroon', !!hz && !hz.hidden && !document.body.classList.contains('vctl') && hz.getBoundingClientRect().bottom > hb.offsetHeight + 60); };
+  new MutationObserver(onS).observe(document.body, {attributes:true, attributeFilter:['class']});
+  { const hz = document.getElementById('hero2'); if(hz) new MutationObserver(onS).observe(hz, {attributes:true, attributeFilter:['hidden']}); }
+  { const lg = document.getElementById('hlogo'); if(lg) lg.addEventListener('click', e => { e.preventDefault(); if(CTL.tab !== 'man') ctlTab('man'); if(state.sel != null) closePax(); window.scrollTo({top:0, behavior:'smooth'}); }); }
+  addEventListener('scroll', onS, {passive:true}); onS();
+  const cta = document.getElementById('h2cta');
+  if(cta) cta.addEventListener('click', () => { const q = document.getElementById('q'); const c = document.querySelector('.controls');
+    window.scrollTo({top: Math.max(0, c.getBoundingClientRect().top + scrollY - (hb.offsetHeight || 0) - 4), behavior: reduce ? 'auto' : 'smooth'}); setTimeout(() => q && q.focus(), reduce ? 0 : 450); });
+  // contadores
+  if(!reduce) setTimeout(() => document.querySelectorAll('.h2num [data-count]').forEach(el => { const fin = +el.dataset.count, t0 = performance.now();
+    const paso = t => { const p = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(fin * (1 - Math.pow(1 - p, 3))); if(p < 1) requestAnimationFrame(paso); }; requestAnimationFrame(paso); }), 300);
+  // olas del héroe (se pausan si el héroe no se ve)
+  const cv = document.getElementById('mar'); if(cv && cv.getContext){ const cx = cv.getContext('2d'); let vis = true, run = false;
+    const tam = () => { const r = cv.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); cv.width = Math.max(1, r.width * d); cv.height = Math.max(1, r.height * d); cx.setTransform(d, 0, 0, d, 0, 0); };
+    addEventListener('resize', tam); tam();
+    const K = [{y:.72,a:10,l:.012,v:.6,c:'rgba(20,184,196,.20)'},{y:.82,a:13,l:.009,v:-.45,c:'rgba(20,184,196,.15)'},{y:.9,a:8,l:.015,v:.35,c:'rgba(255,181,71,.10)'}];
+    const dib = t => { const w = cv.clientWidth, h = cv.clientHeight; cx.clearRect(0, 0, w, h);
+      K.forEach(k => { cx.beginPath(); cx.moveTo(0, h); for(let x = 0; x <= w; x += 10) cx.lineTo(x, h * k.y + Math.sin(x * k.l + t * .0018 * k.v) * k.a + Math.sin(x * k.l * .5 - t * .0007) * k.a * .5); cx.lineTo(w, h); cx.closePath(); cx.fillStyle = k.c; cx.fill(); });
+      if(!reduce && vis && !document.hidden && !document.getElementById('hero2').hidden) requestAnimationFrame(dib); else run = false; };
+    const go = () => { if(!run){ run = true; tam(); requestAnimationFrame(dib); } };
+    if('IntersectionObserver' in window) new IntersectionObserver(e => { vis = e[0].isIntersecting; if(vis) go(); }).observe(cv);
+    document.addEventListener('visibilitychange', () => { if(!document.hidden) go(); });
+    new MutationObserver(go).observe(document.getElementById('hero2'), {attributes:true, attributeFilter:['hidden']}); go(); }
+  // entrada al hacer scroll
+  if(!reduce && 'IntersectionObserver' in window){ const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.remove('wait'); io.unobserve(e.target); } }), {threshold:.12});
+    document.querySelectorAll('main.wrap .svc, #agenda, .faq details').forEach((el, i) => { el.classList.add('rv'); if(el.getBoundingClientRect().top > innerHeight){ el.classList.add('wait'); el.style.transitionDelay = (i % 3) * 70 + 'ms'; io.observe(el); } }); }
+  // agenda: deslizar para cambiar de día
+  const ad = document.getElementById('ag-days'); let x0 = null;
+  if(ad){ ad.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive:true});
+    ad.addEventListener('touchend', e => { if(x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if(Math.abs(dx) < 50) return;
+      const d = [3, 4, 5], i = d.indexOf(+AG_DAY), n = d[i + (dx < 0 ? 1 : -1)]; if(!n) return; renderAgenda(n); const el = ad.querySelector('.ag-day'); if(el) el.classList.add(dx < 0 ? 'izq' : 'der'); }); }
+  // preguntas: una abierta a la vez
+  document.querySelectorAll('.faq details').forEach(d => d.addEventListener('toggle', () => { if(d.open) document.querySelectorAll('.faq details[open]').forEach(o => { if(o !== d) o.open = false; }); }));
+})();
 /* ---------- Encabezado fijo al bajar ---------- */
 (function(){
   const h = document.querySelector('header.board');
@@ -2654,7 +2803,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 364;
+const APP_V = 368;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
