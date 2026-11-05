@@ -660,7 +660,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 #atoast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:3000;display:grid;gap:8px;width:min(94vw,460px);pointer-events:none}
 #atoast div{pointer-events:auto;background:#0C4F23;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 6px 18px rgba(0,0,0,.25);font:500 14px/1.4 var(--body);cursor:pointer;animation:rise .25s ease both}
 #atoast div b{display:block;font-weight:700;font-size:15px}
-.cview{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}.cview button{font:700 13px var(--body);border:1.5px solid var(--green);background:#fff;color:var(--green);border-radius:9px;padding:8px 6px;cursor:pointer}
+.cview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}@media (max-width:640px){.cview{grid-template-columns:repeat(2,minmax(0,1fr))}}.cview{gap:6px;margin:6px 0}.cview button{font:700 13px var(--body);border:1.5px solid var(--green);background:#fff;color:var(--green);border-radius:9px;padding:8px 6px;cursor:pointer}
 .cview button[aria-pressed="true"]{background:var(--green);color:#fff}
 #cout .cfh{cursor:pointer;position:relative;padding-right:30px}#cout .cfh::after{content:"▾";position:absolute;right:11px;top:10px;font-size:15px;color:var(--green);transition:transform .15s}
 #cout.solo .cfl:not(.tg) .cnames,#cout:not(.solo) .cfl.tg .cnames{display:none}
@@ -774,7 +774,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
   <p class="cs" id="ct-s"></p>
   <div class="csearch"><input id="lq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn"></span></div>
   <div class="cfase" id="cfase" role="tablist" aria-label="Estado de los vuelos"></div>
-  <div class="cview" id="cview" role="group" aria-label="Vista"><button type="button" data-cv="0">👥 Desplegar nombres</button><button type="button" data-cv="1">✈️ Ver solo vuelos</button></div>
+  <div class="cview" id="cview" role="group" aria-label="Vista"><button type="button" data-cv="all">🕒 Ver todo por horario</button><button type="button" data-cv="todo">👥 Desplegar nombres</button><button type="button" data-cv="vue">✈️ Ver solo vuelos</button><button type="button" data-cv="tra">🚐 Ver solo traslados</button><button type="button" data-cv="dir">🛫 Ver vuelos sin conexiones</button><button type="button" data-cv="cx">🔁 Ver solo conexiones</button></div>
   <div class="calert" id="calert"></div>
   <div class="cstats" role="group" aria-label="Filtrar" hidden>
     <button class="cstat" data-f="all" aria-pressed="true"><b id="cs-all">0</b><span>Total</span></button>
@@ -2028,12 +2028,20 @@ document.addEventListener('visibilitychange', () => { if(!document.hidden) alChe
 document.addEventListener('click', e => { const b = e.target.closest('#cfase [data-fase]'); if(!b) return; CTL.fase = b.dataset.fase; ctlRender(); });
 setInterval(() => { if(['lle', 'sal'].includes(CTL.tab) && !document.hidden && !$('#ctl').hidden) ctlRender(); if(CTL.tab === 'con' && !document.hidden) konRender(); }, 60000); // los vuelos cambian de apartado solos
 /* Vista de Llegadas/Salidas: con nombres o solo vuelos; tocar el encabezado de un vuelo despliega u oculta sus nombres */
-const CV = {solo: false, tg: new Set()};
-try{ CV.solo = localStorage.getItem('ctl-solo') === '1'; }catch(e){}
+const CV = {solo: false, modo: 'todo', tg: new Set()}; // modo: todo (con nombres) · vue (solo vuelos) · tra (solo traslados)
+try{ const m = localStorage.getItem('ctl-modo'); CV.modo = ['all', 'todo', 'vue', 'tra', 'dir', 'cx'].includes(m) ? m : (localStorage.getItem('ctl-solo') === '1' ? 'vue' : 'todo'); }catch(e){}
+CV.solo = CV.modo !== 'todo';
+/* Solo conexiones: vuelos de conexión (llegadas: el vuelo de su ciudad a México; salidas: de México a su ciudad), un grupo por vuelo */
+function cxGroups(){ const g = {}, lle = CTL.tab === 'lle';
+  DATA.forEach(r => { const l = lle ? r.c1 : r.c2, base = lle ? r.ida : r.reg; if(!l || !l.f) return;
+    const k = l.f + '|' + ctlHora(l) + '|' + l.v, dif = base && base.f !== l.f;
+    (g[k] = g[k] || {l, pax: [], pe: lle && dif, cl: lle && !dif, cx: lle ? null : (dif ? 'sig' : 'mismo')}).pax.push(r); });
+  return Object.keys(g).sort().map(k => { g[k].pax.sort((a, b) => a.n.localeCompare(b.n, 'es')); return g[k]; }); }
+const cvPasa = G => CV.modo === 'todo' || CV.modo === 'all' || (CV.modo === 'tra') === !!G.l.terr;
 function cvApply(){ const c = $('#cout'); if(c){ c.classList.toggle('solo', CV.solo); const q = $('#lq'); c.classList.toggle('q', !!(q && q.value.trim())); }
-  document.querySelectorAll('#cview [data-cv]').forEach(b => b.setAttribute('aria-pressed', (b.dataset.cv === '1') === CV.solo)); }
+  document.querySelectorAll('#cview [data-cv]').forEach(b => b.setAttribute('aria-pressed', b.dataset.cv === CV.modo)); }
 document.addEventListener('click', e => { const b = e.target.closest('#cview [data-cv]');
-  if(b){ CV.solo = b.dataset.cv === '1'; CV.tg.clear(); try{ localStorage.setItem('ctl-solo', CV.solo ? '1' : '0'); }catch(er){} document.querySelectorAll('#cout .cfl.tg').forEach(x => x.classList.remove('tg')); cvApply(); return; }
+  if(b){ CV.modo = b.dataset.cv; CV.solo = CV.modo !== 'todo'; CV.tg.clear(); try{ localStorage.setItem('ctl-modo', CV.modo); }catch(er){} CV.faseAuto = true; ctlRender(); return; }
   const h = e.target.closest('#cout .cfh'); if(!h || e.target.closest('a, button')) return;
   const sc = h.parentNode, k = sc.dataset.gk; sc.classList.toggle('tg'); if(sc.classList.contains('tg')) CV.tg.add(k); else CV.tg.delete(k); });
 document.addEventListener('input', e => { if(e.target.id === 'lq') cvApply(); });
@@ -2045,10 +2053,10 @@ function ctlRender(){
   all.forEach(r => c[ctlSt(r.n)]++);
   $('#cs-all').textContent = all.length; $('#cs-ok').textContent = c.ok; $('#cs-ns').textContent = c.ns; $('#cs-pe').textContent = c.pe;
   let html = '', day = '';
-  const GR = ctlGroups(); GR.forEach(G => G.fase = faseVuelo(G.l));
+  const GR = CV.modo === 'cx' ? cxGroups() : CV.modo === 'dir' ? ctlGroups().filter(G => !G.l.terr && !G.pe && !G.cx).map(G => Object.assign({}, G, {pax: G.pax.filter(r => !(lle ? r.c1 : r.c2))})).filter(G => G.pax.length) : ctlGroups().filter(cvPasa); GR.forEach(G => G.fase = faseVuelo(G.l));
   const cnt = k => GR.filter(G => G.fase === k), pp = L => L.reduce((a, G) => a + G.pax.length, 0);
-  if(CTL.faseTab !== CTL.tab){ CTL.faseTab = CTL.tab; CTL.fase = (FASES.find(([k]) => cnt(k).length) || FASES[0])[0]; } // al entrar: el primer apartado con vuelos
-  $('#cfase').innerHTML = FASES.map(([k, t]) => `<button type="button" role="tab" data-fase="${k}" aria-selected="${CTL.fase === k}"><span>${t}</span><b>${cnt(k).length} ${cnt(k).length === 1 ? 'vuelo' : 'vuelos'} · ${pp(cnt(k))} pax</b></button>`).join('')
+  if(CTL.faseTab !== CTL.tab || (CV.faseAuto && !cnt(CTL.fase).length)){ CV.faseAuto = false; CTL.faseTab = CTL.tab; CTL.fase = (FASES.find(([k]) => cnt(k).length) || FASES[0])[0]; } // al entrar: el primer apartado con vuelos
+  $('#cfase').innerHTML = FASES.map(([k, t]) => `<button type="button" role="tab" data-fase="${k}" aria-selected="${CTL.fase === k}"><span>${t}</span><b>${cnt(k).length} ${CV.modo === 'tra' ? (cnt(k).length === 1 ? 'traslado' : 'traslados') : CV.modo === 'cx' ? (cnt(k).length === 1 ? 'conexión' : 'conexiones') : CV.modo === 'dir' ? (cnt(k).length === 1 ? 'vuelo directo' : 'vuelos directos') : (cnt(k).length === 1 ? 'vuelo' : 'vuelos')} · ${pp(cnt(k))} pax</b></button>`).join('')
     + '<p class="cfn">Según el horario programado de cada vuelo y la hora estimada de cada traslado; los retrasos de vuelos se confirman en “Estatus ↗”.</p>';
   GR.filter(G => G.fase === CTL.fase).forEach(G => {
     const pax = G.pax.filter(r => CTL.filter === 'all' || ctlSt(r.n) === CTL.filter); if(!pax.length) return;
@@ -2056,18 +2064,18 @@ function ctlRender(){
     if(l.f !== day){ html += `<h3 class="cday">${esc(fmtDate(l.f))}</h3>`; day = l.f; }
     const gk = l.f + '|' + ctlHora(l) + '|' + l.v + '|' + (l.route || '');
     html += `<section class="cfl${CV.tg.has(gk) ? ' tg' : ''}" data-gk="${esc(gk)}"><div class="cfh"><span class="t">${esc(ctlHora(l))}</span><span class="v">${esc(l.v)}</span>
-      <span class="r">${l.terr ? esc(l.route) : `${esc(l.o)} ${esc(l.s)} → ${esc(l.d)} ${esc(l.l)}`}</span><span class="c">${G.pax.length} ${G.pax.length===1?"pasajero":"pasajeros"}</span>${G.pe ? '<span class="cpe">Llega a México para pernoctar · Hotel NH</span>' : G.cx ? `<span class="cpe">${G.cx === 'sig' ? 'Conexión al día siguiente a su ciudad' : 'Conexión a su ciudad de origen'}</span>` : ''}${faUrl(l.v) ? `<a class="fa-link" href="${faUrl(l.v)}" target="_blank" rel="noopener">Estatus ↗</a>` : ''}</div><ul class="cnames">` +
+      <span class="r">${l.terr ? esc(l.route) : `${esc(l.o)} ${esc(l.s)} → ${esc(l.d)} ${esc(l.l)}`}</span><span class="c">${G.pax.length} ${G.pax.length===1?"pasajero":"pasajeros"}</span>${G.pe ? '<span class="cpe">Llega a México para pernoctar · Hotel NH</span>' : G.cl ? '<span class="cpe">Conexión el mismo día a Hermosillo</span>' : G.cx ? `<span class="cpe">${G.cx === 'sig' ? 'Conexión al día siguiente a su ciudad' : 'Conexión a su ciudad de origen'}</span>` : ''}${faUrl(l.v) ? `<a class="fa-link" href="${faUrl(l.v)}" target="_blank" rel="noopener">Estatus ↗</a>` : ''}</div><ul class="cnames">` +
       pax.map(r => { const s = ctlSt(r.n), cx = lle ? r.c1 : r.c2;
         const con = cx ? ` · conexión ${esc(cx.v)} ${lle ? 'desde ' + esc(cx.o) : 'a ' + esc(cx.d)}` : '';
         const clave = lle ? (r.ci || r.cr) : (r.cr || r.ci);
         const pern = lle && (r.notas||[]).some(n => n.k === 'pe') ? '<span class="ctag">Hotel NH</span>' : '';
-        const sig = G.pe && r.ida ? `<small class="csig">sigue ${esc(fmtDate(r.ida.f))} · ${esc(r.ida.v)} ${esc(r.ida.o)} ${esc(r.ida.s)} → ${esc(r.ida.d)}</small>`
+        const sig = (G.pe || G.cl) && r.ida ? `<small class="csig">sigue ${esc(fmtDate(r.ida.f))} · ${esc(r.ida.v)} ${esc(r.ida.o)} ${esc(r.ida.s)} → ${esc(r.ida.d)}</small>`
           : G.cx && r.reg ? `<small class="csig">viene de ${esc(fmtDate(r.reg.f))} · ${esc(r.reg.v)} ${esc(r.reg.o)} → ${esc(r.reg.d)} ${esc(r.reg.l)}</small>` : '';
         return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${sig}</li>`; }).join('') + '</ul></section>';
   });
   alUI();
   setTimeout(cvApply, 0);
-  $('#cout').innerHTML = html || `<p class="cnote">${CTL.fase === 'ruta' ? 'No hay vuelos en ruta en este momento.' : CTL.fase === 'ater' ? 'Todavía no ha aterrizado ningún vuelo.' : 'No quedan vuelos programados.'}</p>`;
+  $('#cout').innerHTML = html || `<p class="cnote">${CV.modo === 'tra' ? 'No hay traslados en este apartado.' : CV.modo === 'cx' ? 'No hay conexiones en este apartado.' : CV.modo === 'dir' ? 'No hay vuelos sin conexión en este apartado.' : CTL.fase === 'ruta' ? 'No hay vuelos en ruta en este momento.' : CTL.fase === 'ater' ? 'Todavía no ha aterrizado ningún vuelo.' : 'No quedan vuelos programados.'}</p>`;
 }
 /* ---------- Estatus de vuelos (FlightAware) ---------- */
 const ICAO = {'VOLARIS':'VOI','AEROMEXICO':'AMX','VIVA AEROBUS':'VIV'};
@@ -2694,7 +2702,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 379;
+const APP_V = 384;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
