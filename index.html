@@ -583,6 +583,7 @@ body.vctl .qhint-w{display:none}
 .agv-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#eef1ef;padding:10px 10px calc(env(safe-area-inset-bottom,0px) + 16px)}
 .agv-body img{display:block;width:100%;max-width:1100px;height:auto;margin:0 auto;border-radius:6px;box-shadow:0 1px 6px rgba(0,0,0,.12);cursor:zoom-in}
 .agv-body.zoom img{width:250%;max-width:none;cursor:zoom-out}
+@media (min-width:700px){.agv.vue .agv-body:not(.zoom) img{width:auto;max-width:100%;max-height:calc(136vh - 140px);cursor:zoom-in}.agv.vue .agv-body.zoom img{width:67%;max-width:none;max-height:none;cursor:zoom-out}}
 .agv-bar .agv-dl{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.85);font-size:14px;padding:9px 12px}
 .agv-wait{margin:40px 16px;text-align:center;font:600 16px/1.5 var(--body);color:var(--green)}
 .agv-tip{margin:0;padding:6px 14px;font-size:12.5px;color:var(--muted);background:#eef1ef;text-align:center}
@@ -1800,7 +1801,7 @@ function agvShow(label){ $('#agv').setAttribute('aria-label', label); $('.agv-bo
 /* Ver mis vuelos: se muestra dentro de la página, igual que la agenda, con botón Regresar y opción de guardar el PDF */
 async function agvVuelos(r){
   AGV_R = r; const img = $('#agv-img'), w = $('#agv-wait'); img.removeAttribute('src'); img.hidden = true; w.hidden = false; w.textContent = 'Generando tus vuelos…'; $('#agv-dl').hidden = false;
-  img.alt = 'Vuelos de ' + tcase(r.n); agvShow('Mis vuelos');
+  img.alt = 'Vuelos de ' + tcase(r.n); $('#agv').classList.add('vue'); agvShow('Mis vuelos');
   try{ const c = await vueloCanvas(r, true); if(AGV_R !== r) return; img.src = c.canvas.toDataURL('image/jpeg', 0.92); img.hidden = false; w.hidden = true; }
   catch(e){ if(AGV_R === r) w.textContent = 'No se pudo generar. Revisa tu conexión e inténtalo de nuevo.'; }
 }
@@ -1810,9 +1811,9 @@ $('#agv-dl').addEventListener('click', async () => { const r = AGV_R, b = $('#ag
     else { const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = nombre; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); } }
   catch(e){ alert('No se pudo generar el PDF. Revisa tu conexión e inténtalo de nuevo.'); }
   finally{ b.disabled = false; b.textContent = t0; setTimeout(() => { DLG = false; awaySince = 0; }, 1500); } });
-function agvClose(){ AGV_R = null; $('#agv').hidden = true; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; $('#agv-img').hidden = false; document.body.style.overflow = ''; const o = $('#ag-open'); if(o) o.focus({preventScroll:true}); }
+function agvClose(){ AGV_R = null; $('#agv').classList.remove('vue'); $('#agv').hidden = true; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; $('#agv-img').hidden = false; document.body.style.overflow = ''; const o = $('#ag-open'); if(o) o.focus({preventScroll:true}); }
 document.addEventListener('click', e => { const a = e.target.closest('#ag-open, [data-agv]'); if(!a) return; e.preventDefault();
-  const img = $('#agv-img'), dc = a.dataset.agv === 'dc'; AGV_R = null; $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; img.hidden = false;
+  const img = $('#agv-img'), dc = a.dataset.agv === 'dc'; AGV_R = null; $('#agv').classList.remove('vue'); $('#agv-dl').hidden = true; $('#agv-wait').hidden = true; img.hidden = false;
   img.alt = dc ? 'Dress code y recomendaciones de la Segunda Cumbre Universales' : 'Agenda de la Segunda Cumbre Universales: actividades del 3 al 5 de noviembre';
   img.src = dc ? 'dresscode-cumbre.jpg?v=349' : 'agenda-cumbre.jpg?v=349';
   agvShow(dc ? 'Dress code y recomendaciones' : 'Agenda del evento'); });
@@ -2693,7 +2694,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 375;
+const APP_V = 379;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
