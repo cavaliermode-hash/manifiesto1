@@ -667,6 +667,15 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 #cout.q .cfl .cnames{display:block!important}
 .cfase{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 4px}.cfase button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 6px;cursor:pointer;font:600 14px var(--body);color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px}.cfase button b{font:600 12px var(--body);color:var(--muted)}.cfase button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}.cfase button[aria-selected="true"] b{color:#D7EBDD}.cfase .cfn{grid-column:1/-1;margin:2px 0 0;font-size:12px;color:var(--muted)}
 @media (max-width:560px){.cfase button{font-size:12.5px;padding:7px 4px}.cfase button b{font-size:11px}}
+.appbox{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--green);border-radius:12px;padding:14px 16px}
+.appbox h3{margin:0 0 6px;font:700 18px var(--display);color:var(--green);text-transform:uppercase;letter-spacing:.03em}
+.appbox p{margin:0 0 8px}.appbox .appd{margin:4px 0 2px}
+.appal{display:flex;align-items:center;gap:10px;background:var(--green-soft);border-radius:10px;padding:8px 12px;margin:0 0 8px}
+.appic{width:36px;height:36px;border-radius:9px;background:var(--green);display:grid;place-items:center;font-size:19px;flex:none}
+.appal b{display:block}.appal small{color:var(--muted)}
+.appk{font:700 14px var(--mono);letter-spacing:.1em;border:2px solid var(--green);border-radius:6px;padding:0 6px;color:var(--ink)}
+.appbox ul{margin:0 0 8px;padding-left:20px}.appbox li{padding:2px 0}.appbox li::marker{color:var(--green)}
+.apptip{background:#FFF7E6;border-left:4px solid #E0A100;padding:7px 12px;border-radius:6px;font-size:14px;margin:0!important}
 .kfil{display:grid;gap:6px;margin:4px 0 10px}.kfil .kfr{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.kfil .kfl{font:700 11px var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;min-width:58px}
 .kfil button{font:600 12.5px var(--body);border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:99px;padding:5px 10px;cursor:pointer}
 .kfil button b{font-weight:800;color:var(--green);margin-left:3px}.kfil button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}.kfil button[aria-pressed="true"] b{color:#fff}
@@ -747,7 +756,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 <section class="wrap ctl" id="rep" hidden>
   <h2 class="ct">Reporte de telemarketing y presupuesto</h2>
   <p class="cs">Datos del Excel de telemarketing (todas las filas: invitados, staff y lugares de relleno del bloqueo). Toca un estatus para filtrar la tabla por nombre.</p>
-  <div class="rmode" role="group" aria-label="Vista"><button type="button" data-rv="tot" aria-pressed="true">TOTALES</button><button type="button" data-rv="nom" aria-pressed="false">POR NOMBRE</button></div>
+  <div class="rmode" role="group" aria-label="Vista"><button type="button" data-rv="nom" aria-pressed="true">POR NOMBRE</button><button type="button" data-rv="tot" aria-pressed="false">TOTALES</button></div>
   <div id="rout"></div>
   <p id="rmsg" class="kmsg" role="status"></p>
 </section>
@@ -1103,6 +1112,28 @@ function paxRow(r){ // resultado de búsqueda: solo el nombre y "Ver mi reserva"
     <span class="prow-b">Ver mi reserva <span aria-hidden="true">›</span></span>
   </button>`;
 }
+/* Descarga la app de tu aerolínea: solo en la reserva (al final) y en el PDF de vuelos */
+const AL_NOM = {AEROMEXICO:'Aeroméxico', VOLARIS:'Volaris', 'VIVA AEROBUS':'Viva Aerobus', VIVAAEROBUS:'Viva Aerobus', VIVA:'Viva Aerobus'};
+function appsDe(r){ const m = new Map();
+  [[r.c1, 'i'], [r.ida, 'i'], [r.reg, 'r'], [r.c2, 'r']].forEach(([l, t]) => { if(!l || !l.v) return;
+    const cia = String(l.v).toUpperCase().replace(/\s*\d+\s*$/, '').trim(), nom = AL_NOM[cia] || tcase(cia), cl = t === 'i' ? (r.ci || r.cr) : (r.cr || r.ci);
+    const k = nom + '|' + (cl || ''); if(!m.has(k)) m.set(k, {nom, cl}); });
+  return [...m.values()]; }
+const APP_PTS = ['Consultar tu reserva <b>en tiempo real</b>.', 'Hacer tu <b>check-in 24 horas antes</b> y obtener tu <b>pase de abordar digital</b>.',
+  'Recibir avisos de <b>cambios de horario, puerta o retrasos</b>.', 'Ver la <b>información importante</b> que comparta la aerolínea.'];
+function appBoxWeb(r){ const A = appsDe(r); if(!A.length) return '';
+  return `<section class="appbox" aria-labelledby="app-t"><h3 id="app-t">📲 Descarga la app de tu aerolínea</h3>
+    <p>Para tener tu reserva siempre a la mano, descarga en tu celular la <b>app oficial de tu aerolínea</b> (App Store o Google Play) y agrega tu reserva con tu <b>clave</b> y tu <b>apellido</b>.</p>
+    <p class="appd"><b>Desde la app podrás:</b></p><ul>${APP_PTS.map(t => `<li>${t}</li>`).join('')}</ul>
+    <p class="apptip">💡 Activa las <b>notificaciones</b> de la app para no perderte ningún aviso de tu vuelo.</p></section>`; }
+function appBoxPDF(r){ const A = appsDe(r); if(!A.length) return ''; const G = '#136c34';
+  return `<div style="margin-top:16px;border-left:4px solid ${G};padding-left:9px;font:bold 15px Arial,sans-serif;color:${G};letter-spacing:.4px">📲 DESCARGA LA APP DE TU AEROLÍNEA</div>
+    <div style="margin-top:6px;border:1px solid #D5DCE6;border-radius:8px;padding:10px 14px;font:13px/1.5 Arial,sans-serif;color:#16301F">
+      <div>Para tener tu reserva siempre a la mano, descarga en tu celular la <b>app oficial de tu aerolínea</b> (App Store o Google Play) y agrega tu reserva con tu <b>clave</b> y tu <b>apellido</b>.</div>
+      <div style="margin-top:8px"><b>Desde la app podrás:</b></div>
+      ${APP_PTS.map(t => `<div style="display:flex;gap:8px;padding:1px 0"><span style="color:${G};font-weight:bold">•</span><span>${t}</span></div>`).join('')}
+      <div style="margin-top:8px;background:#FFF7E6;border-left:4px solid #E0A100;padding:6px 10px">💡 Activa las <b>notificaciones</b> de la app para no perderte ningún aviso de tu vuelo.</div>
+    </div>`; }
 function detailView(r){
   const q0 = state.q; state.q = ''; const card = paxCard(r); state.q = q0;
   const first = tcase(splitName(r.n).nom.split(' ')[0] || r.n.split(' ')[0]);
@@ -1113,7 +1144,9 @@ function detailView(r){
     </div>
     ${countdownHTML(r)}
     <section class="itinweb" aria-label="Su itinerario día por día">${mailHTML(r, 'web')}</section>
+    <div id="agslot"></div>
     ${tripSteps(r)}
+    ${appBoxWeb(r)}
   </div>`;
 }
 /* ---------- Guía del viaje ---------- */
@@ -1173,8 +1206,8 @@ function tripSteps(r){
   const a = stepBlock('Tu viaje de ida, paso a paso', [r.c1, r.ida]);
   const b = stepBlock('Tu regreso, paso a paso', [r.reg, r.c2]);
   if(!a && !b) return '';
-  return `<div class="guide">${a}${b}</div>
-    ${mailBox(r)}`;
+  return `${mailBox(r)}
+    <div class="guide">${a}${b}</div>`;
 }
 /* ---------- Enviar a mi correo ---------- */
 function resumenTxt(r){
@@ -1535,6 +1568,7 @@ function vueloHTML(r, pie){ /* despedida ECI siempre al final (búsqueda, VECI y
     <div style="margin-top:10px;font:11px Arial,sans-serif;color:#666">Horarios en hora local de cada aeropuerto.</div>
     <div style="margin-top:16px;border-left:4px solid ${G};padding-left:9px;font:bold 15px Arial,sans-serif;color:${G};letter-spacing:.4px">PUNTOS IMPORTANTES DE SU VUELO</div>
     <div style="margin-top:6px;background:#F0F8F2;border-left:4px solid ${G};padding:8px 14px">${[...document.querySelectorAll('section.important li')].map(li => `<div style="display:flex;gap:8px;font:13px/1.55 Arial,sans-serif;color:#16301F;padding:2px 0"><span style="color:${G};font-weight:bold">•</span><span>${li.innerHTML.replace(/<b>/g, '<b style="color:#16301F">')}</span></div>`).join('')}</div>
+    ${appBoxPDF(r)}
     ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<i style="font-weight:bold;color:${G}">Viajes El Corte Inglés</i></div>` : ''}
   </div>`;
 }
@@ -1678,11 +1712,16 @@ function filtered(){
     (!state.reg || (r.reg&&r.reg.v===state.reg) || (r.c2&&r.c2.v===state.reg)) &&
     (!terms.length || (new Set(terms).size === r._w.size && terms.every(t => r._w.has(t)))));
 }
+/* En la reserva, la agenda y la información general van después del itinerario (antes del PDF, el paso a paso y la app) */
+function agMover(dentro){ const ag = document.getElementById('agenda'), inf = document.getElementById('info'), sv = document.getElementById('services');
+  if(!ag || !inf || !sv) return;
+  if(dentro){ const sl = document.getElementById('agslot'); if(sl){ sl.appendChild(ag); sl.appendChild(inf); } }
+  else if(ag.parentNode !== sv.parentNode){ sv.after(ag); ag.after(inf); } }
 function render(){
-  const ctrl = document.querySelector('.controls');
+  const ctrl = document.querySelector('.controls'); agMover(false);
   if(typeof renderAgenda === 'function' && document.getElementById('ag-days')) renderAgenda(AG_DAY);
   if(state.sel != null && DATA[state.sel]){
-    ctrl.hidden = true; $('#qhint').hidden = true; $('#out').innerHTML = detailView(DATA[state.sel]); return;
+    ctrl.hidden = true; $('#qhint').hidden = true; $('#out').innerHTML = detailView(DATA[state.sel]); agMover(true); return;
   }
   ctrl.hidden = false;
   if(!qTerms().length){ $('#clear').hidden = !state.q;
@@ -1986,7 +2025,7 @@ if(navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', 
 setInterval(() => alCheck(), 30000);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) alCheck(); });
 document.addEventListener('click', e => { const b = e.target.closest('#cfase [data-fase]'); if(!b) return; CTL.fase = b.dataset.fase; ctlRender(); });
-setInterval(() => { if(['lle', 'sal'].includes(CTL.tab) && !document.hidden && !$('#ctl').hidden) ctlRender(); if(CTL.tab === 'con' && KON.m === 'lle' && !document.hidden) konRender(); }, 60000); // los vuelos cambian de apartado solos
+setInterval(() => { if(['lle', 'sal'].includes(CTL.tab) && !document.hidden && !$('#ctl').hidden) ctlRender(); if(CTL.tab === 'con' && !document.hidden) konRender(); }, 60000); // los vuelos cambian de apartado solos
 /* Vista de Llegadas/Salidas: con nombres o solo vuelos; tocar el encabezado de un vuelo despliega u oculta sus nombres */
 const CV = {solo: false, tg: new Set()};
 try{ CV.solo = localStorage.getItem('ctl-solo') === '1'; }catch(e){}
@@ -2307,9 +2346,9 @@ function kRows(){
   extra.forEach(x => { x.s = kSt(x.k); rows.push(x); });
   rows.forEach(x => { if(!x.k){ x.k = x.n; } if(x.k === x.n) x.s = kSt(x.n); });
   /* Llegadas: el check-in es automático al aterrizar el vuelo o llegar el traslado (según horario); solo el No show se marca a mano */
-  if(lle){ CTL.tab = 'lle';
-    try{ rows.forEach(x => { const l = x.l || x.tl || tierraLeg(x.r, true); x.fase = l && l.f ? faseVuelo(l) : 'prog';
-      x.s = (CTL.marks.lle || {})[x.k] === 'ns' ? 'ns' : x.fase === 'ater' ? 'ok' : 'pe'; }); }
+  { CTL.tab = KON.m; // llegadas y regresos: check-in automático al aterrizar o llegar
+    try{ rows.forEach(x => { const l = x.l || x.tl || tierraLeg(x.r, lle); x.fase = l && l.f ? faseVuelo(l) : 'prog';
+      x.s = (CTL.marks[KON.m] || {})[x.k] === 'ns' ? 'ns' : x.fase === 'ater' ? 'ok' : 'pe'; }); }
     finally{ CTL.tab = t0; } }
   const k = KON.sort;
   rows.sort((a,b) => { let c = k==='s' ? kRank[a.s]-kRank[b.s] : String(a[k]).localeCompare(String(b[k]),'es');
@@ -2345,7 +2384,7 @@ function kFilUI(base){
 document.addEventListener('click', e => { const b = e.target.closest('#kfil [data-kf]'); if(!b || b.disabled) return; KON[b.dataset.kf] = b.dataset.v; konRender(); });
 document.addEventListener('change', e => { if(e.target.id === 'kfv'){ KON.fv = e.target.value; konRender(); } });
 function konRender(){
-  const lle = KON.m === 'lle'; $('#k-t').textContent = lle ? 'Concentrado de llegadas' : 'Concentrado de regresos (salidas)'; $('#k-fh').textContent = lle ? 'Llegada' : 'Salida'; $('#k-s').textContent = lle ? 'Todos los invitados en una sola lista. El check-in se marca solo cuando aterriza el vuelo o llega el traslado (según su horario); marca No show únicamente si aplica.' : 'Todos los invitados en una sola lista, sin importar la fecha. Marca Check-in o No show y ordena tocando el encabezado de cada columna.';
+  const lle = KON.m === 'lle'; $('#k-t').textContent = lle ? 'Concentrado de llegadas' : 'Concentrado de regresos (salidas)'; $('#k-fh').textContent = lle ? 'Llegada' : 'Salida'; $('#k-s').textContent = 'Todos los invitados en una sola lista. El check-in se marca solo cuando aterriza el vuelo o llega el traslado (según su horario); marca No show únicamente si aplica.';
   document.querySelectorAll('.kmode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === KON.m));
   if(KON.filter !== 'ok') KON.fd = KON.ft = KON.fv = ''; // los filtros por fecha, tipo y vuelo solo están en Check-in
   const all0 = kRows(), all = kFiltra(all0), c = {ok:0, ns:0, pe:0}; all.forEach(x => c[x.s]++);
@@ -2355,7 +2394,7 @@ function konRender(){
   const rows = all.filter(x => KON.filter === 'all' || x.s === KON.filter);
   $('#kbody').innerHTML = rows.map(x => { const l = x.l;
     return `<tr class="st-${x.s}${x.tag ? ' kx' : ''}"><td class="kn">${esc(x.n)}${rolTag((DATA.find(r => r.n === x.n) || {}).rol || (stTag(x.n) ? 'STAFF' : ''))}${x.tag ? `<small class="ktag">${esc(x.tag)}</small>` : ''}</td>${l ? `<td class="kf">${esc(fmtDate(l.f))}<small>${esc(lle ? l.l : l.s)} · ${esc(l.o)}→${esc(l.d)}</small></td>
-      <td class="kv">${esc(l.v)}</td>` : `<td class="kf">${esc(x.lab)}<small>${x.v === 'Por su cuenta' ? '🚗' : '🚐'} ${esc(x.det)}</small></td><td class="kv">${esc(x.v)}</td>`}<td><div class="kb">${lle ? `<span class="kauto ${x.s}">${x.s === 'ns' ? '✗ No show' : x.s === 'ok' ? '✓ Check-in' : x.fase === 'ruta' ? '✈️ En camino' : '🕒 Por llegar'}</span>
+      <td class="kv">${esc(l.v)}</td>` : `<td class="kf">${esc(x.lab)}<small>${x.v === 'Por su cuenta' ? '🚗' : '🚐'} ${esc(x.det)}</small></td><td class="kv">${esc(x.v)}</td>`}<td><div class="kb">${true ? `<span class="kauto ${x.s}">${x.s === 'ns' ? '✗ No show' : x.s === 'ok' ? '✓ Check-in' : x.fase === 'ruta' ? '✈️ En camino' : lle ? '🕒 Por llegar' : '🕒 Por salir'}</span>
       <button class="bns" data-n="${esc(x.k || x.n)}" data-s="ns" aria-pressed="${x.s==='ns'}">${x.s === 'ns' ? '↺ Quitar no show' : '✗ No show'}</button>` : `<button class="bok" data-n="${esc(x.k || x.n)}" data-s="ok" aria-pressed="${x.s==='ok'}">✓ Check-in</button>
       <button class="bns" data-n="${esc(x.k || x.n)}" data-s="ns" aria-pressed="${x.s==='ns'}">✗ No show</button>
       <button class="bpe" data-n="${esc(x.k || x.n)}" data-s="pe" aria-pressed="${x.s==='pe'}">⏳ Pendiente</button>`}</div></td></tr>`; }).join('')
@@ -2446,7 +2485,7 @@ async function repGate(){
 }
 /* ---------- Reporte de telemarketing y presupuesto (solo VECI) ---------- */
 const REP_ST = [['PENDIENTE POR MANDAR LA INFORMACIÓN','#DDEBF7','#16301F'],['PENDIENTE CONFIRMAR PARTICIPANTE O INVITADO','#C9C400','#16301F'],['INDIVIDUAL EMITIDO OK','#70AD47','#0F2A12'],['BLOQUEO EMITIDO OK','#D9CCB0','#16301F'],['TERRESTRE CONFIRMADO','#9C5B2E','#FFFFFF'],['CANCELADO','#C00000','#FFFFFF']];
-const RV = {v:'tot', st:'', q:'', sort:'n', dir:1}; // sin buscador en el Reporte (q siempre vacío)
+const RV = {v:'nom', st:'', q:'', sort:'n', dir:1}; // sin buscador en el Reporte (q siempre vacío)
 const REP_NOTA = 'Nota: el presupuesto aéreo incluye asientos y pago de equipaje. No incluye los costos de telemarketing ni de emisión.';
 const repNotaHTML = () => `<p class="rnota">📝 <b>Nota:</b> ${esc(REP_NOTA.replace(/^Nota: /, ''))}</p>`;
 const mxn = x => '$' + (Math.round(x * 100) / 100).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -2654,7 +2693,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 370;
+const APP_V = 375;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
