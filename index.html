@@ -686,6 +686,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 .wmsg{margin:8px 0 0;text-align:center;font-size:13.5px;color:var(--green);font-weight:600}
 .dhl{background:none;color:inherit;font-weight:700;padding:0}
 .dfin{margin:6px 2px 18px;font-size:16px;line-height:1.5}
+.faq .faq-n{margin:0 16px 14px!important;padding:8px 12px!important}
 .appbox{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--green);border-radius:12px;padding:14px 16px}
 .appbox h3{margin:0 0 6px;font:700 18px var(--display);color:var(--green);text-transform:uppercase;letter-spacing:.03em}
 .appbox p{margin:0 0 8px}.appbox .appd{margin:4px 0 2px}
@@ -876,7 +877,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
     <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a tu <b>coordinador de Viajes El Corte Inglés</b>.</p></details>
-    <details><summary>¿Tengo dos claves de reserva?</summary><p>Si tu vuelo de ida y tu vuelo de regreso tienen <b>claves distintas</b>, cada una aparece junto a su vuelo en tu itinerario y debes usar <b>la clave que corresponde a cada trayecto</b>. Si es la misma, aparece una sola vez como clave de ida y regreso. Horarios en hora local de cada aeropuerto.</p></details>
+    <details><summary>¿Tengo dos claves de reserva?</summary><p>Si tu vuelo de ida y tu vuelo de regreso tienen <b>claves distintas</b>, cada una aparece junto a su vuelo en tu itinerario y debes usar <b>la clave que corresponde a cada trayecto</b>. Si es la misma, aparece una sola vez como clave de ida y regreso.</p><p class="svc-n faq-n">Horarios en hora local de cada aeropuerto.</p></details>
     <details><summary>¿Qué pasa si llego antes del 3 o me voy después del 5 de noviembre?</summary><p>MetLife cubre únicamente <b>las noches de hotel y los traslados terrestres dentro de las fechas del evento (3 al 5 de noviembre) o por ruta</b>. Las noches o traslados adicionales <b>corren por tu cuenta</b>.</p></details>
     <details><summary>¿Cuándo y cómo hago el check-in de mis vuelos?</summary><p>Puedes hacerlo desde <b>24 horas antes</b> de tu vuelo en la app o en la página de la aerolínea, con tu <b>clave de reserva de 6 letras</b>. Si no es posible hacerlo en línea, preséntate en el mostrador de la aerolínea <b>2 horas antes</b> de tu vuelo.</p></details>
     <details><summary>¿Cómo identifico mi traslado en el aeropuerto?</summary><p>A tu llegada al aeropuerto, localiza el <b>logo de MetLife</b>: habrá <b>staff apoyando</b> para trasladarte al hotel.</p></details>
@@ -2771,7 +2772,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 398;
+const APP_V = 400;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
