@@ -572,7 +572,20 @@ header.board #upd:not(:empty)::before{content:" · "}
 #con .ctools button{font-size:13px;padding:7px 12px}
 #con .kmsg,#con .ksync,#con .cnote{font-size:12px;margin-top:4px}
 @media (max-width:560px){#con .kb button{padding:3px 5px;font-size:10.5px}}
-.qhint-w{padding-top:12px}.qhint{padding:14px 16px!important;margin:0}.qhint-w:has(#qhint[hidden]){display:none}
+.qhint-w{padding-top:14px}.qhint{margin:0}
+.hero3{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px 24px;align-items:center;padding:22px 24px;border:1px solid var(--line);border-radius:16px;
+  background:radial-gradient(120% 140% at 100% 0%,#FFF1E8 0%,rgba(255,241,232,0) 45%),linear-gradient(135deg,#E6F2EA 0%,#F7FAF8 70%);box-shadow:0 8px 24px rgba(19,108,52,.07)}
+.h3eye{display:inline-block;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--acc,#C2410C)}
+.h3t{margin:4px 0 8px;font:700 clamp(26px,4.2vw,38px)/1.05 var(--display);color:var(--green-dark);letter-spacing:-.01em;text-wrap:balance}
+.hero3 p{margin:0;color:var(--ink);font-size:15.5px;line-height:1.5;max-width:62ch;text-wrap:pretty}
+.h3chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.h3chips span{font:600 13px var(--body);background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 11px;color:var(--green-dark)}
+.h3art{width:100%;height:auto;max-width:220px;justify-self:end}
+.h3plane{animation:h3float 4s ease-in-out infinite;transform-origin:120px 50px}
+@keyframes h3float{50%{transform:translateY(-5px)}}
+@media (max-width:640px){.hero3{grid-template-columns:1fr;padding:18px 16px}.h3art{display:none}.hero3 p{font-size:15px}}
+.hero3.qmini{padding:12px 16px}.hero3.qmini p,.hero3.qmini .h3chips,.hero3.qmini .h3art{display:none}.hero3.qmini .h3t{font-size:22px;margin:2px 0 0}
+@media (prefers-reduced-motion:reduce){.h3plane{animation:none}}.qhint-w:has(#qhint[hidden]){display:none}
 body.vctl .qhint-w{display:none}
 .ctab td.cc .cl{display:inline-block;min-width:62px;font:600 10.5px var(--body);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.ctab td.cc br+.cl{margin-top:5px}
 .agv{position:fixed;inset:0;z-index:1000;background:#fff;display:flex;flex-direction:column}
@@ -854,7 +867,22 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
   <div id="csum" hidden></div>
   </section>
 
-<div class="wrap qhint-w"><div id="qhint" class="empty start qhint" hidden>🔎 <b>Escribe tu nombre completo</b> (nombres y apellidos) para ver tu itinerario y tu reserva.<br>Por seguridad solo aparece tu reserva si el nombre coincide completo. Los acentos no importan.</div></div>
+<div class="wrap qhint-w"><div id="qhint" class="qhint hero3" hidden>
+  <div class="h3txt">
+    <span class="h3eye">San Carlos, Sonora · 3 al 5 de noviembre</span>
+    <h2 class="h3t">Consulta tu itinerario</h2>
+    <p><b>Escribe tu nombre completo</b> (nombres y apellidos) para ver tus vuelos, traslados y hospedaje. Por seguridad solo aparece tu reserva si el nombre coincide completo; los acentos no importan.</p>
+    <div class="h3chips"><span>✈️ Vuelos</span><span>🚐 Traslados</span><span>🏨 Hotel Marinaterra</span><span>☀️ 31° / 23°</span></div>
+  </div>
+  <svg class="h3art" viewBox="0 0 240 150" aria-hidden="true">
+    <circle cx="186" cy="44" r="26" fill="#FFE2CF"/><circle cx="186" cy="44" r="16" fill="#F7B48F"/>
+    <path d="M24 118 C 70 30, 170 30, 216 118" fill="none" stroke="#136C34" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/>
+    <circle cx="24" cy="118" r="7" fill="#136C34"/><circle cx="216" cy="118" r="7" fill="#C2410C"/>
+    <text x="24" y="142" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#16301F">MEX</text>
+    <text x="216" y="142" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#16301F">HMO</text>
+    <g class="h3plane"><text x="120" y="58" text-anchor="middle" font-size="26">✈️</text></g>
+  </svg>
+</div></div>
 <div class="controls">
   <div class="wrap">
     <div class="search">
@@ -1847,7 +1875,7 @@ function render(){
   ctrl.hidden = false;
   if(!qTerms().length){ $('#clear').hidden = !state.q;
     $('#qhint').hidden = false; $('#out').innerHTML = ''; return; }
-  $('#qhint').hidden = false;
+  $('#qhint').hidden = false; $('#qhint').classList.toggle('qmini', !!(state.q || '').trim());
   const rows = filtered();
   $('#count').innerHTML = `<b>${rows.length}</b> resultado${rows.length===1?'':'s'}`;
   $('#clear').hidden = !state.q;
@@ -2823,7 +2851,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 401;
+const APP_V = 402;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
