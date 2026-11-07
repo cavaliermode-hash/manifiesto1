@@ -25,7 +25,7 @@
 :root{
   color-scheme:light;
   --green:#126B30;--green-dark:#0C4F23;--green-soft:#E6F2EA;--green-line:#B9D9C3;
-  --bg:#FFFFFF;--surface:#FFFFFF;--ink:#16301F;--muted:#55705E;--line:#D3E4D8;
+  --bg:#F7FAF8;--surface:#FFFFFF;--ink:#16301F;--muted:#55705E;--line:#D3E4D8;
   --board:var(--green);--board-ink:#FFFFFF;--board-muted:#CFE6D6;--amber:#CDE8D4;--amber-ink:#0C4F23;
   --chip:var(--green-soft);--accent:var(--green);--ok:var(--green);--ok-bg:var(--green-soft);--warn:#55705E;--warn-bg:#EEF2EF;
   --ida:var(--green);--reg:var(--green-dark);
@@ -701,6 +701,48 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 .kfil button b{font-weight:800;color:var(--green);margin-left:3px}.kfil button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}.kfil button[aria-pressed="true"] b{color:#fff}
 .kfil button:disabled{opacity:.4;cursor:default}.kfil select{font:600 13px var(--body);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff;color:var(--ink);min-width:0;width:0;flex:1 1 auto}.kfil{min-width:0;max-width:100%}.kfil .kfr{min-width:0}
 .ktag{display:block;margin-top:3px;font:600 11.5px var(--body);color:#8A5A00}
+
+/* ===== Paleta 60-30-10: fondo hueso verdoso (60) · verde corporativo (30) · terracota atardecer para acciones (10) ===== */
+:root{--acc:#C2410C;--acc-h:#9A3412;--acc-a:#7C2D12;--acc-soft:#FFF1E8;--green-h:#0F5A2B;--green-a:#0B4721;--focus:#2563EB;
+  --ok:#15803D;--ok-soft:#E7F6EC;--err:#B42318;--err-soft:#FDECEA;--warn:#8A5A00;--warn-soft:#FFF4D6;--info:#0E7490;--info-soft:#E6F6F8}
+/* Foco accesible (teclado): anillo azul fuera de la paleta */
+:focus-visible{outline:3px solid var(--focus)!important;outline-offset:2px!important}
+/* Acciones clave en terracota */
+.prow-b,.pdfbox .abtn2,.wpass-w .abtn2:not(.wsec){background:var(--acc)!important;color:#fff!important;box-shadow:0 4px 12px rgba(194,65,12,.22);transition:background .2s,transform .2s,box-shadow .2s}
+.prow:hover .prow-b,.pdfbox .abtn2:hover,.wpass-w .abtn2:not(.wsec):hover{background:var(--acc-h)!important;transform:translateY(-2px);box-shadow:0 8px 18px rgba(194,65,12,.3)}
+.prow:active .prow-b,.pdfbox .abtn2:active,.wpass-w .abtn2:not(.wsec):active{background:var(--acc-a)!important;transform:translateY(0);box-shadow:0 2px 6px rgba(194,65,12,.25)}
+/* Botones verdes y de contorno */
+.abtn2{transition:background .2s,transform .15s}
+.abtn2:hover{background:var(--green-h)}.abtn2:active{background:var(--green-a);transform:translateY(1px)}
+.wpass-w .wsec:hover{background:var(--green-soft)!important}.wpass-w .wsec:active{background:var(--green)!important;color:#fff!important}
+.tabs button{transition:background .2s,border-color .2s,color .2s}
+.tabs button:hover:not([aria-selected="true"]){background:var(--green-soft)}
+.tabs button:active{background:var(--green-a);color:#fff}
+.prow{transition:border-color .2s,box-shadow .2s}
+.prow:hover{border-color:var(--green);box-shadow:0 6px 16px rgba(19,108,52,.1)}
+/* Enlaces */
+main a:not([class]),.foot a{transition:color .2s,text-decoration-thickness .2s}
+main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decoration-thickness:2px}
+/* Mensajes del sistema */
+.kauto.ok{background:var(--ok-soft)!important;color:var(--ok)!important}.kauto.ns{background:var(--err-soft)!important;color:var(--err)!important}.kauto.pe{background:var(--warn-soft)!important;color:var(--warn)!important}
+.apptip,.dcierre .dimp{background:var(--warn-soft)!important;border-left-color:#E0A100!important}
+.wmsg{color:var(--ok)!important}
+/* Microinteracción 1: progreso del viaje */
+.vprog{margin:4px 2px 16px}
+.vbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.vbar i{display:block;height:100%;width:var(--p);border-radius:99px;background:linear-gradient(90deg,var(--green),var(--info) 55%,var(--acc));animation:vfill 1.1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes vfill{from{width:0}}
+.vlab{display:flex;justify-content:space-between;margin-top:5px;font:600 12px var(--body);color:var(--muted)}
+.vlab b{color:var(--ink)}
+/* Microinteracción 2: estado del vuelo en color, con destello al cambiar */
+.cfl.f-prog{border-left-color:#9AA9A0}.cfl.f-ruta{border-left-color:var(--info)}.cfl.f-ater{border-left-color:var(--ok)}
+.cfl{transition:border-color .6s}
+.cfl.flash .cfh{animation:cflash 1.6s ease}
+@keyframes cflash{0%{background:var(--info-soft)}50%{background:var(--ok-soft)}100%{}}
+/* Microinteracción 3: carga con brillo */
+.agv-wait{position:relative;max-width:520px;margin:40px auto!important;padding:56px 16px!important;border-radius:14px;background:linear-gradient(100deg,var(--green-soft) 30%,#F4FBF6 50%,var(--green-soft) 70%);background-size:220% 100%;animation:shimmer 1.4s linear infinite}
+@keyframes shimmer{from{background-position:120% 0}to{background-position:-120% 0}}
+@media (prefers-reduced-motion:reduce){.vbar i,.cfl.flash .cfh,.agv-wait{animation:none!important}.prow-b,.abtn2{transition:none!important}}
 </style>
 </head>
 <body>
@@ -1160,6 +1202,13 @@ const legFin = l => { if(!l || !l.f) return null; const d = l.s ? when(l, 's') :
 const tramoHecho = L => { L = L.filter(x => x && x.f); return L.length > 0 && L.every(l => { const f = legFin(l); return f ? f <= ahora() : l.f < hoyISO(); }); };
 const idaHecha = r => tramoHecho([r.c1, r.ida]), regHecho = r => tramoHecho([r.reg, r.c2]);
 const viajeHecho = r => { const L = [r.c1, r.ida, r.reg, r.c2].filter(x => x && x.f); return L.length ? tramoHecho(L) : hoyISO() > HOTEL.co; };
+/* Barra de progreso del viaje: ida · evento · regreso, según la hora actual */
+function progViaje(r){ if(viajeHecho(r)) return '';
+  const L = [r.c1, r.ida, r.reg, r.c2].filter(x => x && x.f); if(L.length < 2) return '';
+  const a = L[0].s ? when(L[0], 's') : null, z = legFin(L[L.length - 1]); if(!a || !z || z <= a) return '';
+  const pct = Math.max(0, Math.min(100, (ahora() - a) / (z - a) * 100)), rs = r.reg && r.reg.s ? when(r.reg, 's') : z, etapa = !idaHecha(r) ? 0 : ahora() < rs ? 1 : 2;
+  const lab = ['Ida', 'Evento', 'Regreso'].map((t, k) => k === etapa ? `<b>● ${t}</b>` : `<span>${t}</span>`).join('');
+  return `<div class="vprog" aria-label="Avance de su viaje: ${Math.round(pct)}%"><div class="vbar"><i style="--p:${Math.max(3, pct).toFixed(1)}%"></i></div><div class="vlab">${lab}</div></div>`; }
 /* Mi pase de viaje (estilo Wallet): solo en la reserva. Se guarda como imagen en Fotos y los vuelos se agregan al calendario. */
 const fCorta = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? `${m[3]} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][m[2] - 1]}` : ''; };
 const vCorto = v => String(v || '').replace(/^AEROMEXICO\s*/i, 'AM ').replace(/^VOLARIS\s*/i, 'Y4 ').replace(/^VIVA AEROBUS\s*/i, 'VB ');
@@ -1196,6 +1245,7 @@ function detailView(r){
     <div class="dhello">
       <p class="dname"><span class="est">Estimado(a)</span> <b>${esc(r.n)}</b></p>${viajeHecho(r) ? '' : `<p class="dsub dintro">${esc(INTRO_TXT).replace('Segunda Cumbre Universales', '<mark class="dhl">Segunda Cumbre Universales</mark>')}</p>`}
     </div>
+    ${progViaje(r)}
     ${viajeHecho(r) ? `<p class="dbye dfin">Gracias por acompañarnos en la <b>Segunda Cumbre Universales</b>. Le enviamos un cordial saludo y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Viajes El Corte Inglés</i></b></p>`
       : `<section class="itinweb" aria-label="Su itinerario día por día">${mailHTML(r, 'web')}</section>`}
     <div id="agslot"></div>
@@ -2098,7 +2148,7 @@ document.addEventListener('visibilitychange', () => { if(!document.hidden) alChe
 document.addEventListener('click', e => { const b = e.target.closest('#cfase [data-fase]'); if(!b) return; CTL.fase = b.dataset.fase; ctlRender(); });
 setInterval(() => { if(['lle', 'sal'].includes(CTL.tab) && !document.hidden && !$('#ctl').hidden) ctlRender(); if(CTL.tab === 'con' && !document.hidden) konRender(); }, 60000); // los vuelos cambian de apartado solos
 /* Vista de Llegadas/Salidas: con nombres o solo vuelos; tocar el encabezado de un vuelo despliega u oculta sus nombres */
-const CV = {solo: false, modo: 'todo', tg: new Set()}; // modo: todo (con nombres) · vue (solo vuelos) · tra (solo traslados)
+const CV = {solo: false, modo: 'todo', tg: new Set(), fases: new Map()}; // modo: todo (con nombres) · vue (solo vuelos) · tra (solo traslados)
 try{ const m = localStorage.getItem('ctl-modo'); CV.modo = ['all', 'todo', 'vue', 'tra', 'dir', 'cx'].includes(m) ? m : (localStorage.getItem('ctl-solo') === '1' ? 'vue' : 'todo'); }catch(e){}
 CV.solo = CV.modo !== 'todo';
 /* Solo conexiones: vuelos de conexión (llegadas: el vuelo de su ciudad a México; salidas: de México a su ciudad), un grupo por vuelo */
@@ -2133,7 +2183,8 @@ function ctlRender(){
     const l = G.l, ok = G.pax.filter(r => ctlSt(r.n) === 'ok').length;
     if(l.f !== day){ html += `<h3 class="cday">${esc(fmtDate(l.f))}</h3>`; day = l.f; }
     const gk = l.f + '|' + ctlHora(l) + '|' + l.v + '|' + (l.route || '');
-    html += `<section class="cfl${CV.tg.has(gk) ? ' tg' : ''}" data-gk="${esc(gk)}"><div class="cfh"><span class="t">${esc(ctlHora(l))}</span><span class="v">${esc(l.v)}</span>
+    const pf = CV.fases.get(gk), fl = pf && pf !== G.fase; CV.fases.set(gk, G.fase);
+    html += `<section class="cfl f-${G.fase}${fl ? ' flash' : ''}${CV.tg.has(gk) ? ' tg' : ''}" data-gk="${esc(gk)}"><div class="cfh"><span class="t">${esc(ctlHora(l))}</span><span class="v">${esc(l.v)}</span>
       <span class="r">${l.terr ? esc(l.route) : `${esc(l.o)} ${esc(l.s)} → ${esc(l.d)} ${esc(l.l)}`}</span><span class="c">${G.pax.length} ${G.pax.length===1?"pasajero":"pasajeros"}</span>${G.pe ? '<span class="cpe">Llega a México para pernoctar · Hotel NH</span>' : G.cl ? '<span class="cpe">Conexión el mismo día a Hermosillo</span>' : G.cx ? `<span class="cpe">${G.cx === 'sig' ? 'Conexión al día siguiente a su ciudad' : 'Conexión a su ciudad de origen'}</span>` : ''}${faUrl(l.v) ? `<a class="fa-link" href="${faUrl(l.v)}" target="_blank" rel="noopener">Estatus ↗</a>` : ''}</div><ul class="cnames">` +
       pax.map(r => { const s = ctlSt(r.n), cx = lle ? r.c1 : r.c2;
         const con = cx ? ` · conexión ${esc(cx.v)} ${lle ? 'desde ' + esc(cx.o) : 'a ' + esc(cx.d)}` : '';
@@ -2772,7 +2823,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 400;
+const APP_V = 401;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
