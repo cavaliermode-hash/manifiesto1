@@ -129,7 +129,7 @@
       x.cl = x.ci || x.cr; // compatibilidad con páginas guardadas en el navegador
       if (x.c1 && x.ida && !x.ida.o) x.ida.o = x.c1.d;
       if (x.c2 && x.reg && !x.c2.o) x.c2.o = x.reg.d;
-      if (/^STAFF/i.test(x.rol)) { if (!opt.staff) continue; x.staff = true; } // staff: solo si se pide (va aparte, protegido con la contraseña VECI)
+      if (/^STAFF/i.test(x.rol)) { if (!opt.staff) continue; x.staff = true; } // staff: solo si se pide (va aparte, protegido con la contraseña de Staff)
       rows.push(x);
     }
     return rows;

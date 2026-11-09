@@ -577,7 +577,8 @@ header.board #upd:not(:empty)::before{content:" · "}
   background:radial-gradient(120% 140% at 100% 0%,#FFF1E8 0%,rgba(255,241,232,0) 45%),linear-gradient(135deg,#E6F2EA 0%,#F7FAF8 70%);box-shadow:0 8px 24px rgba(19,108,52,.07)}
 .h3eye{display:inline-block;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--acc,#C2410C)}
 .h3t{margin:0 0 8px;font:700 clamp(26px,4.2vw,38px)/1.05 var(--display);color:var(--green-dark);letter-spacing:-.01em;text-wrap:balance}
-.hero3 p{margin:0;color:var(--ink);font-size:15.5px;line-height:1.5;max-width:62ch;text-wrap:pretty}
+.hero3 p{margin:0 auto;color:var(--ink);font-size:15.5px;line-height:1.55;max-width:none;text-align:justify;text-align-last:center}
+.hero3 .h3t{text-align:center}
 .h3chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .h3chips span{font:600 13px var(--body);background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 11px;color:var(--green-dark)}
 .h3art{width:100%;height:auto;max-width:220px;justify-self:end}
@@ -765,9 +766,9 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     <nav class="tabs" role="tablist" aria-label="Apartados">
       <button role="tab" data-tab="man" aria-selected="true">Manifiesto</button>
       <button role="tab" data-tab="rep" aria-selected="false">Reporte</button>
-      <button role="tab" data-veci="1" aria-selected="false">VECI</button>
+      <button role="tab" data-stf="1" aria-selected="false">Staff</button>
     </nav>
-    <nav class="tabs vsub" aria-label="Secciones VECI" hidden>
+    <nav class="tabs vsub" aria-label="Secciones Staff" hidden>
       <button role="tab" data-tab="cla" aria-selected="false">Claves</button>
       <button role="tab" data-tab="lle" aria-selected="false">Llegadas</button>
       <button role="tab" data-tab="sal" aria-selected="false">Salidas</button>
@@ -931,10 +932,10 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     </ul>
   </section>
   <div class="dcierre" id="cierre" hidden><p class="dimp"><b id="dimp-t">Importante.- Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.</b></p>
-    <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Viajes El Corte Inglés</i></b></p></div>
+    <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Equipo de Coordinación de Viajes</i></b></p></div>
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
-    <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a tu <b>coordinador de Viajes El Corte Inglés</b>.</p></details>
+    <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a tu <b>coordinador de Equipo de Coordinación de Viajes</b>.</p></details>
     <details><summary>¿Tengo dos claves de reserva?</summary><p>Si tu vuelo de ida y tu vuelo de regreso tienen <b>claves distintas</b>, cada una aparece junto a su vuelo en tu itinerario y debes usar <b>la clave que corresponde a cada trayecto</b>. Si es la misma, aparece una sola vez como clave de ida y regreso.</p><p class="svc-n faq-n">Horarios en hora local de cada aeropuerto.</p></details>
     <details><summary>¿Qué pasa si llego antes del 3 o me voy después del 5 de noviembre?</summary><p>MetLife cubre únicamente <b>las noches de hotel y los traslados terrestres dentro de las fechas del evento (3 al 5 de noviembre) o por ruta</b>. Las noches o traslados adicionales <b>corren por tu cuenta</b>.</p></details>
     <details><summary>¿Cuándo y cómo hago el check-in de mis vuelos?</summary><p>Puedes hacerlo desde <b>24 horas antes</b> de tu vuelo en la app o en la página de la aerolínea, con tu <b>clave de reserva de 6 letras</b>. Si no es posible hacerlo en línea, preséntate en el mostrador de la aerolínea <b>2 horas antes</b> de tu vuelo.</p></details>
@@ -1257,12 +1258,12 @@ function detailView(r){
   const q0 = state.q; state.q = ''; const card = paxCard(r); state.q = q0;
   const first = tcase(splitName(r.n).nom.split(' ')[0] || r.n.split(' ')[0]);
   return `<div class="detail">
-    <button class="back" id="back"><span aria-hidden="true">‹</span> ${VOLVER_A ? 'Volver a ' + ({con:'Concentrado', lle:'Llegadas', sal:'Salidas'}[VOLVER_A.tab] || 'VECI') : 'Volver a la búsqueda'}</button>
+    <button class="back" id="back"><span aria-hidden="true">‹</span> ${VOLVER_A ? 'Volver a ' + ({con:'Concentrado', lle:'Llegadas', sal:'Salidas'}[VOLVER_A.tab] || 'Staff') : 'Volver a la búsqueda'}</button>
     <div class="dhello">
       <p class="dname"><span class="est">Estimado(a)</span> <b>${esc(r.n)}</b></p>${viajeHecho(r) ? '' : `<p class="dsub dintro">${esc(INTRO_TXT).replace('Segunda Cumbre Universales', '<mark class="dhl">Segunda Cumbre Universales</mark>')}</p>`}
     </div>
     ${progViaje(r)}
-    ${viajeHecho(r) ? `<p class="dbye dfin">Gracias por acompañarnos en la <b>Segunda Cumbre Universales</b>. Le enviamos un cordial saludo y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Viajes El Corte Inglés</i></b></p>`
+    ${viajeHecho(r) ? `<p class="dbye dfin">Gracias por acompañarnos en la <b>Segunda Cumbre Universales</b>. Le enviamos un cordial saludo y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Equipo de Coordinación de Viajes</i></b></p>`
       : `<section class="itinweb" aria-label="Su itinerario día por día">${mailHTML(r, 'web')}</section>`}
     <div id="agslot"></div>
     ${tripSteps(r)}
@@ -1346,7 +1347,7 @@ function resumenTxt(r){
   L.push('', 'PUNTOS IMPORTANTES',
     '- El check-in podrá realizarse 24 horas antes de la salida, si la aerolínea lo permite. De lo contrario, preséntate 2 horas antes en los mostradores.',
     '- Para administrar tu reserva usa únicamente las 6 letras de la clave en la página de la aerolínea.',
-    '', 'Consulta tu itinerario y la agenda del evento: ' + location.origin + location.pathname, '', 'Viajes El Corte Inglés');
+    '', 'Consulta tu itinerario y la agenda del evento: ' + location.origin + location.pathname, '', 'Equipo de Coordinación de Viajes');
   return L.join('\n');
 }
 /* Correo: la misma información que el PDF (reserva, vuelos, traslados y pernoctas, sede, información general,
@@ -1367,7 +1368,7 @@ function mailTxt(r){
     else if(x.rows) x.rows.forEach(([k, v]) => L.push(`- ${k}: ${v}`)); else if(x.text) L.push(x.text); if(x.nb) L.push(x.nb); });
   if(!tierra){ L.push('', 'PUNTOS IMPORTANTES DE SU VUELO'); document.querySelectorAll('section.important li').forEach(li => L.push('- ' + li.innerText.trim())); }
   L.push('', 'Importante.- ' + impTxt(r),
-    '', 'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', 'Viajes El Corte Inglés');
+    '', 'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', 'Equipo de Coordinación de Viajes');
   return L.join('\n');
 }
 /* Correo con formato (colores, tarjetas de vuelo, negritas y puntos importantes sombreados), igual que el PDF.
@@ -1445,8 +1446,8 @@ function mailHTML(r, enPDF){
     b += `<tr><td bgcolor="#F0F8F2" style="background:#F0F8F2;border-left:4px solid ${G};padding:${C ? '5px 12px' : '10px 14px'}"><table cellpadding="0" cellspacing="0">${pts}</table></td></tr>`; }
   b += `<tr><td style="padding-top:${C ? 6 : 12}px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFF7E6" style="background:#FFF7E6;border-left:4px solid #E0A100;padding:${C ? '5px 12px;line-height:1.25' : '10px 14px'}">${T('Importante.- ' + impTxt(r), C ? 11 : fs, INK, 'bold')}</td></tr></table></td></tr>`;
   // (sin botón de PDF en el correo)
-  if(C) b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', 11) + '&nbsp;&nbsp;' + T('Viajes El Corte Inglés', 11, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:4px');
-  else b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.')) + p(T('Viajes El Corte Inglés', fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), C ? 'padding-top:2px;padding-bottom:4px' : 'padding-top:6px;padding-bottom:10px');
+  if(C) b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', 11) + '&nbsp;&nbsp;' + T('Equipo de Coordinación de Viajes', 11, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:4px');
+  else b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.')) + p(T('Equipo de Coordinación de Viajes', fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), C ? 'padding-top:2px;padding-bottom:4px' : 'padding-top:6px;padding-bottom:10px');
   // PDF: 640 px fijos (cabe en una hoja). Correo: a lo ancho de la ventana del correo, hasta 1000 px, para leerse mejor.
   return C ? `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;font-family:Arial,sans-serif;background:#ffffff">${b}</table>`
     : `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;max-width:1000px;font-family:Arial,sans-serif;background:#ffffff">${b}</table>`;
@@ -1461,7 +1462,7 @@ async function emlFor(r){
   const html = `<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:12px;background:#fff">${mailHTML(r)}<p id="verv" style="text-align:center;font-size:11px;color:#8A97A8;margin:18px 0 14px"></p>
 </body></html>`;
   const pdf = new Uint8Array(await (await itinPDF(r)).arrayBuffer()); let ps = ''; for(let i = 0; i < pdf.length; i += 8192) ps += String.fromCharCode.apply(null, pdf.subarray(i, i + 8192));
-  const B = 'veci' + Date.now(), name = 'Itinerario ' + tcase(r.n) + '.pdf';
+  const B = 'stf' + Date.now(), name = 'Itinerario ' + tcase(r.n) + '.pdf';
   return ['X-Unsent: 1', `To: ${MAIL[r.n] || ''}`, `Subject: =?UTF-8?B?${b64u('Tu itinerario · Segunda Cumbre Universales')}?=`, 'MIME-Version: 1.0',
     `Content-Type: multipart/mixed; boundary="${B}"`, '', `--${B}`, 'Content-Type: text/html; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '', wrap76(b64u(html)),
     `--${B}`, `Content-Type: application/pdf; name="=?UTF-8?B?${b64u(name)}?="`, 'Content-Transfer-Encoding: base64', `Content-Disposition: attachment; filename="=?UTF-8?B?${b64u(name)}?="`, '', wrap76(btoa(ps)),
@@ -1511,7 +1512,7 @@ function waTxt(r){
     '👕 *Dress code y recomendaciones:*', base + 'dresscode-cumbre.jpg?v=349', '',
     '🔎 *Consulta tu reserva cuando quieras:*', base, '',
     '*Importante.-* ' + impTxt(r).replace('MetLife', '*MetLife*'), '',
-    'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', '*_Viajes El Corte Inglés_*');
+    'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', '*_Equipo de Coordinación de Viajes_*');
   return L.join('\n');
 }
 /* ---------- Itinerario personal en PDF ---------- */
@@ -1640,7 +1641,7 @@ async function itinPDFtexto(r){
     document.querySelectorAll('section.important li').forEach(li => bul(li.innerText)); }
   y += 4; para('Importante.- ' + impTxt(r), {b:1});
   y += 2; para('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.');
-  para('Viajes El Corte Inglés', {b:1, c:G});
+  para('Equipo de Coordinación de Viajes', {b:1, c:G});
   return doc.output('blob');
 }
 async function descargarPDF(r, msg, ver){
@@ -1667,13 +1668,13 @@ async function descargarPDF(r, msg, ver){
 document.addEventListener('click', e => { const b = e.target.closest('[data-pdf], [data-pdfv]'); if(!b) return; e.preventDefault();
   const r = DATA[+(b.dataset.pdfv ?? b.dataset.pdf)]; DLG = true; setTimeout(() => { DLG = false; awaySince = 0; }, 3000);
   window.open(location.pathname + '?pdf=' + encodeURIComponent(r.n) + '&v=' + APP_V + '.' + Date.now(), '_blank'); /* v: evita que el navegador use una versión guardada */ });
-/* ---------- PDF solo de vuelos (formato Viajes El Corte Inglés · "Su viaje") ---------- */
+/* ---------- PDF solo de vuelos (formato "Su viaje") ---------- */
 const AERO_N = {MEX:'Mexico City, (Benito Juarez Intl)', HMO:'Hermosillo, (I.Pesqueira Garcia)', GDL:'Guadalajara, (Miguel Hidalgo y Costilla Intl)', MTY:'Monterrey, (Gral. Mariano Escobedo Intl)', MID:'Merida, (Manuel Crescencio Rejon Intl)', QRO:'Queretaro, (Queretaro Intl)', CUL:'Culiacan, (Fedl. de Bachigualato Intl)', ACA:'Acapulco, (Juan N. Alvarez Intl)', TIJ:'Tijuana, (Gral. Abelardo L. Rodriguez Intl)', PBC:'Puebla, (Hermanos Serdan Intl)', TLC:'Toluca, (Lic. Adolfo Lopez Mateos Intl)', NLU:'Santa Lucia, (Felipe Angeles Intl)', LMM:'Los Mochis, (Valle del Fuerte Intl)'};
 const LINEA = v => { const m = String(v || '').match(/^(.*?)\s*(\d+)$/); if(!m) return v; const al = m[1].toUpperCase(), c = {AEROMEXICO:['Aeromexico','AM'], VOLARIS:['Volaris','Y4'], 'VIVA AEROBUS':['Viva Aerobus','VB']}[al]; return c ? `${c[0]} ${c[1]} ${m[2]}` : v; };
 const LOGO_AL = v => ({AEROMEXICO:'logo-am.png', VOLARIS:'logo-y4.png', 'VIVA AEROBUS':'logo-vb.png'})[String(v || '').toUpperCase().replace(/\s*\d+$/, '')] || '';
 const DIAV = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], MESV = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const fV = (iso, conDia) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if(!m) return iso || ''; const d = new Date(Date.UTC(+m[1], m[2]-1, +m[3])); return (conDia ? DIAV[d.getUTCDay()] + ' ' : '') + m[3] + ' ' + MESV[m[2]-1] + (conDia ? ' ' + m[1] : ''); };
-function vueloHTML(r, pie){ /* despedida ECI siempre al final (búsqueda, VECI y ZIP) */
+function vueloHTML(r, pie){ /* despedida siempre al final (búsqueda, Staff y ZIP) */
   const G = '#1C6B2E', ida = [r.c1, r.ida].filter(Boolean), reg = [r.reg, r.c2].filter(Boolean), ci = r.ci || r.cr, cr = r.cr || r.ci, misma = ci && cr && ci === cr;
   const dur = l => { const m = legMin(l); return m > 0 ? `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')} (Sin paradas)` : ''; };
   const leg = (l, clave, lab) => `<div style="font:15px Arial,sans-serif;color:#222;margin:14px 0 4px 2px">${fV(l.f, true)}</div>
@@ -1697,7 +1698,7 @@ function vueloHTML(r, pie){ /* despedida ECI siempre al final (búsqueda, VECI y
     <div style="margin-top:16px;border-left:4px solid ${G};padding-left:9px;font:bold 15px Arial,sans-serif;color:${G};letter-spacing:.4px">PUNTOS IMPORTANTES DE SU VUELO</div>
     <div style="margin-top:6px;background:#F0F8F2;border-left:4px solid ${G};padding:8px 14px">${[...document.querySelectorAll('section.important li')].map(li => `<div style="display:flex;gap:8px;font:13px/1.55 Arial,sans-serif;color:#16301F;padding:2px 0"><span style="color:${G};font-weight:bold">•</span><span>${li.innerHTML.replace(/<b>/g, '<b style="color:#16301F">')}</span></div>`).join('')}</div>
     ${appBoxPDF(r)}
-    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<i style="font-weight:bold;color:${G}">Viajes El Corte Inglés</i></div>` : ''}
+    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<i style="font-weight:bold;color:${G}">Equipo de Coordinación de Viajes</i></div>` : ''}
   </div>`;
 }
 async function vueloCanvas(r, pie){
@@ -1722,7 +1723,7 @@ async function vueloPDF(r, pie){
 }
 document.addEventListener('click', async e => { const b = e.target.closest('[data-vpdf]'); if(!b) return; e.preventDefault();
   const r = DATA[+b.dataset.vpdf]; DLG = true; setTimeout(() => { DLG = false; awaySince = 0; }, 3000);
-  if(!b.dataset.solover){ // VECI (✈️): solo descarga el PDF, sin abrir otra pestaña
+  if(!b.dataset.solover){ // Staff (✈️): solo descarga el PDF, sin abrir otra pestaña
     if(b.disabled) return; const t0 = b.textContent; b.disabled = true; b.textContent = '⏳';
     try{ const blob = await vueloPDF(r, true), a = document.createElement('a'); a.href = URL.createObjectURL(new File([blob], tcase(r.n) + '.pdf', {type:'application/pdf'})); a.download = tcase(r.n) + '.pdf';
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); b.textContent = '✅'; setTimeout(() => { b.textContent = t0; }, 1500); }
@@ -1770,16 +1771,16 @@ function pdfDirecto(){
   const sp = new URLSearchParams(location.search), solo = !!sp.get('vpdf'), n = sp.get('pdf') || sp.get('vpdf'); if(!n) return false;
   pdfDirecto2(sp, solo, n.trim().toUpperCase()); return true;
 }
-/* El staff no está en los datos públicos: se toma de la pestaña de VECI que abrió esta página, o de la sesión VECI vigente */
+/* El staff no está en los datos públicos: se toma de la pestaña de Staff que abrió esta página, o de la sesión Staff vigente */
 async function pdfDirecto2(sp, solo, nn){
   let r = DATA.find(x => x.n === nn);
   if(!r){ try{ const o = window.opener && window.opener.DATA && window.opener.DATA.find(x => x.n === nn); if(o) r = JSON.parse(JSON.stringify(o)); }catch(e){} }
-  if(!r){ const ses = veciSes(); if(ses && ses.pw){ await veciTel(ses.pw); r = DATA.find(x => x.n === nn); } }
+  if(!r){ const ses = stfSes(); if(ses && ses.pw){ await stfTel(ses.pw); r = DATA.find(x => x.n === nn); } }
   document.title = r ? (solo ? 'Vuelos ' : 'Itinerario ') + tcase(r.n) : 'Itinerario';
   document.body.insertAdjacentHTML('beforeend', `<div style="position:fixed;inset:0;z-index:2000;background:#fff;font:600 17px/1.5 system-ui,sans-serif;color:#136c34;padding:40px 20px;text-align:center" id="pdfst">${r ? 'Generando itinerario de ' + esc(tcase(r.n)) + '…' : 'No se encontró la reserva.'}</div>`);
   if(!r) return;
   (solo ? vueloPDF(r, true) : itinPDF(r)).then(blob => { const url = URL.createObjectURL(new File([blob], (solo ? '' : 'Itinerario ') + tcase(r.n) + '.pdf', {type:'application/pdf'}));
-    $('#pdfst').innerHTML = `<a href="${url}" style="color:#136c34">Abrir itinerario de ${esc(tcase(r.n))} (PDF)</a>`; if(solo && !sp.get('ver')){ // PDF de vuelos (VECI): se descarga automáticamente y además se abre para verlo
+    $('#pdfst').innerHTML = `<a href="${url}" style="color:#136c34">Abrir itinerario de ${esc(tcase(r.n))} (PDF)</a>`; if(solo && !sp.get('ver')){ // PDF de vuelos (Staff): se descarga automáticamente y además se abre para verlo
       const nombre = tcase(r.n) + '.pdf', dl = document.createElement('a'); dl.href = url; dl.download = nombre; document.body.appendChild(dl); dl.click(); dl.remove();
       $('#pdfst').innerHTML = `✓ Se descargó <b>${esc(nombre)}</b><br><a href="${url}" style="color:#136c34">Abrir PDF</a>`; setTimeout(() => location.replace(url), 900); }
     else location.replace(url); })
@@ -1800,7 +1801,7 @@ function icsFor(r){
     return ['BEGIN:VEVENT',`UID:${Date.now()}-${i}@manifiestodevuelos.com`,`DTSTAMP:${stamp}`,`DTSTART:${z(when(l,'s'))}`,`DTEND:${z(when(l,'l'))}`,
       `SUMMARY:Vuelo ${l.v} ${l.o}-${l.d}`,`DESCRIPTION:Clave de reserva: ${code||'-'}\\nCheck-in 24 h antes. Llega al aeropuerto 2 h antes.`,`LOCATION:Aeropuerto ${tzOf(l.o).c} (${l.o})`,
       'BEGIN:VALARM','TRIGGER:-PT24H','ACTION:DISPLAY','DESCRIPTION:Ya puedes hacer check-in','END:VALARM','END:VEVENT'].join('\r\n'); });
-  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Viajes El Corte Ingles//Manifiesto//ES','CALSCALE:GREGORIAN',...ev,'END:VCALENDAR'].join('\r\n');
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Manifiesto de Vuelos//ES','CALSCALE:GREGORIAN',...ev,'END:VCALENDAR'].join('\r\n');
 }
 function flightView(rows){
   const g = new Map();
@@ -2116,7 +2117,7 @@ function alGrupos(tab){ const t0 = CTL.tab; CTL.tab = tab;
 function alDesc(G){ const l = G.l, n = G.pax.length, nom = G.pax.slice(0, 3).map(r => tcase(r.n)).join(', ') + (n > 3 ? ` y ${n - 3} más` : '');
   return `${l.terr ? l.route : `${l.v} · ${l.o} ${l.s} → ${l.d} ${l.l}`}\n${n} ${n === 1 ? 'pasajero' : 'pasajeros'}: ${nom}`; }
 function alToast(t, b, tab){ let box = document.getElementById('atoast'); if(!box){ box = document.createElement('div'); box.id = 'atoast'; box.setAttribute('role', 'status'); document.body.appendChild(box); }
-  const d = document.createElement('div'); d.innerHTML = `<b>${esc(t)}</b>${esc(b).replace(/\n/g, '<br>')}`; d.onclick = () => { d.remove(); if(veciSes()) ctlTab(tab); };
+  const d = document.createElement('div'); d.innerHTML = `<b>${esc(t)}</b>${esc(b).replace(/\n/g, '<br>')}`; d.onclick = () => { d.remove(); if(stfSes()) ctlTab(tab); };
   box.appendChild(d); while(box.children.length > 3) box.firstChild.remove(); setTimeout(() => d.remove(), 12000);
   try{ const a = new (window.AudioContext || window.webkitAudioContext)(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; g.gain.value = .08; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + .18); }catch(e){} }
 async function alNotif(t, b, tab, tag){
@@ -2158,7 +2159,7 @@ document.addEventListener('click', async e => { const b = e.target.closest('[dat
   if('Notification' in window && Notification.permission === 'default'){ DLG = true; try{ await Notification.requestPermission(); }catch(er){} setTimeout(() => { DLG = false; awaySince = 0; }, 800); }
   if('serviceWorker' in navigator){ try{ await navigator.serviceWorker.register('sw.js?v=1', {scope: './'}); }catch(er){} }
   AL.on = true; AL.sent = {}; alCheck(true); alSave(); alUI(); alResumen(true); alSave(); });
-if(navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if(e.data && e.data.alerta && veciSes()) ctlTab(e.data.alerta); });
+if(navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if(e.data && e.data.alerta && stfSes()) ctlTab(e.data.alerta); });
 setInterval(() => alCheck(), 30000);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) alCheck(); });
 document.addEventListener('click', e => { const b = e.target.closest('#cfase [data-fase]'); if(!b) return; CTL.fase = b.dataset.fase; ctlRender(); });
@@ -2275,7 +2276,7 @@ function llegaDe(r){
   if(m){ const iso = `2026-11-${m[1].padStart(2, '0')}`; return {ll: `${iso} ${m[3].padStart(5, '0')}`, llt: `${fmtDate(iso)} · ${m[3]} h · traslado`}; }
   return {ll: '2026-11-03 99:99', llt: /por tu cuenta/i.test(t) ? 'Llega por su cuenta' : '—'};
 }
-const rolVer = rol => /^staff/i.test(rol || '') ? 'STAFF' + (/INSPECCI/i.test(rol) ? ' · VISITA DE INSPECCIÓN' : '') : String(rol || ''); // staff sin distinguir VECI o MetLife
+const rolVer = rol => /^staff/i.test(rol || '') ? 'STAFF' + (/INSPECCI/i.test(rol) ? ' · VISITA DE INSPECCIÓN' : '') : String(rol || ''); // staff sin distinguir agencia o MetLife
 const rolTag = rol => rol ? `<span class="rtag">${esc(rolVer(rol).toUpperCase())}</span>` : '';
 function claRows(){
   const rows = DATA.map((r, i) => ({i, n:r.n, ci:r.ci || (!r.cr ? r.cl || '' : ''), cr:r.cr || '', ...llegaDe(r), rol:r.rol || ''}));
@@ -2570,7 +2571,7 @@ $('#kreset').addEventListener('click', async () => {
 function ctlTab(t){
   CTL.tab = t; CTL.filter = 'all';
   document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
-  const vb = document.querySelector('.tabs [data-veci]'); if(vb) vb.setAttribute('aria-selected', t !== 'man' && t !== 'rep');
+  const vb = document.querySelector('.tabs [data-stf]'); if(vb) vb.setAttribute('aria-selected', t !== 'man' && t !== 'rep');
   const vs = document.querySelector('.tabs.vsub'); if(vs) vs.hidden = t === 'man' || t === 'rep';
   document.querySelectorAll('.cstat').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === 'all'));
   const on = t !== 'man', con = t === 'con', cla = t === 'cla', pyt = t === 'pyt', rp = t === 'rep'; document.body.classList.toggle('vctl', on);
@@ -2593,30 +2594,30 @@ function askPw(msg){
     m.onclick = e => { if(e.target === m) done(null); };
   });
 }
-/* Sesión VECI: con la contraseña correcta se queda abierta mientras haya actividad o la ausencia sea menor a 60 minutos
+/* Sesión Staff: con la contraseña correcta se queda abierta mientras haya actividad o la ausencia sea menor a 60 minutos
    (cambiar de pestaña, abrir otra app o recargar). Si pasan 60 minutos sin actividad o fuera de la página, o se cierra
    la pestaña, se vuelve a pedir la contraseña. Se guarda solo en esta pestaña (sessionStorage), no en el dispositivo. */
-const VECI_MIN = 60, VECI_MS = VECI_MIN * 60000;
-const veciSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('veci') || 'null'); return v && Date.now() - v.t < VECI_MS ? v : null; }catch(e){ return null; } };
-const veciSave = pw => { try{ sessionStorage.setItem('veci', JSON.stringify({pw: pw || (veciSes() || {}).pw || '', t: Date.now()})); }catch(e){} };
-const veciEnd = () => { try{ sessionStorage.removeItem('veci'); }catch(e){} TEL = {}; MAIL = {}; DATA = DATA.filter(r => !r.staff); };
-async function veciTel(pw){ if(PACK && PACK.tel && !Object.keys(TEL).length){ try{ const c = await Cifra.descifrar(PACK.tel, pw); TEL = c.tel || {}; MAIL = c.mail || {}; staffAdd(c.staff || []); }catch(e){ TEL = {}; MAIL = {}; } } }
-/* Staff: viene protegido con la contraseña VECI y solo se agrega a las pestañas de VECI (no al buscador público ni a Traslados y pernoctas) */
+const Staff_MIN = 60, Staff_MS = Staff_MIN * 60000;
+const stfSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('stf') || 'null'); return v && Date.now() - v.t < Staff_MS ? v : null; }catch(e){ return null; } };
+const stfSave = pw => { try{ sessionStorage.setItem('stf', JSON.stringify({pw: pw || (stfSes() || {}).pw || '', t: Date.now()})); }catch(e){} };
+const stfEnd = () => { try{ sessionStorage.removeItem('stf'); }catch(e){} TEL = {}; MAIL = {}; DATA = DATA.filter(r => !r.staff); };
+async function stfTel(pw){ if(PACK && PACK.tel && !Object.keys(TEL).length){ try{ const c = await Cifra.descifrar(PACK.tel, pw); TEL = c.tel || {}; MAIL = c.mail || {}; staffAdd(c.staff || []); }catch(e){ TEL = {}; MAIL = {}; } } }
+/* Staff: viene protegido con la contraseña Staff y solo se agrega a las pestañas de Staff (no al buscador público ni a Traslados y pernoctas) */
 const stTag = n => { const r = DATA.find(x => x.staff && x.n === n); return r ? rolTag(r.rol || 'STAFF') : ''; }; // staff: mismo formato que los demás roles
 function staffAdd(L){ DATA = DATA.filter(r => !r.staff); L.forEach(r => { r.staff = true; r._w = new Set(norm(r.n).split(/\s+/).filter(Boolean)); r._n = norm(r.n); DATA.push(r); }); }
 async function conGate(msg){
-  const ses = veciSes(); if(ses && ses.pw && await sha256(ses.pw.trim().toLowerCase()) === RESET_H){ await veciTel(ses.pw); veciSave(ses.pw); return true; }
-  if(ses) veciEnd(); // sesión con la contraseña anterior: se vuelve a pedir
+  const ses = stfSes(); if(ses && ses.pw && await sha256(ses.pw.trim().toLowerCase()) === RESET_H){ await stfTel(ses.pw); stfSave(ses.pw); return true; }
+  if(ses) stfEnd(); // sesión con la contraseña anterior: se vuelve a pedir
   const pw = await askPw(msg || 'Para abrir esta sección escribe la contraseña:'); if(pw === null) return false;
   if(await sha256(pw.trim().toLowerCase()) !== RESET_H){ alert('Contraseña incorrecta.'); return false; }
-  veciSave(pw);
+  stfSave(pw);
   // Teléfonos de los invitados: van cifrados con la contraseña del equipo y solo se abren aquí.
-  await veciTel(pw);
+  await stfTel(pw);
   return true;
 }
 let TEL = {}, MAIL = {}, REP = null;
 /* Reporte: datos cifrados aparte con su propia contraseña; se pide al entrar y queda abierto hasta recargar la página */
-const repSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('repses') || 'null'); return v && Date.now() - v.t < VECI_MS ? v : null; }catch(e){ return null; } };
+const repSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('repses') || 'null'); return v && Date.now() - v.t < Staff_MS ? v : null; }catch(e){ return null; } };
 const repSave = pw => { try{ sessionStorage.setItem('repses', JSON.stringify({pw: pw || (repSes() || {}).pw || '', t: Date.now()})); }catch(e){} };
 /* Confirmado emitido OK y Bloqueo (Aeroméxico / emitido) OK cuentan juntos como un solo estatus */
 const ST_CONF = /^(CONFIRMADO EMITIDO|BLOQUEO (AEROMEXICO|EMITIDO)|INDIVIDUAL EMITIDO)|EMITIDO OK$/; // cualquier boleto emitido u OK de bloqueo
@@ -2625,11 +2626,11 @@ async function repGate(){
   if(REP){ repSave(); return true; } if(!PACK || !PACK.rep) return false;
   const ses = repSes();
   if(ses && ses.pw){ try{ REP = repNorm((await Cifra.descifrar(PACK.rep, ses.pw)).rep || null); if(REP){ repSave(); return true; } }catch(e){} }
-  const pw = await askPw(ses === null && sessionStorage.getItem('repses') ? `Pasaron ${VECI_MIN} minutos sin actividad en el Reporte. Escribe la contraseña:` : 'Para abrir el Reporte escribe la contraseña:'); if(pw === null) return false;
+  const pw = await askPw(ses === null && sessionStorage.getItem('repses') ? `Pasaron ${Staff_MIN} minutos sin actividad en el Reporte. Escribe la contraseña:` : 'Para abrir el Reporte escribe la contraseña:'); if(pw === null) return false;
   try{ const k = pw.trim().toLowerCase(); REP = repNorm((await Cifra.descifrar(PACK.rep, k)).rep || null); if(REP) repSave(k); return !!REP; }
   catch(e){ alert('Contraseña incorrecta.'); return false; }
 }
-/* ---------- Reporte de telemarketing y presupuesto (solo VECI) ---------- */
+/* ---------- Reporte de telemarketing y presupuesto (solo Staff) ---------- */
 const REP_ST = [['PENDIENTE POR MANDAR LA INFORMACIÓN','#DDEBF7','#16301F'],['PENDIENTE CONFIRMAR PARTICIPANTE O INVITADO','#C9C400','#16301F'],['INDIVIDUAL EMITIDO OK','#70AD47','#0F2A12'],['BLOQUEO EMITIDO OK','#D9CCB0','#16301F'],['TERRESTRE CONFIRMADO','#9C5B2E','#FFFFFF'],['CANCELADO','#C00000','#FFFFFF']];
 const RV = {v:'nom', st:'', q:'', sort:'n', dir:1}; // sin buscador en el Reporte (q siempre vacío)
 const REP_NOTA = 'Nota: el presupuesto aéreo incluye asientos y pago de equipaje. No incluye los costos de telemarketing ni de emisión.';
@@ -2700,7 +2701,7 @@ let xlP = null; const loadXL = () => window.ExcelJS ? Promise.resolve(window.Exc
 async function repExcel(btn){
   if(!REP) return; const t0 = btn.textContent; btn.disabled = true; btn.textContent = 'Generando Excel…'; DLG = true;
   try{
-    const XL = await loadXL(), wb = new XL.Workbook(); wb.creator = 'Viajes El Corte Inglés'; wb.created = new Date();
+    const XL = await loadXL(), wb = new XL.Workbook(); wb.creator = 'Manifiesto de vuelos'; wb.created = new Date();
     const F = REP.filas, tot = sumR(F), n = F.length, G = 'FF136C34', G2 = 'FFEAF5EE', BRD = {style:'thin', color:{argb:'FFCFD8D3'}};
     const borde = c => { c.border = {top:BRD, left:BRD, bottom:BRD, right:BRD}; }, MON = '"$"#,##0.00', hoy = new Date().toLocaleDateString('es-MX', {day:'2-digit', month:'long', year:'numeric'});
     const hx = h => 'FF' + h.replace('#', '').toUpperCase();
@@ -2757,24 +2758,24 @@ document.addEventListener('click', e => { const b = e.target.closest('#rout .rdl
 /* ✕ en los buscadores: borra el texto de un toque y vuelve a mostrar todo */
 document.addEventListener('click', e => { const x = e.target.closest('.csearch .cx'); if(!x) return; const i = x.parentNode.querySelector('input'); if(!i) return; i.value = ''; i.dispatchEvent(new Event('input', {bubbles:true})); const j = x.parentNode.querySelector('input') || document.getElementById(i.id); if(j) j.focus(); });
 document.addEventListener('input', e => { if(e.target.id !== 'rq') return; RV.q = e.target.value; const pos = e.target.selectionStart; repRender(); const i = $('#rq'); if(i){ i.focus(); try{ i.setSelectionRange(pos, pos); }catch(er){} } });
-// actividad dentro de VECI: renueva los 60 minutos (como mucho una vez cada 15 s)
-let veciTick = 0;
+// actividad dentro de Staff: renueva los 60 minutos (como mucho una vez cada 15 s)
+let stfTick = 0;
 ['pointerdown','keydown','scroll','touchstart'].forEach(ev => addEventListener(ev, () => {
-  if(CTL.tab === 'man' || document.hidden || Date.now() - veciTick < 15000) return; if(CTL.tab === 'rep'){ if(repSes()){ veciTick = Date.now(); repSave(); } return; } if(!veciSes()) return; veciTick = Date.now(); veciSave(); }, {passive:true}));
-// si se cumplen los 60 minutos sin actividad estando en VECI, se vuelve a pedir la contraseña
-async function veciVence(){
-  if(CTL.tab === 'man' || CTL.tab === 'rep' || DLG || veciSes()) return;
-  const tab = CTL.tab; veciEnd();
-  if(await conGate(`Pasaron ${VECI_MIN} minutos sin actividad. Escribe la contraseña para seguir en VECI:`)) ctlTab(tab); else ctlTab('man');
+  if(CTL.tab === 'man' || document.hidden || Date.now() - stfTick < 15000) return; if(CTL.tab === 'rep'){ if(repSes()){ stfTick = Date.now(); repSave(); } return; } if(!stfSes()) return; stfTick = Date.now(); stfSave(); }, {passive:true}));
+// si se cumplen los 60 minutos sin actividad estando en Staff, se vuelve a pedir la contraseña
+async function stfVence(){
+  if(CTL.tab === 'man' || CTL.tab === 'rep' || DLG || stfSes()) return;
+  const tab = CTL.tab; stfEnd();
+  if(await conGate(`Pasaron ${Staff_MIN} minutos sin actividad. Escribe la contraseña para seguir en Staff:`)) ctlTab(tab); else ctlTab('man');
 }
-setInterval(() => { if(!document.hidden) veciVence(); }, 20000);
+setInterval(() => { if(!document.hidden) stfVence(); }, 20000);
 document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.addEventListener('click', async () => {
-  // dentro de VECI se cambia de sección sin volver a pedir contraseña
+  // dentro de Staff se cambia de sección sin volver a pedir contraseña
   if(b.dataset.tab === 'rep'){ if(!(await repGate())) return; }
   else if(b.dataset.tab !== 'man' && ['man', 'rep'].includes(CTL.tab) && !(await conGate())) return; ctlTab(b.dataset.tab); }));
-/* VECI: una sola pestaña con contraseña que agrupa Llegadas, Salidas, Traslados y pernoctas, Concentrado y Claves. */
-document.querySelector('.tabs [data-veci]').addEventListener('click', async () => {
-  if(CTL.tab !== 'man' && CTL.tab !== 'rep') return; if(!(await conGate())) return; ctlTab('cla'); }); // VECI abre en Claves
+/* Staff: una sola pestaña con contraseña que agrupa Llegadas, Salidas, Traslados y pernoctas, Concentrado y Claves. */
+document.querySelector('.tabs [data-stf]').addEventListener('click', async () => {
+  if(CTL.tab !== 'man' && CTL.tab !== 'rep') return; if(!(await conGate())) return; ctlTab('cla'); }); // Staff abre en Claves
 document.querySelectorAll('.cstat').forEach(b => b.addEventListener('click', () => {
   CTL.filter = b.dataset.f; document.querySelectorAll('.cstat').forEach(x => x.setAttribute('aria-pressed', x === b)); ctlRender(); }));
 $('#cout').addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if(!b) return;
@@ -2825,7 +2826,7 @@ $('#ccopy').addEventListener('click', async () => { const t = ctlResumen();
   catch(e){ const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); }
   $('#cmsg').textContent = 'Resumen copiado. Pégalo en WhatsApp.'; });
 $('#cprint').addEventListener('click', () => window.print());
-const RESET_H = '08eefd8fb75d26d53d50caa85b482d550ce8122d405b632294102ddd4f0e6f35'; // contraseña del equipo VECI (se compara sin mayúsculas)
+const RESET_H = '08eefd8fb75d26d53d50caa85b482d550ce8122d405b632294102ddd4f0e6f35'; // contraseña del equipo Staff (se compara sin mayúsculas)
 async function sha256(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join(''); }
 $('#creset').addEventListener('click', async () => {
   const pw = await askPw('Para borrar las marcas de ' + (CTL.tab === 'lle' ? 'Llegadas' : 'Salidas') + ' escribe la contraseña:');
@@ -2839,7 +2840,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 404;
+const APP_V = 406;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
@@ -2892,14 +2893,14 @@ function restoreView(){
   let r = null; try{ r = JSON.parse(sessionStorage.getItem('restore') || 'null'); sessionStorage.removeItem('restore'); }catch(e){}
   if(!r) return;
   if(r.ag && AGENDA[r.ag]) renderAgenda(r.ag);
-  // VECI: se restaura abajo según la sesión de 60 minutos
+  // Staff: se restaura abajo según la sesión de 60 minutos
   if(r.q){ const q = document.getElementById('q'); if(q){ q.value = r.q; state.q = r.q; render(); } }
   const i = r.n ? DATA.findIndex(x => x.n === r.n) : -1;
   if(i >= 0 && (!r.tab || r.tab === 'man')) openPax(i);
-  // estaba en VECI: sigue ahí si no han pasado 60 minutos; si pasaron, pide la contraseña para volver a entrar
+  // estaba en Staff: sigue ahí si no han pasado 60 minutos; si pasaron, pide la contraseña para volver a entrar
   if(r.tab === 'rep') (async () => { if(await repGate()){ ctlTab('rep'); setTimeout(() => window.scrollTo({top: r.y || 0}), 80); } })();
-  else if(r.tab && r.tab !== 'man') (async () => { const vencio = !veciSes(); if(vencio) veciEnd();
-    if(await conGate(vencio ? `Pasaron ${VECI_MIN} minutos fuera de VECI. Escribe la contraseña para continuar:` : '')) { ctlTab(r.tab); setTimeout(() => window.scrollTo({top: r.y || 0}), 80); } })();
+  else if(r.tab && r.tab !== 'man') (async () => { const vencio = !stfSes(); if(vencio) stfEnd();
+    if(await conGate(vencio ? `Pasaron ${Staff_MIN} minutos fuera de Staff. Escribe la contraseña para continuar:` : '')) { ctlTab(r.tab); setTimeout(() => window.scrollTo({top: r.y || 0}), 80); } })();
   setTimeout(() => window.scrollTo({top: r.y || 0}), 60);
 }
 /* Carga inicial tolerante a datos móviles lentos: espera hasta 15 s por intento y reintenta 3 veces. */
