@@ -760,7 +760,6 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 <body>
 <header class="board">
   <div class="wrap">
-    <div class="eyebrow" id="ev">Manifiesto de itinerario</div>
     <h1>SEGUNDA CUMBRE UNIVERSALES</h1>
     <div class="sub" id="upd" hidden></div>
     <nav class="tabs" role="tablist" aria-label="Apartados">
@@ -2840,7 +2839,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 403;
+const APP_V = 404;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
