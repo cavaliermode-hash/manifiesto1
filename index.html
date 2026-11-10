@@ -811,7 +811,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 </section>
 <section class="wrap ctl" id="cla" hidden>
   <h2 class="ct">Claves de reserva</h2>
-  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 lo envía por WhatsApp y 📋 copia el correo con formato para pegarlo.</p>
+  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 lo envía por WhatsApp 📨 copia el correo de <b>invitación</b> (lo que se le considera) y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
   <div class="rolbar" id="rolbar" role="group" aria-label="Filtrar por rol"></div>
   <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span id="cqn"></span></div>
   <div class="ktable-wrap"><table class="ktable ctab">
@@ -929,7 +929,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
       <li><b>Qué necesita llevar:</b> una <b>identificación oficial vigente</b> (INE o pasaporte) <b>con el mismo nombre de su reserva</b>, y su <b>clave de reserva o pase de abordar</b>.</li>
     </ul>
   </section>
-  <div class="dcierre" id="cierre" hidden><p class="dimp"><b id="dimp-t">Importante.- Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.</b></p>
+  <div class="dcierre" id="cierre" hidden><p class="dimp"><b id="dimp-t">Importante.- Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.</b></p>
     <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Equipo de Coordinación de Viajes</i></b></p></div>
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
@@ -1061,8 +1061,8 @@ const MESL = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
 const fLarga = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if(!m) return iso || ''; const d = new Date(Date.UTC(+m[1], m[2]-1, +m[3])); return `${DIAL[d.getUTCDay()]} ${+m[3]} de ${MESL[m[2]-1]}`; };
 /* Locales de Hermosillo que llegan por su cuenta (con estacionamiento): MetLife solo cubre las noches de hotel */
 const esLocal = r => (r.notas || []).some(n => n.k === 'tr' && /por tu cuenta/i.test(n.t) && /estacionamiento/i.test(n.t));
-const impTxt = r => r.loc ? 'Le recordamos que su llegada y regreso a la sede del evento son por su cuenta.' : esLocal(r) ? 'Le recordamos que MetLife cubre únicamente las noches de hotel.' : 'Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento o por ruta.';
-const MET = 'Le recordamos que MetLife cubre únicamente las noches de hotel y traslados terrestres que estén dentro del evento.';
+const impTxt = r => r.loc ? 'Le recordamos que su llegada y regreso a la sede del evento son por su cuenta.' : esLocal(r) ? 'Le recordamos que MetLife cubre únicamente las noches de hotel.' : 'Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.';
+const MET = 'Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.';
 // Excepciones confirmadas por el equipo (noches adicionales pagadas por el invitado, etc.)
 const HOTEL_EXC = {};
 /* Recepción en el aeropuerto de Hermosillo (logo de MetLife): solo si su vuelo llega a Hermosillo dentro de las fechas del evento (3 al 5 nov). */
@@ -1081,7 +1081,7 @@ function aplicaLlegada(r){ const ida = [r.c1, r.ida].filter(Boolean), l = ida.fi
 function hotelInfo(r){
   if(HOTEL_EXC[r.n]) return HOTEL_EXC[r.n];
   if(!tieneHotel(r)) return {lines: [], nota: ''};
-  const lines = [`Reservación por 1 noche en el ${HOTEL.n}. Dirección: ${HOTEL.dir}`, 'Check in: 03 diciembre, 15:00 hrs.', 'Check out: 04 diciembre, 12:00 hrs.'];
+  const lines = [`Reservación por 1 noche en el ${HOTEL.n}. Dirección: ${HOTEL.dir}`, 'Check in: 03 diciembre, 15:00 hrs.', 'Check out: 04 diciembre, 12:00 hrs.', `Resguardo de equipaje: a su llegada a la Ciudad de México, su equipaje será resguardado en el ${HOTEL.n}, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; se le entregará a su regreso al hotel.`];
   const ida = [r.c1, r.ida].filter(Boolean), reg = [r.reg, r.c2].filter(Boolean);
   const lleg = ida.find(l => l.d === EV_AP) || ida[ida.length - 1], sal = reg.find(l => l.o === EV_AP) || reg[0];
   const notas = [];
@@ -1427,7 +1427,7 @@ function mailHTML(r, enPDF){
   /* Itinerario en orden cronológico, agrupado por día */
   const b0 = b.length;
   if(!tierra && !(WEB && viajeHecho(r))){ const u = claveUna(r); b += p(T('Datos de su reservación aérea', C ? 14 : 16, G, 'bold'), C ? 'padding-top:8px;padding-bottom:2px' : 'padding-top:14px;padding-bottom:4px');
-    if(dos) b += p(T('Su viaje tiene dos claves de reserva distintas: la clave de ida aparece en su vuelo de ida y la clave de regreso en su vuelo de regreso.', C ? 11 : fs, INK)); else if(!r.ida && !r.reg && !r.c1 && !r.c2) b += p(T('Sus vuelos están en proceso de emisión. En cuanto estén confirmados verá aquí su clave de reserva y sus horarios.', C ? 11 : fs, INK)); else b += key(u.lab, u.k); }
+    if(dos) b += p(T('Su viaje tiene dos claves de reserva distintas: la clave de ida aparece en su vuelo de ida y la clave de regreso en su vuelo de regreso.', C ? 11 : fs, INK)); else if(!r.ida && !r.reg && !r.c1 && !r.c2) b += p(T('Sus vuelos están en proceso de emisión. En cuanto estén confirmados verá aquí su clave de reserva y sus horarios.', C ? 11 : fs, INK)); else if(!u.k || /^[\s\-–—]*$/.test(u.k)) b += p(T('Su clave de reserva se compartirá en cuanto esté confirmada.', C ? 11 : fs, INK)); else b += key(u.lab, u.k); }
   { const blkRows = rows => (rows || []).map(([k, v]) => `<tr><td valign="top" width="${C ? 104 : 120}" style="width:${C ? 104 : 120}px;padding:${C ? '0 6px 0 0' : '1px 8px 1px 0'}">${T(esc(k), C ? 10 : 12, MUT, 'bold')}</td><td style="padding:${C ? '0;line-height:1.25' : '1px 0;line-height:1.35'}">${T(esc(v).replace(B_HL, x => `<b style="color:${INK}">${x}</b>`), C ? 11 : 13, INK)}</td></tr>`).join('');
     const blk = (ic, t, inner) => `<tr><td style="padding:${C ? '3px 0' : '5px 0'}"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;border:1.5px solid #EBCB72;border-left:5px solid #E0A100;border-radius:8px;padding:${C ? '3px 9px' : '6px 11px'}">${T(ic + ' ' + esc(t.toUpperCase()), C ? 10 : 12, '#6B4A00', 'bold', 'Arial,sans-serif', 'letter-spacing:.5px')}<table cellpadding="0" cellspacing="0" style="margin-top:${C ? 1 : 2}px">${inner}</table></td></tr></table></td></tr>`;
     const verde = (tit, txt) => `<tr><td style="padding:${C ? '3px 0' : '5px 0'}"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#E3F1E7" style="background:#E3F1E7;border:2px solid ${G};border-radius:8px;padding:${C ? '4px 10px;line-height:1.3' : '8px 12px;line-height:1.4'}">${T(tit, C ? 12 : 14, G, 'bold')}<br>${T(txt, C ? 12 : fs, INK)}</td></tr></table></td></tr>`;
@@ -1487,6 +1487,54 @@ document.addEventListener('click', e => { const a = e.target.closest('a[data-mai
       .then(() => { msg.innerHTML = `<b>Se abrió el correo para ${esc(tcase(r.n))} y su itinerario ya está copiado con formato.</b> Haz clic en el cuerpo del mensaje y <b>pega</b> (Ctrl+V, ⌘V o mantén presionado › Pegar). Después dale Enviar.`; abrir(); })
       .catch(() => { location.href = a.href; });
   }catch(err){ location.href = a.href; }
+});
+
+/* Correo de INVITACIÓN: contexto de lo que se le considera (antes de confirmar). Calibri 11 para Outlook. */
+function invPartes(r){
+  const fl = l => l ? `${l.v} · ${fDia(l.f)} · ${AP[l.o] || l.o} ${l.s} h → ${AP[l.d] || l.d} ${l.l} h` : '';
+  const ida = [r.c1, r.ida].filter(Boolean), reg = [r.reg, r.c2].filter(Boolean), org = ida[0] ? (AP[ida[0].o] || ida[0].o) : '';
+  const L = [];
+  if(r.loc){
+    L.push('Su participación como <b>invitado local</b>: llegada por su cuenta a la sede del evento, con cita a las <b>12:00 h</b>.');
+    if(r.est) L.push('<b>Estacionamiento</b> considerado para usted en Torre Manacar.');
+  } else if(r.tc && !r.vu){
+    L.push(`<b>Traslado terrestre</b> desde ${esc(tcase(r.tc))} a la sede del evento (punto de encuentro y horario por confirmar).`);
+  } else {
+    L.push(`<b>Vuelo redondo</b>${org ? ' desde ' + esc(org) : ' desde su ciudad de origen'} a la Ciudad de México.` + (ida.length || reg.length ? ' Propuesta de vuelos:<br>&nbsp;<br>&nbsp;' : ' Su vuelo se encuentra en proceso de emisión.'));
+    L.push('<b>Boleto de avión</b> en clase turista.', '<b>Equipaje de mano</b> en cabina, máximo 15 kg.', '<b>Equipaje documentado</b>, máximo 25 kg.', '<b>Asientos asignados</b>.');
+    L.push('<b>Recepción</b> a su llegada al Aeropuerto de la Ciudad de México y <b>traslados</b> al evento.');
+  }
+  if(tieneHotel(r)) L.push(`<b>Hospedaje</b> 1 noche en el ${esc(HOTEL.n)} (check in 3 de diciembre · check out 4 de diciembre).`);
+  if(tieneHotel(r)) L.push(`<b>Resguardo de equipaje:</b> a su llegada a la Ciudad de México, su equipaje será resguardado en el ${esc(HOTEL.n)}, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; se le entregará a su regreso al hotel.`);
+  L.push('<b>Comida, actividad y cena</b> del evento.');
+  return L;
+}
+const fDia = f => { if(!f) return ''; const d = new Date(f + 'T12:00:00'); return ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][d.getDay()] + ' ' + d.getDate() + ' ' + ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]; };
+const conVueloInv = r => !r.loc && !!(r.vu || r.ida || r.reg || r.c1 || r.c2);
+function invHTML(r){
+  const F = 'font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#16301F;line-height:1.4', G = '#136c34';
+  const P = t => `<p style="margin:0 0 10px;${F}"><font face="Calibri">${t}</font></p>`;
+  const H = t => `<p style="margin:14px 0 6px;${F};font-weight:bold;color:${G}"><font face="Calibri" color="${G}"><b>${t}</b></font></p>`;
+  const UL = a => a.map(x => `<p style="margin:0 0 4px;text-align:left;${F}"><font face="Calibri">•&nbsp;${x}</font></p>`).join('') + `<p style="margin:0 0 6px;${F}">&nbsp;</p>`; // viñetas como texto: alineadas a la izquierda al pegar en Outlook
+  return `<div style="${F}">` +
+    P(`Estimado(a) <b>${esc(r.n)}</b>`) +
+    P('Por medio del presente, tenemos el gusto de invitarle a <b>ConoceMet by MetLife</b>, que se llevará a cabo el <b>jueves 3 de diciembre de 2026</b> en <b>MetLife Torre Manacar, piso 7</b> (Av. Insurgentes Sur 1457, esquina Río Mixcoac, Ciudad de México).') +
+    H('Para su participación le estamos considerando') + UL(invPartes(r)) +
+    (conVueloInv(r)
+      ? P('Si desea realizar algún cambio de fecha u horario posterior a su confirmación, esto generará un <b>cargo por cambio</b> y posiblemente <b>diferencia de tarifa</b>, los cuales tendrán que ser cubiertos por su parte.') +
+        P('Le recordamos que <b>MetLife</b> cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.') +
+        P('Esperamos su validación respondiendo con la siguiente leyenda: <b>“Estoy de acuerdo con el itinerario de vuelo, proceder con la compra”</b>.')
+      : '') + // terrestres y locales: su información se agrega aparte
+    '</div>';
+}
+const invTxt = r => invHTML(r).replace(/<br>/g, '\n').replace(/<\/(p|li)>/g, '\n').replace(/<li[^>]*>/g, '• ').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\n{3,}/g, '\n\n').trim();
+/* Copiar correo: data-cinv = invitación · data-cmail = confirmación con claves */
+document.addEventListener('click', e => { const b = e.target.closest('[data-cinv]'); if(!b) return; e.preventDefault();
+  const r = DATA[+b.dataset.cinv], msg = $('#cmsg2'), ok = () => { b.textContent = '✅'; setTimeout(() => { b.textContent = '📨'; }, 1800);
+    if(msg) msg.innerHTML = `<b>Invitación de ${esc(tcase(r.n))} copiada con formato.</b> Pégala (Ctrl+V, ⌘V o mantén presionado › Pegar) en el cuerpo del mensaje.`; };
+  const txt = () => { const t = document.createElement('textarea'); t.value = invTxt(r); document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); ok(); }catch(err){} t.remove(); };
+  try{ navigator.clipboard.write([new ClipboardItem({'text/html': new Blob([invHTML(r)], {type:'text/html'}), 'text/plain': new Blob([invTxt(r)], {type:'text/plain'})})]).then(ok, txt); }
+  catch(err){ txt(); }
 });
 /* Copiar el correo con formato (igual al que se envía) sin abrir la app de correo */
 document.addEventListener('click', e => { const b = e.target.closest('[data-cmail]'); if(!b) return; e.preventDefault();
@@ -2311,7 +2359,7 @@ addEventListener('DOMContentLoaded', () => Object.entries(VQ).forEach(([id, sel]
 /* Botones 📄 PDF, 💬 WhatsApp y ✉️ correo de una persona (Claves y Traslados y pernoctas) */
 function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}${TEL[n]
       ? `<a class="cwa" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(waTxt(DATA[i]))}" target="_blank" rel="noopener" title="Enviar por WhatsApp a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp a ${esc(tcase(n))}">💬</a>`
-      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}<button class="ccopy" type="button" data-cmail="${i}" title="Copiar el correo de ${esc(tcase(n))} (sin abrir el correo)" aria-label="Copiar correo de ${esc(tcase(n))}">📋</button></div></td>`; }
+      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Copiar correo de INVITACIÓN de ${esc(tcase(n))} (lo que se le considera, antes de confirmar)" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
 function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const c = {}; DATA.forEach(r => { const k = (r.rol || 'SIN ROL').toUpperCase(); c[k] = (c[k] || 0) + 1; });
   const orden = Object.keys(c).sort((a, b) => (/^STAFF/.test(a) - /^STAFF/.test(b)) || c[b] - c[a] || a.localeCompare(b, 'es'));
@@ -2840,7 +2888,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 415;
+const APP_V = 428;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}

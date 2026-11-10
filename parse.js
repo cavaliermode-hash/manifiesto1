@@ -101,6 +101,9 @@
     const ap = v => { const u = up(v ?? ''); return CITY[u] || u; };
     const leg = (r, m) => {
       if (!m || empty(r[m['VUELO']])) return null;
+      // Si en el Excel se capturaron al revés (fecha en VUELO y vuelo en FECHA), se acomodan.
+      { const fv = r[m['VUELO']], ff = r[m['FECHA']], esFecha = x => x instanceof Date || typeof x === 'number' || /^\d{1,4}[\/-]\d{1,2}[\/-]\d{1,4}/.test(String(x || '').trim());
+        if (esFecha(fv) && ff != null && /[A-Za-z]/.test(String(ff)) && !esFecha(ff)) { r = r.slice(); r[m['VUELO']] = ff; r[m['FECHA']] = fv; } }
       return { v: clean(r[m['VUELO']]).toUpperCase().replace(/VIVAAEROBUS/g, 'VIVA AEROBUS').replace(/\s+/g, ' ').replace(/^AM (?=\d)/, 'AEROMEXICO ').replace(/^Y4 (?=\d)/, 'VOLARIS ').replace(/^VB (?=\d)/, 'VIVA AEROBUS '), f: toDate(r[m['FECHA']]), o: ap(r[m['ORIGEN']]), d: ap(r[m['DESTINO']]),
                s: toTime(r[m['SALE']]), l: toTime(r[m['LLEGA']]) };
     };
