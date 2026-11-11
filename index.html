@@ -1001,7 +1001,7 @@ const porCuentaR = r => !!r.loc || (r.notas || []).some(n => n.k === 'tr' && /po
 const viajeTxt = r => porCuentaR(r) ? 'Llega por su cuenta a la sede del evento.' : 'Viaje por traslado terrestre.';
 const soloTierra = r => !r.ida && !r.reg && !r.c1 && !r.c2 && !r.vu && (r.loc || r.tc || /TERRESTRE/.test(r.st || '') || (r.notas || []).some(n => n.k === 'tr'));
 /* Hotel del evento: solo foráneos (con vuelo o con pernocta indicada en el Excel); los locales no llevan hospedaje */
-const tieneHotel = r => !r.loc && !!(r.vu || r.ida || r.reg || r.c1 || r.c2 || (r.notas || []).some(n => n.k === 'pe'));
+const tieneHotel = r => !r.loc && !!(r.pe || r.vu || r.ida || r.reg || r.c1 || r.c2 || (r.notas || []).some(n => n.k === 'pe'));
 function tierraBlock(r){
   const det = r.loc ? 'Participante local: llegas por tu cuenta a la sede del evento, MetLife Torre Manacar, piso 7.' + (r.est ? ' Tienes estacionamiento considerado en Torre Manacar.' : '') : porCuentaR(r) ? 'Llegas por tu cuenta a la sede del evento; revisa tus indicaciones especiales.' : (r.notas || []).some(n => n.k === 'tr') ? 'Revisa los detalles en tus indicaciones especiales.' : 'Tu viaje al evento es por traslado terrestre.';
   return `<div class="leg ida"><h4>${porCuentaR(r) ? 'Llega por su cuenta' : 'Traslado terrestre'}</h4><div class="none">${det}</div></div>`;
@@ -1497,7 +1497,7 @@ function invPartes(r){
   if(r.loc){
     L.push('Su participación como <b>invitado local</b>: llegada por su cuenta a la sede del evento, con cita a las <b>12:00 h</b>.');
     if(r.est) L.push('<b>Estacionamiento</b> considerado para usted en Torre Manacar.');
-  } else if(r.tc && !r.vu){
+  } else if(r.tc && !r.vu && !r.ida && !r.reg && !r.c1 && !r.c2){
     L.push(`<b>Traslado terrestre</b> desde ${esc(tcase(r.tc))} a la sede del evento (punto de encuentro y horario por confirmar).`);
   } else {
     L.push(`<b>Vuelo redondo</b>${org ? ' desde ' + esc(org) : ' desde su ciudad de origen'} a la Ciudad de México.` + (ida.length || reg.length ? ' Propuesta de vuelos:<br>&nbsp;<br>&nbsp;' : ' Su vuelo se encuentra en proceso de emisión.'));
@@ -2888,7 +2888,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 428;
+const APP_V = 429;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
