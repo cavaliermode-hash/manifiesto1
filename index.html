@@ -815,7 +815,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 </section>
 <section class="wrap ctl" id="cla" hidden>
   <h2 class="ct">Claves de reserva</h2>
-  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 envía la confirmación por WhatsApp, 📲 envía la <b>invitación</b> por WhatsApp, 📨 abre la <b>invitación</b> en Outlook con asunto y agenda adjunta y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
+  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 envía la confirmación por WhatsApp, 📲 envía la <b>invitación</b> por WhatsApp, 📨 copia la <b>invitación</b> con formato (con la agenda) y abre el correo con destinatario y asunto para pegarla y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
   <div class="rolbar" id="rolbar" role="group" aria-label="Filtrar por rol"></div>
   <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span id="cqn"></span></div>
   <div class="ktable-wrap"><table class="ktable ctab">
@@ -1635,22 +1635,15 @@ async function invEml(r){
 }
 document.addEventListener('click', async e => { const b = e.target.closest('[data-cinv]'); if(!b) return; e.preventDefault();
   const r = DATA[+b.dataset.cinv], msg = $('#cmsg2'), done = t => { b.textContent = '✅'; setTimeout(() => { b.textContent = '📨'; }, 1800); if(msg) msg.innerHTML = t; };
-  // Computadora: borrador .eml que Outlook clásico abre ya lleno (Para, Asunto, cuerpo con formato y agenda adjunta)
-  if(!matchMedia('(pointer:coarse)').matches){
-    try{
-      const eml = await invEml(r), url = URL.createObjectURL(new Blob([eml], {type: 'message/rfc822'})), a = document.createElement('a');
-      a.href = url; a.download = invAsunto(r).replace(/[\\/:*?"<>|]/g, '-') + '.eml'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 20000);
-      done(`<b>Invitación de ${esc(tcase(r.n))} lista.</b> Abre el archivo descargado (.eml): Outlook la muestra llena, con destinatario, asunto, formato y la agenda adjunta. Si el navegador pregunta, elige <b>Conservar</b>.`);
-      return;
-    }catch(err){ /* si falla, abre Outlook y copia la invitación */ }
-  }
-  const abrir = () => { location.href = `mailto:${encodeURIComponent(MAIL[r.n] || '')}?subject=${encodeURIComponent(invAsunto(r))}` + (CFG.cc ? '&cc=' + encodeURIComponent(CFG.cc) : ''); };
-  // Se abre Outlook (mailto) con destinatario y asunto; la invitación ya va copiada con formato y con la agenda al final.
-  const vImg = await vueloPropPNG(r).catch(() => '');
-  const conAgenda = invHTML(r, vImg) + `<p style="margin:12px 0 0"><img src="${new URL(AGENDA_ADJ, location.href).href}" width="640" alt="Agenda ConoceMet by MetLife" style="width:640px;max-width:100%;height:auto"></p>`;
-  const okCopia = () => { done(`<b>Se abrió Outlook con la invitación de ${esc(tcase(r.n))}</b> (destinatario y asunto listos). Haz clic en el cuerpo del correo y pega con <b>Ctrl+V</b> (en celular: mantén presionado › Pegar): se pega con formato y con la agenda.`); abrir(); };
-  try{ await navigator.clipboard.write([new ClipboardItem({'text/html': new Blob([conAgenda], {type:'text/html'}), 'text/plain': new Blob([invTxt(r)], {type:'text/plain'})})]); okCopia(); }
-  catch(err){ const t = document.createElement('textarea'); t.value = invTxt(r); document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); }catch(e2){} t.remove(); okCopia(); }
+  // Igual que el correo de confirmación: copia la invitación con formato (vuelos propuestos y agenda incluidos)
+  // y abre el correo con destinatario, copia y asunto. Solo hay que pegar (Ctrl+V, ⌘V o mantener presionado › Pegar) y enviar.
+  DLG = true; setTimeout(() => { DLG = false; awaySince = 0; }, 4000);
+  const mail = `mailto:${encodeURIComponent(MAIL[r.n] || '')}?` + (CFG.cc ? 'cc=' + encodeURIComponent(CFG.cc) + '&' : '') + `subject=${encodeURIComponent(invAsunto(r))}`;
+  const html = vueloPropPNG(r).catch(() => '').then(vImg => new Blob([invHTML(r, vImg) + `<p style="margin:12px 0 0"><img src="${new URL(AGENDA_ADJ, location.href).href}" width="640" alt="Agenda ConoceMet by MetLife" style="width:640px;max-width:100%;height:auto"></p>`], {type:'text/html'}));
+  const ok = () => { done(`<b>Se abrió el correo para ${esc(tcase(r.n))} y su invitación ya está copiada con formato.</b> Haz clic en el cuerpo del mensaje y <b>pega</b> (Ctrl+V, ⌘V o mantén presionado › Pegar). Después dale Enviar.`); location.href = mail; };
+  const soloTexto = () => { const t = document.createElement('textarea'); t.value = invTxt(r); document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); }catch(e2){} t.remove(); ok(); };
+  try{ navigator.clipboard.write([new ClipboardItem({'text/html': html, 'text/plain': new Blob([invTxt(r)], {type:'text/plain'})})]).then(ok, soloTexto); }
+  catch(err){ soloTexto(); }
 });
 /* Copiar el correo con formato (igual al que se envía) sin abrir la app de correo */
 document.addEventListener('click', e => { const b = e.target.closest('[data-cmail]'); if(!b) return; e.preventDefault();
@@ -2514,7 +2507,7 @@ addEventListener('DOMContentLoaded', () => Object.entries(VQ).forEach(([id, sel]
 /* Botones 📄 PDF, 💬 WhatsApp y ✉️ correo de una persona (Claves y Traslados y pernoctas) */
 function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}${TEL[n]
       ? `<a class="cwa" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(waTxt(DATA[i]))}" target="_blank" rel="noopener" title="Enviar por WhatsApp a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp a ${esc(tcase(n))}">💬</a>`
-      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${TEL[n] ? `<a class="cwa cwainv" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(invWa(DATA[i]))}" target="_blank" rel="noopener" title="WhatsApp de INVITACIÓN a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp de invitación a ${esc(tcase(n))}">📲</a>` : ''}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Correo de INVITACIÓN de ${esc(tcase(n))}: abre en Outlook con asunto, destinatario y la agenda adjunta" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
+      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${TEL[n] ? `<a class="cwa cwainv" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(invWa(DATA[i]))}" target="_blank" rel="noopener" title="WhatsApp de INVITACIÓN a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp de invitación a ${esc(tcase(n))}">📲</a>` : ''}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Correo de INVITACIÓN de ${esc(tcase(n))}: se copia con formato para pegarla en el correo" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
 function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const c = {}; DATA.forEach(r => { const k = (r.rol || 'SIN ROL').toUpperCase(); c[k] = (c[k] || 0) + 1; });
   const orden = Object.keys(c).sort((a, b) => (/^STAFF/.test(a) - /^STAFF/.test(b)) || c[b] - c[a] || a.localeCompare(b, 'es'));
@@ -3049,7 +3042,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 465;
+const APP_V = 466;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
