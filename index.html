@@ -16,7 +16,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Manifiesto">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Manifiesto · ConoceMet by MetLife</title>
+<title>Itinerarios de viaje · Evento ConoceMet by MetLife</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" media="print" onload="this.media='all'">
@@ -756,12 +756,16 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 .agv-wait{position:relative;max-width:520px;margin:40px auto!important;padding:56px 16px!important;border-radius:14px;background:linear-gradient(100deg,var(--green-soft) 30%,#F4FBF6 50%,var(--green-soft) 70%);background-size:220% 100%;animation:shimmer 1.4s linear infinite}
 @keyframes shimmer{from{background-position:120% 0}to{background-position:-120% 0}}
 @media (prefers-reduced-motion:reduce){.vbar i,.cfl.flash .cfh,.agv-wait{animation:none!important}.prow-b,.abtn2{transition:none!important}}
+.disc{margin:2px 0 0;font:500 11.5px/1.3 var(--body);color:var(--muted)}
+@media (max-width:560px){.disc{font-size:10px}}
 </style>
 </head>
 <body>
 <header class="board">
   <div class="wrap">
+    <p class="eyebrow">Itinerarios de viaje de los invitados</p>
     <h1>CONOCEMET BY METLIFE</h1>
+    <p class="disc">Sitio informativo de la agencia de viajes que coordina el evento · No es un sitio oficial de MetLife</p>
     <div class="sub" id="upd" hidden></div>
     <nav class="tabs" role="tablist" aria-label="Apartados">
       <button role="tab" data-tab="man" aria-selected="true">Manifiesto</button>
@@ -940,7 +944,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     <details><summary>¿Cómo identifico mi traslado en el aeropuerto?</summary><p>A tu llegada al aeropuerto, localiza el <b>logo de MetLife</b>: habrá <b>staff apoyando</b> para trasladarte a la sede del evento.</p></details>
     <details><summary>¿Cómo llego a mi vuelo de regreso?</summary><p>El <b>Hotel NH T2 Aeropuerto</b> está dentro de la <b>Terminal 2</b> del Aeropuerto de la Ciudad de México. Si tu vuelo sale de la <b>Terminal 1</b>, puedes cambiar de terminal en el <b>Aerotrén</b>.</p></details>
   </section>
-  <p class="foot"><a href="privacidad.html" style="color:inherit">Aviso de privacidad</a></p>
+  <p class="foot">Sitio informativo operado por la agencia de viajes que coordina el evento ConoceMet by MetLife para que sus invitados consulten su itinerario. No es un sitio oficial de MetLife ni de ninguna aerolínea, y no solicita contraseñas de otros servicios ni datos de pago. · <a href="privacidad.html" style="color:inherit">Aviso de privacidad</a></p>
 </main>
 
 <div id="agv" class="agv" role="dialog" aria-modal="true" aria-label="Agenda del evento" hidden>
@@ -1085,7 +1089,7 @@ function hotelInfo(r){
   const ida = [r.c1, r.ida].filter(Boolean), reg = [r.reg, r.c2].filter(Boolean);
   const lleg = ida.find(l => l.d === EV_AP) || ida[ida.length - 1], sal = reg.find(l => l.o === EV_AP) || reg[0];
   const notas = [];
-  if(lleg && lleg.f < HOTEL.ci) notas.push(`Su vuelo llega a la Ciudad de México el ${fLarga(lleg.f)} a las ${lleg.l} h, antes del check in del hotel (03 de diciembre).`);
+  if(lleg && lleg.f < HOTEL.ci && !(r.notas || []).some(n => n.k === 'pe')) notas.push(`Su vuelo llega a la Ciudad de México el ${fLarga(lleg.f)} a las ${lleg.l} h, antes del check in del hotel (03 de diciembre).`);
   if(sal && sal.f > HOTEL.co) notas.push(`Su vuelo de regreso sale de la Ciudad de México el ${fLarga(sal.f)} a las ${sal.s} h, después del check out del hotel (04 de diciembre).`);
   // dentro de las fechas del evento (3 al 5 nov) todo aplica: solo se avisa si llega antes del 3 o regresa después del 5
   return {lines, nota: notas.length ? notas.join(' ') + ' ' + (esLocal(r) ? impTxt(r) : MET) : ''};
@@ -1099,7 +1103,8 @@ function aeroHTML(r){ if(soloTierra(r)) return ''; let x = '';
   return x ? `<section class="aerobox" aria-label="Aeropuerto">${x}</section>` : ''; }
 /* Indicaciones especiales en bloques claros: cada traslado o pernocta se separa en un recuadro con sus datos clave
    (fecha y hora, dónde le recogen, dirección, destino, vuelo). Si un texto no coincide con ningún formato, se muestra tal cual. */
-const rango = (a, b) => { const x = a.match(/^(.+?) de (\w+)$/), y = b.match(/^(.+?) de (\w+)$/); return 'Del ' + (x && y && x[2] === y[2] ? x[1] : a) + ' al ' + b; };
+const rango = (a, b) => { const dia = t => { const f = isoDe(t); return f ? ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][new Date(f + 'T12:00:00').getDay()] + ' ' : ''; };
+  const x = a.match(/^(.+?) de (\w+)$/), y = b.match(/^(.+?) de (\w+)$/); return 'Del ' + dia(a) + (x && y && x[2] === y[2] ? x[1] : a) + ' al ' + dia(b) + b; };
 function notaBloques(r){
   const ida = [], pern = [], reg = [], otros = [];
   (r.notas || []).forEach(n => { const t = n.t; let m;
@@ -1545,6 +1550,7 @@ function invHTML(r, vImg){
   } else {
     b += vImg ? p(`<img src="${vImg}" width="640" alt="Propuesta de vuelos" style="width:640px;max-width:100%;height:auto;display:block;border:0">`) : ida.length || r.reg ? p('&nbsp;') + p('&nbsp;') : p(T('Su vuelo se encuentra en proceso de emisión.'));
     b += blk('🧳', 'Su vuelo incluye', [['Boleto de avión', 'Clase <b>turista</b>'], ['Equipaje de mano', 'En cabina, máximo <b>15 kg</b>'], ['Equipaje documentado', 'Máximo <b>25 kg</b>'], ['Asientos', '<b>Asignados</b>']]);
+    if((r.notas || []).some(n => n.k === 'pe')) b += blk('🏨', 'Pernocta a su llegada', [['Periodo', '<b>Del miércoles 2 al jueves 3 de diciembre</b> (1 noche)'], ['Hotel', 'Hotel NH Collection Mexico City Airport T2'], ['Check-in', '<b>2 de diciembre</b>'], ['Check-out', '<b>3 de diciembre</b>']]);
     b += verde('📍 Recepción en el Aeropuerto de la Ciudad de México', '<b>Recepción a su llegada</b> y <b>traslado a la sede del evento</b> (<b>MetLife Torre Manacar, piso 7</b>).');
   }
   if(hotel) b += blk('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será <b>resguardado en el ${esc(HOTEL.n)}</b>, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; <b>se le entregará a su regreso al hotel</b>.`]]);
@@ -2982,7 +2988,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 454;
+const APP_V = 455;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
