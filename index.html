@@ -576,7 +576,7 @@ header.board #upd:not(:empty)::before{content:" · "}
 .hero3{display:grid;grid-template-columns:1fr;gap:0;align-items:center;padding:22px 24px;border:1px solid var(--line);border-radius:16px;
   background:radial-gradient(120% 140% at 100% 0%,#FFF1E8 0%,rgba(255,241,232,0) 45%),linear-gradient(135deg,#E6F2EA 0%,#F7FAF8 70%);box-shadow:0 8px 24px rgba(19,108,52,.07)}
 .h3eye{display:inline-block;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--acc,#C2410C)}
-.h3t{margin:0 0 8px;font:700 clamp(26px,4.2vw,38px)/1.05 var(--display);color:var(--green-dark);letter-spacing:-.01em;text-wrap:balance}
+.h3t{margin:0 0 8px;font:700 clamp(21px,3.2vw,28px)/1.05 var(--display);color:var(--green-dark);letter-spacing:-.01em;text-wrap:balance}
 .hero3 p{margin:0;color:var(--ink);font-size:15.5px;line-height:1.55;max-width:none;text-align:left}
 .hero3 .h3t{text-align:left}
 .h3chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
@@ -869,7 +869,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 <div class="wrap qhint-w"><div id="qhint" class="qhint hero3" hidden>
   <div class="h3txt">
     <h2 class="h3t">Consulta tu itinerario</h2>
-    <p><b>Escribe tu nombre completo</b> (nombres y apellidos) para ver tus vuelos, traslados y hospedaje.</p>
+    <p><b>Escriba su nombre completo</b> (nombre(s) y apellidos) para consultar sus vuelos, traslados y hospedaje. Puede escribirlo con o sin acentos y con «ñ» o «n»; el resultado será el mismo.</p>
   </div>
 </div></div>
 <div class="controls">
@@ -1003,7 +1003,7 @@ const soloTierra = r => !r.ida && !r.reg && !r.c1 && !r.c2 && !r.vu && (r.loc ||
 /* Hotel del evento: solo foráneos (con vuelo o con pernocta indicada en el Excel); los locales no llevan hospedaje */
 const tieneHotel = r => !r.loc && !!(r.pe || r.vu || r.ida || r.reg || r.c1 || r.c2 || (r.notas || []).some(n => n.k === 'pe'));
 function tierraBlock(r){
-  const det = r.loc ? 'Participante local: llegas por tu cuenta a la sede del evento, MetLife Torre Manacar, piso 7.' + (r.est ? ' Tienes estacionamiento considerado en Torre Manacar.' : '') : porCuentaR(r) ? 'Llegas por tu cuenta a la sede del evento; revisa tus indicaciones especiales.' : (r.notas || []).some(n => n.k === 'tr') ? 'Revisa los detalles en tus indicaciones especiales.' : 'Tu viaje al evento es por traslado terrestre.';
+  const det = r.loc ? 'Participante local: tu cita es a las 12:00 h en MetLife Torre Manacar, piso 7. Aplica estacionamiento en Torre Manacar.' : porCuentaR(r) ? 'Llegas por tu cuenta a la sede del evento; revisa tus indicaciones especiales.' : (r.notas || []).some(n => n.k === 'tr') ? 'Revisa los detalles en tus indicaciones especiales.' : 'Tu viaje al evento es por traslado terrestre.';
   return `<div class="leg ida"><h4>${porCuentaR(r) ? 'Llega por su cuenta' : 'Traslado terrestre'}</h4><div class="none">${det}</div></div>`;
 }
 /* Tarjetas de vuelo: Ida / Regreso con horas grandes, duración y conexión. */
@@ -1061,7 +1061,7 @@ const MESL = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
 const fLarga = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if(!m) return iso || ''; const d = new Date(Date.UTC(+m[1], m[2]-1, +m[3])); return `${DIAL[d.getUTCDay()]} ${+m[3]} de ${MESL[m[2]-1]}`; };
 /* Locales de Hermosillo que llegan por su cuenta (con estacionamiento): MetLife solo cubre las noches de hotel */
 const esLocal = r => (r.notas || []).some(n => n.k === 'tr' && /por tu cuenta/i.test(n.t) && /estacionamiento/i.test(n.t));
-const impTxt = r => r.loc ? 'Le recordamos que su llegada y regreso a la sede del evento son por su cuenta.' : esLocal(r) ? 'Le recordamos que MetLife cubre únicamente las noches de hotel.' : 'Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.';
+const impTxt = r => r.loc ? 'Le recordamos que su cita es a las 12:00 h en MetLife Torre Manacar, piso 7, y que aplica estacionamiento en Torre Manacar.' : esLocal(r) ? 'Le recordamos que MetLife cubre únicamente las noches de hotel.' : 'Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.';
 const MET = 'Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.';
 // Excepciones confirmadas por el equipo (noches adicionales pagadas por el invitado, etc.)
 const HOTEL_EXC = {};
@@ -1109,7 +1109,7 @@ function notaBloques(r){
     if(n.k === 'tr' && (m = t.match(/^Traslado terrestre desde (.+?) a la sede del evento\. Te compartiremos/))){
       ida.push({i:'🚐', t:'Traslado terrestre', rows:[['Fecha', 'Jueves 3 de diciembre'], ['Desde', m[1]], ['Destino', 'Sede del evento: MetLife Torre Manacar, piso 7'], ['Punto de encuentro y horario', 'Se los compartiremos próximamente']]}); return; }
     if(n.k === 'tr' && r.loc){
-      ida.push({i:'🚙', t:'Llegada por su cuenta', rows:[['Fecha', 'Jueves 3 de diciembre'], ['Llegada', 'Por su cuenta a la sede del evento: MetLife Torre Manacar, piso 7 (Av. Insurgentes Sur 1457, esquina Río Mixcoac)'], ['Cita', '12:00 h · participantes locales'], ['Regreso', 'Por su cuenta, al terminar el evento']].concat(r.est ? [['Estacionamiento', 'Considerado para usted en Torre Manacar']] : [])}); return; }
+      ida.push({i:'🅿️', t:'Asistencia al evento', rows:[['Fecha', 'Jueves 3 de diciembre'], ['Sede', 'MetLife Torre Manacar, piso 7 (Av. Insurgentes Sur 1457, esquina Río Mixcoac)'], ['Cita', '12:00 h'], ['Estacionamiento', 'Aplica en Torre Manacar']]}); return; }
     if(n.k === 'tr' && /por tu cuenta/i.test(t)){
       ida.push({i:'🚙', t:'Llegada por su cuenta', rows:[['Periodo', 'Jueves 3 de diciembre'], ['Llegada', 'Jueves 3 de diciembre, por su cuenta, directo a la sede del evento (MetLife Torre Manacar, piso 7, Ciudad de México)'], ['Regreso', 'Jueves 3 de diciembre, por su cuenta, al terminar el evento']]}); return; }
     if(n.k === 'tr' && (m = t.match(/solo a tu regreso: el (.+?) te llevamos del (.+?) al (aeropuerto de [A-ZÁÉÍÓÚa-záéíóúñ ]+?) para tu vuelo (.+?) \(salida ([\d:]+) h\)\.(?: A tu llegada el (.+?) no aplica traslado (.+?)\.)?/))){
@@ -1156,9 +1156,9 @@ function lineaTiempo(r){
     if(/por su cuenta$/.test(b.t) && val(R, 'Fecha')){ const f = isoDe(val(R, 'Fecha')), lr = legsR.find(x => x.f === f && x.d === 'MEX');
       add(f, b.t.startsWith('Llegada') ? '22:00' : (lr ? minDe(lr.l) + 1 : '17:00'), {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'Traslado terrestre'){ add(HOTEL.ci, '08:00', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
-    if(b.t === 'Llegada por su cuenta' && r.loc){
-      add(HOTEL.ci, '11:59', {tipo: 'blk', i: '🚙', t: 'Llegada por su cuenta', rows: R.filter(x => x[0] !== 'Regreso')});
-      add(HOTEL.ci, '23:01', {tipo: 'blk', i: '🚙', t: 'Regreso por su cuenta', rows: [['Regreso', val(R, 'Regreso')]]}); return; }
+    if(b.t === 'Asistencia al evento' && r.loc){
+      add(HOTEL.ci, '11:59', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
+
     if(b.t === 'Llegada por su cuenta'){
       add(HOTEL.ci, '14:00', {tipo: 'blk', i: '🚙', t: 'Llegada por su cuenta', rows: R.filter(x => x[0] !== 'Regreso')});
       add(HOTEL.co, '12:30', {tipo: 'blk', i: '🚙', t: 'Regreso por su cuenta', rows: [['Regreso', val(R, 'Regreso')]]}); return; }
@@ -1512,22 +1512,54 @@ function invPartes(r){
 const fDia = f => { if(!f) return ''; const d = new Date(f + 'T12:00:00'); return ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][d.getDay()] + ' ' + d.getDate() + ' ' + ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]; };
 const conVueloInv = r => !r.loc && !!(r.vu || r.ida || r.reg || r.c1 || r.c2);
 function invHTML(r){
-  const F = 'font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#16301F;line-height:1.4', G = '#136c34';
-  const P = t => `<p style="margin:0 0 10px;${F}"><font face="Calibri">${t}</font></p>`;
-  const H = t => `<p style="margin:14px 0 6px;${F};font-weight:bold;color:${G}"><font face="Calibri" color="${G}"><b>${t}</b></font></p>`;
-  const UL = a => a.map(x => `<p style="margin:0 0 4px;text-align:left;${F}"><font face="Calibri">•&nbsp;${x}</font></p>`).join('') + `<p style="margin:0 0 6px;${F}">&nbsp;</p>`; // viñetas como texto: alineadas a la izquierda al pegar en Outlook
-  return `<div style="${F}">` +
-    P(`Estimado(a) <b>${esc(r.n)}</b>`) +
-    P('Por medio del presente, tenemos el gusto de invitarle a <b>ConoceMet by MetLife</b>, que se llevará a cabo el <b>jueves 3 de diciembre de 2026</b> en <b>MetLife Torre Manacar, piso 7</b> (Av. Insurgentes Sur 1457, esquina Río Mixcoac, Ciudad de México).') +
-    H('Para su participación le estamos considerando') + UL(invPartes(r)) +
-    (conVueloInv(r)
-      ? P('Si desea realizar algún cambio de fecha u horario posterior a su confirmación, esto generará un <b>cargo por cambio</b> y posiblemente <b>diferencia de tarifa</b>, los cuales tendrán que ser cubiertos por su parte.') +
-        P('Le recordamos que <b>MetLife</b> cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.') +
-        P('Esperamos su validación respondiendo con la siguiente leyenda: <b>“Estoy de acuerdo con el itinerario de vuelo, proceder con la compra”</b>.')
-      : '') + // terrestres y locales: su información se agrega aparte
-    '</div>';
+  // Mismo formato y colores que el correo de confirmación (Calibri 11 pt, barras verdes, bloques y aviso amarillo)
+  const MUT = '#5C6B80', INK = '#16301F', G = '#136c34';
+  const T = (t, c = INK, w = 'normal', extra = '') => { const x = `<font color="${c}" face="Calibri" size="2"><span style="font-family:Calibri,Arial,sans-serif;font-size:11pt;font-weight:${w};color:${c};${extra}">${t}</span></font>`; return w === 'bold' ? `<b>${x}</b>` : x; };
+  const p = (t, st = '') => `<tr><td style="font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.45;color:${INK};${st}">${t}</td></tr>`;
+  const h2 = t => `<tr><td style="padding:16px 0 6px"><table cellpadding="0" cellspacing="0"><tr><td width="4" bgcolor="${G}" style="background:${G};width:4px">&nbsp;</td><td style="padding-left:8px">${T(t.toUpperCase(), G, 'bold', 'letter-spacing:.5px')}</td></tr></table></td></tr>`;
+  const rows = R => R.map(([k, v]) => `<tr><td valign="top" width="150" style="width:150px;padding:1px 8px 1px 0">${T(k, MUT, 'bold')}</td><td style="padding:1px 0;line-height:1.35">${T(v)}</td></tr>`).join('');
+  const blk = (ic, t, R) => `<tr><td style="padding:5px 0"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;border:1.5px solid #EBCB72;border-left:5px solid #E0A100;border-radius:8px;padding:6px 11px">${T(ic + ' ' + t.toUpperCase(), '#6B4A00', 'bold', 'letter-spacing:.5px')}<table cellpadding="0" cellspacing="0" style="margin-top:2px">${rows(R)}</table></td></tr></table></td></tr>`;
+  const verde = (tit, txt) => `<tr><td style="padding:5px 0"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#E3F1E7" style="background:#E3F1E7;border:2px solid ${G};border-radius:8px;padding:8px 12px;line-height:1.4">${T(tit, G, 'bold')}<br>${T(txt)}</td></tr></table></td></tr>`;
+  const imp = t => `<tr><td style="padding-top:12px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFF7E6" style="background:#FFF7E6;border-left:4px solid #E0A100;padding:10px 14px;line-height:1.4">${t}</td></tr></table></td></tr>`;
+  const ida = [r.c1, r.ida].filter(Boolean), org = ida[0] ? (AP[ida[0].o] || ida[0].o) : '', vuelo = conVueloInv(r), hotel = tieneHotel(r);
+  let b = p(`${T('Estimado(a)', MUT)} ${T(esc(r.n.toUpperCase()), INK, 'bold')}`, 'padding-top:12px');
+  const SEDE = 'que se llevará a cabo el <b>jueves 3 de diciembre de 2026</b> en <b>MetLife Torre Manacar, piso 7</b> (Av. Insurgentes Sur 1457, esquina Río Mixcoac, Ciudad de México).';
+  b += p(T('Esperando se encuentre bien, reciba un cordial saludo' + (CFG.yo ? `, mi nombre es <b>${esc(CFG.yo)}</b>.` : '.')), 'padding-top:4px');
+  b += p(T((CFG.ag ? `Le escribo de <b>${esc(CFG.ag)}</b> en representación de <b>MetLife</b>` : 'Le escribimos en representación de <b>MetLife</b>') + ' para dar seguimiento a su participación al evento <b>ConoceMet by MetLife</b>, ' + SEDE), 'padding-top:8px;padding-bottom:4px');
+  if(r.loc){ // Locales: texto propio, con agenda adjunta
+    b += h2('Detalles de su participación');
+    b += p(T('A continuación, le presentamos los detalles que <b>MetLife</b> estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.'), 'padding-bottom:4px');
+    b += blk('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', '<b>Los días del evento</b> · Torre Manacar'], ['Hospedaje', '<b>No aplica</b>']]);
+    b += verde('📅 Cita', 'Jueves 3 de diciembre a las <b>12:00 h</b> · MetLife Torre Manacar, piso 7.');
+    b += imp(T('Le agradecería una confirmación de recepción de este mensaje.', INK, 'bold'));
+    b += p(T('Si necesita más información o tiene preguntas específicas, no dude en ponerse en contacto.'), 'padding-top:8px');
+    b += p(T('Continúo a sus órdenes.'), 'padding-top:8px') + p(T('Saludos cordiales,'), 'padding-top:8px');
+    return `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;max-width:1000px;font-family:Calibri,Arial,sans-serif;font-size:11pt;background:#ffffff">${b}</table>`;
+  }
+  b += h2(vuelo ? 'Para su participación le estamos considerando - Propuesta de vuelos' : 'Para su participación le estamos considerando');
+  // Orden cronológico: llegada → vuelo/traslado → recepción → resguardo de equipaje → evento → traslado al hotel → hospedaje → regreso
+  const tc = !vuelo && r.tc ? esc(tcase(r.tc)) : '';
+  const reg = [r.reg, r.c2].filter(Boolean), regF = reg[0] ? fDia(reg[0].f).replace(/^(\w+) (\d+) (\w+)$/, '$1 $2 $3') : 'Viernes 4 dic';
+  if(tc){
+    b += blk('🚐', 'Traslado terrestre de llegada', [['Fecha', '<b>Jueves 3 de diciembre</b>'], ['Desde', '<b>' + tc + '</b>'], ['Hacia', 'Sede del evento: <b>MetLife Torre Manacar, piso 7</b>'], ['Punto de encuentro y horario', 'Por confirmar']]);
+  } else {
+    b += ida.length || r.reg ? p('&nbsp;') + p('&nbsp;') : p(T('Su vuelo se encuentra en proceso de emisión.'));
+    b += blk('🧳', 'Su vuelo incluye', [['Boleto de avión', 'Clase <b>turista</b>'], ['Equipaje de mano', 'En cabina, máximo <b>15 kg</b>'], ['Equipaje documentado', 'Máximo <b>25 kg</b>'], ['Asientos', '<b>Asignados</b>']]);
+    b += verde('📍 Recepción en el Aeropuerto de la Ciudad de México', '<b>Recepción a su llegada</b> y <b>traslado a la sede del evento</b> (<b>MetLife Torre Manacar, piso 7</b>).');
+  }
+  if(hotel) b += blk('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será <b>resguardado en el ${esc(HOTEL.n)}</b>, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; <b>se le entregará a su regreso al hotel</b>.`]]);
+  if(hotel) b += blk('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '<b>Check in 3 dic</b> · <b>Check out 4 dic</b> · 1 noche']]);
+  b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
+  if(hotel) b += verde('🚐 Traslado al hotel', 'Al terminar la cena, a las <b>23:00 h</b>, traslado al <b>Hotel NH T2 Aeropuerto</b>.');
+  if(tc) b += blk('🚐', 'Traslado terrestre de regreso', [['Desde', '<b>' + (hotel ? esc(HOTEL.n) : 'Sede del evento') + '</b>'], ['Hacia', '<b>' + tc + '</b>'], ['Horario', 'Se le compartirá <b>al finalizar el evento</b>']]);
+  else b += verde('✈️ Vuelo de regreso', 'El <b>Hotel NH T2 Aeropuerto</b> está dentro de la <b>Terminal 2</b> del aeropuerto; si su vuelo sale de la <b>Terminal 1</b>, puede cambiar de terminal en el <b>Aerotrén</b>.');
+  if(vuelo){
+    b += imp(T('Importante.- ', INK, 'bold') + T('Si desea realizar algún cambio de fecha u horario posterior a su confirmación, esto generará un <b>cargo por cambio</b> y posiblemente <b>diferencia de tarifa</b>, los cuales tendrán que ser cubiertos por su parte.') + '<br><br>' + T('Le recordamos que <b>MetLife</b> cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.'));
+    b += p(T('Esperamos su validación respondiendo con la siguiente leyenda: <b>“Estoy de acuerdo con el itinerario de vuelo, proceder con la compra”</b>.'), 'padding-top:12px');
+  }
+  return `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;max-width:1000px;font-family:Calibri,Arial,sans-serif;font-size:11pt;background:#ffffff">${b}</table>`;
 }
-const invTxt = r => invHTML(r).replace(/<br>/g, '\n').replace(/<\/(p|li)>/g, '\n').replace(/<li[^>]*>/g, '• ').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\n{3,}/g, '\n\n').trim();
+const invTxt = r => invHTML(r).replace(/<br>/g, '\n').replace(/<table/g, '\n<table').replace(/<\/(p|li|tr)>/g, '\n').replace(/<\/td><td[^>]*>/g, ' ').replace(/<li[^>]*>/g, '• ').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\n{3,}/g, '\n\n').trim();
 /* Copiar correo: data-cinv = invitación · data-cmail = confirmación con claves */
 document.addEventListener('click', e => { const b = e.target.closest('[data-cinv]'); if(!b) return; e.preventDefault();
   const r = DATA[+b.dataset.cinv], msg = $('#cmsg2'), ok = () => { b.textContent = '✅'; setTimeout(() => { b.textContent = '📨'; }, 1800);
@@ -2648,8 +2680,8 @@ function askPw(msg){
 const Staff_MIN = 60, Staff_MS = Staff_MIN * 60000;
 const stfSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('stf') || 'null'); return v && Date.now() - v.t < Staff_MS ? v : null; }catch(e){ return null; } };
 const stfSave = pw => { try{ sessionStorage.setItem('stf', JSON.stringify({pw: pw || (stfSes() || {}).pw || '', t: Date.now()})); }catch(e){} };
-const stfEnd = () => { try{ sessionStorage.removeItem('stf'); }catch(e){} TEL = {}; MAIL = {}; DATA = DATA.filter(r => !r.staff); };
-async function stfTel(pw){ if(PACK && PACK.tel && !Object.keys(TEL).length){ try{ const c = await Cifra.descifrar(PACK.tel, pw); TEL = c.tel || {}; MAIL = c.mail || {}; staffAdd(c.staff || []); }catch(e){ TEL = {}; MAIL = {}; } } }
+const stfEnd = () => { try{ sessionStorage.removeItem('stf'); }catch(e){} TEL = {}; MAIL = {}; CFG = {}; DATA = DATA.filter(r => !r.staff); };
+async function stfTel(pw){ if(PACK && PACK.tel && !Object.keys(TEL).length){ try{ const c = await Cifra.descifrar(PACK.tel, pw); TEL = c.tel || {}; MAIL = c.mail || {}; CFG = c.cfg || {}; staffAdd(c.staff || []); }catch(e){ TEL = {}; MAIL = {}; } } }
 /* Staff: viene protegido con la contraseña Staff y solo se agrega a las pestañas de Staff (no al buscador público ni a Traslados y pernoctas) */
 const stTag = n => { const r = DATA.find(x => x.staff && x.n === n); return r ? rolTag(r.rol || 'STAFF') : ''; }; // staff: mismo formato que los demás roles
 function staffAdd(L){ DATA = DATA.filter(r => !r.staff); L.forEach(r => { r.staff = true; r._w = new Set(norm(r.n).split(/\s+/).filter(Boolean)); r._n = norm(r.n); DATA.push(r); }); }
@@ -2663,7 +2695,7 @@ async function conGate(msg){
   await stfTel(pw);
   return true;
 }
-let TEL = {}, MAIL = {}, REP = null;
+let TEL = {}, MAIL = {}, REP = null, CFG = {}; // CFG: datos solo para staff (agencia y nombre en las invitaciones)
 /* Reporte: datos cifrados aparte con su propia contraseña; se pide al entrar y queda abierto hasta recargar la página */
 const repSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('repses') || 'null'); return v && Date.now() - v.t < Staff_MS ? v : null; }catch(e){ return null; } };
 const repSave = pw => { try{ sessionStorage.setItem('repses', JSON.stringify({pw: pw || (repSes() || {}).pw || '', t: Date.now()})); }catch(e){} };
@@ -2888,7 +2920,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 429;
+const APP_V = 445;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
