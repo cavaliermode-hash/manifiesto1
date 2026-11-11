@@ -673,7 +673,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 #atoast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:3000;display:grid;gap:8px;width:min(94vw,460px);pointer-events:none}
 #atoast div{pointer-events:auto;background:#0C4F23;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 6px 18px rgba(0,0,0,.25);font:500 14px/1.4 var(--body);cursor:pointer;animation:rise .25s ease both}
 #atoast div b{display:block;font-weight:700;font-size:15px}
-.cview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}@media (max-width:640px){.cview{grid-template-columns:repeat(2,minmax(0,1fr))}}.cview{gap:6px;margin:6px 0}.cview button{font:700 13px var(--body);border:1.5px solid var(--green);background:#fff;color:var(--green);border-radius:9px;padding:8px 6px;cursor:pointer}
+.cview{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 0;width:100%}.cview button{flex:1 1 0;min-width:0;white-space:nowrap;text-align:center;font:700 14px var(--body);border:1.5px solid var(--green);background:#fff;color:var(--green);border-radius:999px;padding:9px 10px;line-height:1.2;cursor:pointer}@media (max-width:640px){.cview{gap:5px}.cview button{flex:1 1 calc(25% - 5px);font-size:12px;padding:8px 4px}}
 .cview button[aria-pressed="true"]{background:var(--green);color:#fff}
 #cout .cfh{cursor:pointer;position:relative;padding-right:30px}#cout .cfh::after{content:"▾";position:absolute;right:11px;top:10px;font-size:15px;color:var(--green);transition:transform .15s}
 #cout.solo .cfl:not(.tg) .cnames,#cout:not(.solo) .cfl.tg .cnames{display:none}
@@ -815,7 +815,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 </section>
 <section class="wrap ctl" id="cla" hidden>
   <h2 class="ct">Claves de reserva</h2>
-  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 lo envía por WhatsApp 📨 abre la <b>invitación</b> en Outlook con asunto y agenda adjunta y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
+  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 envía la confirmación por WhatsApp, 📲 envía la <b>invitación</b> por WhatsApp, 📨 abre la <b>invitación</b> en Outlook con asunto y agenda adjunta y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
   <div class="rolbar" id="rolbar" role="group" aria-label="Filtrar por rol"></div>
   <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span id="cqn"></span></div>
   <div class="ktable-wrap"><table class="ktable ctab">
@@ -851,7 +851,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
   <p class="cs" id="ct-s"></p>
   <div class="csearch"><input id="lq" class="vq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span class="vqn"></span></div>
   <div class="cfase" id="cfase" role="tablist" aria-label="Estado de los vuelos"></div>
-  <div class="cview" id="cview" role="group" aria-label="Vista"><button type="button" data-cv="all">🕒 Ver todo por horario</button><button type="button" data-cv="todo">👥 Desplegar nombres</button><button type="button" data-cv="vue">✈️ Ver solo vuelos</button><button type="button" data-cv="tra">🚐 Ver solo traslados</button><button type="button" data-cv="dir">🛫 Ver vuelos sin conexiones</button><button type="button" data-cv="cx">🔁 Ver solo conexiones</button></div>
+  <div class="cview" id="cview" role="group" aria-label="Vista"><button type="button" data-cv="all" title="Ver todo por horario">🕒 Todo</button><button type="button" data-cv="todo" title="Desplegar nombres">👥 Nombres</button><button type="button" data-cv="vue" title="Ver solo vuelos">✈️ Vuelos</button><button type="button" data-cv="tra" title="Ver solo traslados">🚐 Traslados</button><button type="button" data-cv="loc" title="Ver solo locales">🅿️ Locales</button><button type="button" data-cv="dir" title="Ver vuelos sin conexiones">🛫 Directos</button><button type="button" data-cv="cx" title="Ver solo conexiones">🔁 Conexiones</button></div>
   <div class="calert" id="calert"></div>
   <div class="cstats" role="group" aria-label="Filtrar" hidden>
     <button class="cstat" data-f="all" aria-pressed="true"><b id="cs-all">0</b><span>Total</span></button>
@@ -1085,6 +1085,7 @@ function aplicaLlegada(r){ const ida = [r.c1, r.ida].filter(Boolean), l = ida.fi
 function hotelInfo(r){
   if(HOTEL_EXC[r.n]) return HOTEL_EXC[r.n];
   if(!tieneHotel(r)) return {lines: [], nota: ''};
+  if(r.pe2) return {lines: [`Reservación por 2 noches en el ${HOTEL.n} (pernocta por ruta a su llegada y noche del evento). Dirección: ${HOTEL.dir}`, 'Check in: 02 diciembre, a su llegada.', 'Check out: 04 diciembre, 12:00 hrs.'], nota: ''};
   const lines = [`Reservación por 1 noche en el ${HOTEL.n}. Dirección: ${HOTEL.dir}`, 'Check in: 03 diciembre, 15:00 hrs.', 'Check out: 04 diciembre, 12:00 hrs.', `Resguardo de equipaje: a su llegada a la Ciudad de México, su equipaje será resguardado en el ${HOTEL.n}, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; se le entregará a su regreso al hotel.`];
   const ida = [r.c1, r.ida].filter(Boolean), reg = [r.reg, r.c2].filter(Boolean);
   const lleg = ida.find(l => l.d === EV_AP) || ida[ida.length - 1], sal = reg.find(l => l.o === EV_AP) || reg[0];
@@ -1182,8 +1183,10 @@ function lineaTiempo(r){
   if(!tierra && aplicaLlegada(r)){ const l = legsI.find(x => x.d === EV_AP); add(l.f, minDe(l.l) + 1, {tipo: 'verde', i: '📍', t: 'Recepción en el Aeropuerto de la Ciudad de México', text: LLEGA_TXT}); }
   if(tieneHotel(r)){ const h = hotelInfo(r), ci = isoDe(((h.lines.find(t => /^Check in/i.test(t)) || '').replace(/(\d+) (noviembre|diciembre)/, '$1 de $2'))) || HOTEL.ci;
     const hci = ((h.lines.find(t => /^Check in/i.test(t)) || '').match(/(\d{1,2}:\d{2})/) || [])[1] || '15:00';
-    add(ci, '15:00', {tipo: 'hotel', i: '🏨', t: 'Hospedaje en el hotel sede', lines: h.lines.filter(t => !/^Check (out|in)/i.test(t)), nota: h.nota});
-    add(ci, '15:00', {tipo: 'info', i: '🛎️', t: 'Check-in del ' + HOTEL.n + ' · ' + hci + ' h', text: ''});
+    const hT = r.pe2 ? '23:50' : '15:00';
+    add(ci, hT, {tipo: 'hotel', i: '🏨', t: r.pe2 ? 'Hospedaje del 2 al 4 de diciembre (2 noches)' : 'Hospedaje en el hotel sede', lines: h.lines.filter(t => !/^Check (out|in)/i.test(t)), nota: h.nota});
+    add(ci, hT, {tipo: 'info', i: '🛎️', t: 'Check-in del ' + HOTEL.n + (r.pe2 ? ' · a su llegada' : ' · ' + hci + ' h'), text: ''});
+    if(r.pe2) add(HOTEL.ci, '11:00', {tipo: 'verde', i: '🚐', t: 'Traslado a la sede del evento', text: 'Del Hotel NH T2 Aeropuerto a MetLife Torre Manacar, piso 7. El horario se le confirmará previamente.'});
     add(HOTEL.co, '12:00', {tipo: 'info', i: '🛎️', t: 'Check-out del ' + HOTEL.n, text: ''}); }
   if(!tierra && aplicaRegreso(r) && !regHMO){ const l = legsR.find(x => x.o === EV_AP); add(l.f, minDe(l.s) - 1, {tipo: 'verde', i: '✈️', t: 'Del hotel a tu vuelo de regreso', text: REGRESO_TXT}); }
   { const co = S.find(x => x.tipo === 'info' && /^Check-out/.test(x.t)), sal = S.filter(x => x.f === HOTEL.co && x !== co && (/regreso|aeropuerto/i.test(x.t || '') || x.dir === 'Regreso')).map(x => x.m);
@@ -1535,6 +1538,7 @@ function invHTML(r, vImg){
     b += h2('Detalles de su participación');
     b += p(T('A continuación, le presentamos los detalles que <b>MetLife</b> estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.'), 'padding-bottom:4px');
     b += blk('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', '<b>Los días del evento</b> · Torre Manacar'], ['Hospedaje', '<b>No aplica</b>']]);
+    b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
     b += verde('📅 Cita', 'Jueves 3 de diciembre a las <b>12:00 h</b> · MetLife Torre Manacar, piso 7.');
     b += imp(T('Le agradecería una confirmación de recepción de este mensaje.', INK, 'bold'));
     b += p(T('Si necesita más información o tiene preguntas específicas, no dude en ponerse en contacto.'), 'padding-top:8px');
@@ -1550,11 +1554,13 @@ function invHTML(r, vImg){
   } else {
     b += vImg ? p(`<img src="${vImg}" width="640" alt="Propuesta de vuelos" style="width:640px;max-width:100%;height:auto;display:block;border:0">`) : ida.length || r.reg ? p('&nbsp;') + p('&nbsp;') : p(T('Su vuelo se encuentra en proceso de emisión.'));
     b += blk('🧳', 'Su vuelo incluye', [['Boleto de avión', 'Clase <b>turista</b>'], ['Equipaje de mano', 'En cabina, máximo <b>15 kg</b>'], ['Equipaje documentado', 'Máximo <b>25 kg</b>'], ['Asientos', '<b>Asignados</b>']]);
-    if((r.notas || []).some(n => n.k === 'pe')) b += blk('🏨', 'Pernocta a su llegada', [['Periodo', '<b>Del miércoles 2 al jueves 3 de diciembre</b> (1 noche)'], ['Hotel', 'Hotel NH Collection Mexico City Airport T2'], ['Check-in', '<b>2 de diciembre</b>'], ['Check-out', '<b>3 de diciembre</b>']]);
-    b += verde('📍 Recepción en el Aeropuerto de la Ciudad de México', '<b>Recepción a su llegada</b> y <b>traslado a la sede del evento</b> (<b>MetLife Torre Manacar, piso 7</b>).');
+    if(r.pe2){
+      b += blk('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '<b>Check in 2 dic</b> (a su llegada) · <b>Check out 4 dic</b> · 2 noches']]);
+      b += verde('🚐 Traslado a la sede del evento', 'El <b>jueves 3 de diciembre</b>, del <b>Hotel NH T2 Aeropuerto</b> a <b>MetLife Torre Manacar, piso 7</b>.');
+    } else b += verde('📍 Recepción en el Aeropuerto de la Ciudad de México', '<b>Recepción a su llegada</b> y <b>traslado a la sede del evento</b> (<b>MetLife Torre Manacar, piso 7</b>).');
   }
-  if(hotel) b += blk('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será <b>resguardado en el ${esc(HOTEL.n)}</b>, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; <b>se le entregará a su regreso al hotel</b>.`]]);
-  if(hotel) b += blk('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '<b>Check in 3 dic</b> · <b>Check out 4 dic</b> · 1 noche']]);
+  if(hotel && !r.pe2) b += blk('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será <b>resguardado en el ${esc(HOTEL.n)}</b>, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; <b>se le entregará a su regreso al hotel</b>.`]]);
+  if(hotel && !r.pe2) b += blk('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '<b>Check in 3 dic</b> · <b>Check out 4 dic</b> · 1 noche']]);
   b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
   if(hotel) b += verde('🚐 Traslado al hotel', 'Al terminar la cena, a las <b>23:00 h</b>, traslado al <b>Hotel NH T2 Aeropuerto</b>.');
   if(tc) b += blk('🚐', 'Traslado terrestre de regreso', [['Desde', '<b>' + (hotel ? esc(HOTEL.n) : 'Sede del evento') + '</b>'], ['Hacia', '<b>' + tc + '</b>'], ['Horario', 'Se le compartirá <b>al finalizar el evento</b>']]);
@@ -1571,6 +1577,46 @@ const invTxt = r => invHTML(r).replace(/<br>/g, '\n').replace(/<table/g, '\n<tab
 /* Invitación: en computadora descarga un borrador .eml que Outlook abre listo para enviar
    (destinatario, asunto "Invitación | ConoceMet by MetLife | NOMBRE", cuerpo con formato y la agenda adjunta).
    En celular se copia con formato y se abre el correo con destinatario y asunto. */
+/* WhatsApp de INVITACIÓN: el mismo contenido de la invitación por correo, en texto con *negritas* de WhatsApp;
+   la propuesta de vuelos va escrita (WhatsApp no lleva imagen en el texto) y al final el link de la agenda. */
+function invWa(r){
+  const base = location.origin + location.pathname.replace(/[^\/]*$/, ''), SEP = '━━━━━━━━━━━━━━', L = [];
+  const sec = (ic, t, rows) => { L.push('', `${ic} *${t.toUpperCase()}*`); rows.forEach(([k, v]) => L.push(k ? `• *${k}:* ${v}` : `• ${v}`)); };
+  const vuelo = conVueloInv(r), hotel = tieneHotel(r), tc = !vuelo && r.tc ? tcase(r.tc) : '';
+  const fl = (lab, l) => [`${lab === 'IDA' ? '🛫' : '🛬'} *${lab} · ${l.v}*`, `• ${fmtDate(l.f)} · ${cityOf(l.o)} ${l.s} h → ${cityOf(l.d)} ${l.l} h`];
+  L.push(`👋 Estimado(a) *${r.n.toUpperCase()}*`, '', 'Esperando se encuentre bien, reciba un cordial saludo' + (CFG.yo ? `, mi nombre es *${CFG.yo}*.` : '.'), '',
+    (CFG.ag ? `Le escribo de *${CFG.ag}* en representación de *MetLife*` : 'Le escribimos en representación de *MetLife*') + ' para dar seguimiento a su participación al evento *ConoceMet by MetLife*, que se llevará a cabo el *jueves 3 de diciembre de 2026* en *MetLife Torre Manacar, piso 7* (Av. Insurgentes Sur 1457, esquina Río Mixcoac, Ciudad de México).');
+  if(r.loc){
+    L.push('', SEP, '📋 *DETALLES DE SU PARTICIPACIÓN*', SEP, '', 'A continuación, le presentamos los detalles que *MetLife* estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.');
+    sec('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', '*Los días del evento* · Torre Manacar'], ['Hospedaje', '*No aplica*']]);
+    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Comida, actividad y cena*']]);
+    sec('📅', 'Cita', [['', 'Jueves 3 de diciembre a las *12:00 h* · MetLife Torre Manacar, piso 7.']]);
+    L.push('', '*Le agradecería una confirmación de recepción de este mensaje.*');
+  } else {
+    L.push('', SEP, '📋 *PARA SU PARTICIPACIÓN LE ESTAMOS CONSIDERANDO' + (vuelo ? ' - PROPUESTA DE VUELOS' : '') + '*', SEP);
+    if(tc) sec('🚐', 'Traslado terrestre de llegada', [['Fecha', '*Jueves 3 de diciembre*'], ['Desde', `*${tc}*`], ['Hacia', 'Sede del evento: *MetLife Torre Manacar, piso 7*'], ['Punto de encuentro y horario', 'Por confirmar']]);
+    else {
+      const leg = [r.c1, r.ida].filter(Boolean).map(l => fl('IDA', l)).concat([r.reg, r.c2].filter(Boolean).map(l => fl('REGRESO', l)));
+      L.push(''); if(leg.length) leg.forEach(x => L.push(...x)); else L.push('Su vuelo se encuentra en proceso de emisión.');
+      sec('🧳', 'Su vuelo incluye', [['Boleto de avión', 'Clase *turista*'], ['Equipaje de mano', 'En cabina, máximo *15 kg*'], ['Equipaje documentado', 'Máximo *25 kg*'], ['Asientos', '*Asignados*']]);
+      if(r.pe2){ sec('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '*Check in 2 dic* (a su llegada) · *Check out 4 dic* · 2 noches']]);
+        sec('🚐', 'Traslado a la sede del evento', [['', 'El *jueves 3 de diciembre*, del *Hotel NH T2 Aeropuerto* a *MetLife Torre Manacar, piso 7*.']]); }
+      else sec('📍', 'Recepción en el Aeropuerto de la Ciudad de México', [['', '*Recepción a su llegada* y *traslado a la sede del evento* (*MetLife Torre Manacar, piso 7*).']]);
+    }
+    if(hotel && !r.pe2){ sec('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será *resguardado en el ${HOTEL.n}*, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; *se le entregará a su regreso al hotel*.`]]);
+      sec('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '*Check in 3 dic* · *Check out 4 dic* · 1 noche']]); }
+    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Comida, actividad y cena*']]);
+    if(hotel) sec('🚐', 'Traslado al hotel', [['', 'Al terminar la cena, a las *23:00 h*, traslado al *Hotel NH T2 Aeropuerto*.']]);
+    if(tc) sec('🚐', 'Traslado terrestre de regreso', [['Desde', `*${hotel ? HOTEL.n : 'Sede del evento'}*`], ['Hacia', `*${tc}*`], ['Horario', 'Se le compartirá *al finalizar el evento*']]);
+    else sec('✈️', 'Vuelo de regreso', [['', 'El *Hotel NH T2 Aeropuerto* está dentro de la *Terminal 2* del aeropuerto; si su vuelo sale de la *Terminal 1*, puede cambiar de terminal en el *Aerotrén*.']]);
+    if(vuelo) L.push('', SEP, '', '*Importante.-* Si desea realizar algún cambio de fecha u horario posterior a su confirmación, esto generará un *cargo por cambio* y posiblemente *diferencia de tarifa*, los cuales tendrán que ser cubiertos por su parte.', '',
+      'Le recordamos que *MetLife* cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.', '',
+      'Esperamos su validación respondiendo con la siguiente leyenda: *“Estoy de acuerdo con el itinerario de vuelo, proceder con la compra”*.');
+  }
+  L.push('', '🗓️ *Agenda del evento:*', base + 'agenda-conocemet-invitacion.jpg', '',
+    'Si necesita más información o tiene preguntas específicas, no dude en ponerse en contacto.', '', 'Continúo a sus órdenes.', '', 'Saludos cordiales,');
+  return L.join('\n');
+}
 const invAsunto = r => 'Invitación | ConoceMet by MetLife | ' + String(r.n || '').toUpperCase();
 const AGENDA_ADJ = 'agenda-conocemet-invitacion.jpg';
 async function invEml(r){
@@ -2204,6 +2250,15 @@ const TR_TZ = t => /san carlos|marinaterra|hermosillo|sede|los mochis/i.test(t) 
 function trDur(r, t){ if(/metepec|toluca/i.test(t)) return 120; if(/puebla|triángulo/i.test(t)) return 150; if(/los mochis/i.test(r.cd || '') || /los mochis/i.test(t)) return 300;
   if(/aeropuerto de hermosillo/i.test(t)) return 120; if(/domicilio/i.test(t)) return 90; return 120; }
 function trLegs(r){ const lle = CTL.tab === 'lle', out = [], val = (R, k) => ((R || []).find(x => x[0] === k) || [])[1] || '';
+  // ConoceMet: locales (cita 12:00 h, por su cuenta con estacionamiento) y terrestres sin horario todavía
+  { const at = (f, h) => { const [y, mo, d] = f.split('-').map(Number), [H, M] = h.split(':').map(Number); return new Date(Date.UTC(y, mo - 1, d, H + 6, M)); };
+    if(r.loc){ const f = HOTEL.ci, h = lle ? '12:00' : '23:00', t = at(f, h);
+      return [{terr: true, tr: true, loc: true, f, l: h, s: h, v: '🅿️ Local · por su cuenta', ini: t, fin: t,
+        route: lle ? 'Cita 12:00 h · MetLife Torre Manacar, piso 7 · estacionamiento' : 'Regresa por su cuenta al terminar el evento'}]; }
+    if(r.tc && soloTierra(r) && /^(|Traslado terrestre desde.*)$/i.test(((r.notas || []).find(n => n.k === 'tr') || {}).t || '')){
+      const f = lle ? HOTEL.ci : HOTEL.co;
+      return [{terr: true, tr: true, f, l: '—', s: '—', v: '🚐 Traslado terrestre', ini: null, fin: null,
+        route: lle ? `${tcase(r.tc)} → sede del evento · horario por confirmar` : `Hotel NH T2 → ${tcase(r.tc)} · horario por confirmar`}]; } }
   notaBloques(r).forEach(b => { const R = b.rows || [], txt = R.map(x => x[1]).join(' ');
     let f = '', h = '';
     if(lle && b.t === 'Traslado de ida'){ const fh = val(R, 'Fecha y hora'); f = isoDe(fh); h = (fh.split('·')[1] || '').trim().replace(/\s*h$/, ''); }
@@ -2314,7 +2369,7 @@ document.addEventListener('click', e => { const b = e.target.closest('#cfase [da
 setInterval(() => { if(['lle', 'sal'].includes(CTL.tab) && !document.hidden && !$('#ctl').hidden) ctlRender(); if(CTL.tab === 'con' && !document.hidden) konRender(); }, 60000); // los vuelos cambian de apartado solos
 /* Vista de Llegadas/Salidas: con nombres o solo vuelos; tocar el encabezado de un vuelo despliega u oculta sus nombres */
 const CV = {solo: false, modo: 'todo', tg: new Set(), fases: new Map()}; // modo: todo (con nombres) · vue (solo vuelos) · tra (solo traslados)
-try{ const m = localStorage.getItem('ctl-modo'); CV.modo = ['all', 'todo', 'vue', 'tra', 'dir', 'cx'].includes(m) ? m : (localStorage.getItem('ctl-solo') === '1' ? 'vue' : 'todo'); }catch(e){}
+try{ const m = localStorage.getItem('ctl-modo'); CV.modo = ['all', 'todo', 'vue', 'tra', 'loc', 'dir', 'cx'].includes(m) ? m : (localStorage.getItem('ctl-solo') === '1' ? 'vue' : 'todo'); }catch(e){}
 CV.solo = CV.modo !== 'todo';
 /* Solo conexiones: vuelos de conexión (llegadas: el vuelo de su ciudad a México; salidas: de México a su ciudad), un grupo por vuelo */
 function cxGroups(){ const g = {}, lle = CTL.tab === 'lle';
@@ -2322,7 +2377,7 @@ function cxGroups(){ const g = {}, lle = CTL.tab === 'lle';
     const k = l.f + '|' + ctlHora(l) + '|' + l.v, dif = base && base.f !== l.f;
     (g[k] = g[k] || {l, pax: [], pe: lle && dif, cl: lle && !dif, cx: lle ? null : (dif ? 'sig' : 'mismo')}).pax.push(r); });
   return Object.keys(g).sort().map(k => { g[k].pax.sort((a, b) => a.n.localeCompare(b.n, 'es')); return g[k]; }); }
-const cvPasa = G => CV.modo === 'todo' || CV.modo === 'all' || (CV.modo === 'tra') === !!G.l.terr;
+const cvPasa = G => CV.modo === 'todo' || CV.modo === 'all' || (CV.modo === 'loc' ? !!G.l.loc : CV.modo === 'tra' ? !!G.l.terr && !G.l.loc : !G.l.terr);
 function cvApply(){ const c = $('#cout'); if(c){ c.classList.toggle('solo', CV.solo); const q = $('#lq'); c.classList.toggle('q', !!(q && q.value.trim())); }
   document.querySelectorAll('#cview [data-cv]').forEach(b => b.setAttribute('aria-pressed', b.dataset.cv === CV.modo)); }
 document.addEventListener('click', e => { const b = e.target.closest('#cview [data-cv]');
@@ -2341,7 +2396,7 @@ function ctlRender(){
   const GR = CV.modo === 'cx' ? cxGroups() : CV.modo === 'dir' ? ctlGroups().filter(G => !G.l.terr && !G.pe && !G.cx).map(G => Object.assign({}, G, {pax: G.pax.filter(r => !(lle ? r.c1 : r.c2))})).filter(G => G.pax.length) : ctlGroups().filter(cvPasa); GR.forEach(G => G.fase = faseVuelo(G.l));
   const cnt = k => GR.filter(G => G.fase === k), pp = L => L.reduce((a, G) => a + G.pax.length, 0);
   if(CTL.faseTab !== CTL.tab || (CV.faseAuto && !cnt(CTL.fase).length)){ CV.faseAuto = false; CTL.faseTab = CTL.tab; CTL.fase = (FASES.find(([k]) => cnt(k).length) || FASES[0])[0]; } // al entrar: el primer apartado con vuelos
-  $('#cfase').innerHTML = FASES.map(([k, t]) => `<button type="button" role="tab" data-fase="${k}" aria-selected="${CTL.fase === k}"><span>${t}</span><b>${cnt(k).length} ${CV.modo === 'tra' ? (cnt(k).length === 1 ? 'traslado' : 'traslados') : CV.modo === 'cx' ? (cnt(k).length === 1 ? 'conexión' : 'conexiones') : CV.modo === 'dir' ? (cnt(k).length === 1 ? 'vuelo directo' : 'vuelos directos') : (cnt(k).length === 1 ? 'vuelo' : 'vuelos')} · ${pp(cnt(k))} pax</b></button>`).join('')
+  $('#cfase').innerHTML = FASES.map(([k, t]) => `<button type="button" role="tab" data-fase="${k}" aria-selected="${CTL.fase === k}"><span>${t}</span><b>${cnt(k).length} ${CV.modo === 'loc' ? (cnt(k).length === 1 ? 'grupo local' : 'grupos locales') : CV.modo === 'tra' ? (cnt(k).length === 1 ? 'traslado' : 'traslados') : CV.modo === 'cx' ? (cnt(k).length === 1 ? 'conexión' : 'conexiones') : CV.modo === 'dir' ? (cnt(k).length === 1 ? 'vuelo directo' : 'vuelos directos') : (cnt(k).length === 1 ? 'vuelo' : 'vuelos')} · ${pp(cnt(k))} pax</b></button>`).join('')
     + '<p class="cfn">Según el horario programado de cada vuelo y la hora estimada de cada traslado; los retrasos de vuelos se confirman en “Estatus ↗”.</p>';
   GR.filter(G => G.fase === CTL.fase).forEach(G => {
     const pax = G.pax.filter(r => CTL.filter === 'all' || ctlSt(r.n) === CTL.filter); if(!pax.length) return;
@@ -2361,7 +2416,7 @@ function ctlRender(){
   });
   alUI();
   setTimeout(cvApply, 0);
-  $('#cout').innerHTML = html || `<p class="cnote">${CV.modo === 'tra' ? 'No hay traslados en este apartado.' : CV.modo === 'cx' ? 'No hay conexiones en este apartado.' : CV.modo === 'dir' ? 'No hay vuelos sin conexión en este apartado.' : CTL.fase === 'ruta' ? 'No hay vuelos en ruta en este momento.' : CTL.fase === 'ater' ? 'Todavía no ha aterrizado ningún vuelo.' : 'No quedan vuelos programados.'}</p>`;
+  $('#cout').innerHTML = html || `<p class="cnote">${CV.modo === 'loc' ? 'No hay locales en este apartado.' : CV.modo === 'tra' ? 'No hay traslados en este apartado.' : CV.modo === 'cx' ? 'No hay conexiones en este apartado.' : CV.modo === 'dir' ? 'No hay vuelos sin conexión en este apartado.' : CTL.fase === 'ruta' ? 'No hay vuelos en ruta en este momento.' : CTL.fase === 'ater' ? 'Todavía no ha aterrizado ningún vuelo.' : 'No quedan vuelos programados.'}</p>`;
 }
 /* ---------- Estatus de vuelos (FlightAware) ---------- */
 const ICAO = {'VOLARIS':'VOI','AEROMEXICO':'AMX','VIVA AEROBUS':'VIV'};
@@ -2459,7 +2514,7 @@ addEventListener('DOMContentLoaded', () => Object.entries(VQ).forEach(([id, sel]
 /* Botones 📄 PDF, 💬 WhatsApp y ✉️ correo de una persona (Claves y Traslados y pernoctas) */
 function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}${TEL[n]
       ? `<a class="cwa" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(waTxt(DATA[i]))}" target="_blank" rel="noopener" title="Enviar por WhatsApp a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp a ${esc(tcase(n))}">💬</a>`
-      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Correo de INVITACIÓN de ${esc(tcase(n))}: abre en Outlook con asunto, destinatario y la agenda adjunta" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
+      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${TEL[n] ? `<a class="cwa cwainv" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(invWa(DATA[i]))}" target="_blank" rel="noopener" title="WhatsApp de INVITACIÓN a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp de invitación a ${esc(tcase(n))}">📲</a>` : ''}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Correo de INVITACIÓN de ${esc(tcase(n))}: abre en Outlook con asunto, destinatario y la agenda adjunta" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
 function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const c = {}; DATA.forEach(r => { const k = (r.rol || 'SIN ROL').toUpperCase(); c[k] = (c[k] || 0) + 1; });
   const orden = Object.keys(c).sort((a, b) => (/^STAFF/.test(a) - /^STAFF/.test(b)) || c[b] - c[a] || a.localeCompare(b, 'es'));
@@ -2480,12 +2535,15 @@ function claRender(){ rolBar(); zipRoles();
 const notaDe = (r, k) => ((r.notas || []).find(n => n.k === k) || {}).t || '';
 /* Quién tiene traslado real: la nota "Llegas por tu cuenta… estacionamiento" NO es traslado (son locales que llegan por su cuenta). */
 const sinTraslado = r => /^Sin traslado terrestre/i.test(notaDe(r, 'tr')); // vuela y llega/regresa por su cuenta a CDMX (no es local)
-const esPorCuenta = r => /por tu cuenta/i.test(notaDe(r, 'tr')) && !sinTraslado(r);
-const conTraslado = r => !!notaDe(r, 'tr') && !esPorCuenta(r) && !sinTraslado(r);
 const tieneVuelo = r => [r.c1, r.ida, r.reg, r.c2].some(Boolean);
-const EDO = {'Hermosillo':'Sonora', 'Los Mochis':'Sinaloa', 'Puebla':'Puebla', 'Metepec':'Estado de México', 'Ciudad de México':'CDMX', 'Guaymas':'Sonora', 'Toluca':'Estado de México', 'Culiacán':'Sinaloa', 'Culiacan':'Sinaloa'};
+const esPorCuenta = r => !!r.loc || (/por tu cuenta/i.test(notaDe(r, 'tr')) && !sinTraslado(r));
+const conTraslado = r => (!!r.tc && !r.vu && !tieneVuelo(r)) || (!!notaDe(r, 'tr') && !r.loc && !esPorCuenta(r) && !sinTraslado(r));
+/* Pernocta por ruta a su llegada (Hotel NH): llegan el 2 de diciembre */
+const pernoc = r => !!(r.pe2 || notaDe(r, 'pe'));
+const EDO = {'Hermosillo':'Sonora', 'Los Mochis':'Sinaloa', 'Puebla':'Puebla', 'Metepec':'Estado de México', 'Ciudad de México':'CDMX', 'Guaymas':'Sonora', 'Toluca':'Estado de México', 'Culiacán':'Sinaloa', 'Culiacan':'Sinaloa', 'Cuernavaca':'Morelos', 'Querétaro':'Querétaro', 'Queretaro':'Querétaro', 'Guadalajara':'Jalisco'};
 const conEdo = c => EDO[c] && EDO[c] !== 'CDMX' ? `${c}, ${EDO[c]}` : c;
 function ciudadTr(r, t){ // ciudad de donde sale el traslado
+  if(r.tc && (!t || /^Traslado terrestre desde/i.test(t))) return conEdo(tcase(r.tc));
   const m = t.match(/punto de encuentro .+?,\s*([A-ZÁÉÍÓÚa-záéíóúñ ]+),\s*(?:Pue\.|Estado de México|Edo\.)/);
   if(/Metepec/i.test(t)) return conEdo('Metepec');
   if(m) return conEdo(m[1].trim());
@@ -2498,14 +2556,15 @@ function ciudadTr(r, t){ // ciudad de donde sale el traslado
 const INV = () => DATA.filter(r => !r.staff); // invitados sin staff (Traslados y pernoctas no incluye staff)
 function pytData(){
   const by = (a, b) => a.n.localeCompare(b.n, 'es');
-  const pern = INV().filter(r => notaDe(r, 'pe')).sort(by), grupos = new Map();
+  const pern = INV().filter(pernoc).sort(by), grupos = new Map();
   const locales = INV().filter(r => esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r))).sort(by);
   INV().filter(conTraslado).sort(by).forEach(r => {
     const t = notaDe(r, 'tr'), m = t.match(/punto de encuentro (.+?)(?:, para llevarte|\. A tu regreso)/i), cd = ciudadTr(r, t);
     const cuando = (t.match(/el (\S+ \d+ de \S+) a las ([\d:]+ h)/) || []).slice(1).join(' · ') || (t.match(/a las ([\d:]+ h)/) || [])[1] || '';
     const dest = (t.match(/para llevarte (?:al|a la|a) (.+?)(?:,|\.)/) || [])[1] || '';
     let key, sub, det = '';
-    if(m){ key = 'Punto de encuentro: ' + m[1].split(',')[0]; sub = [cuando, m[1].split(',').slice(1).join(',').trim()].filter(Boolean).join(' · '); }
+    if(r.tc && (!t || /^Traslado terrestre desde/i.test(t))){ key = 'Traslado terrestre a la sede'; sub = 'Jueves 3 de diciembre · punto de encuentro y horario por confirmar · regreso al finalizar el evento'; }
+    else if(m){ key = 'Punto de encuentro: ' + m[1].split(',')[0]; sub = [cuando, m[1].split(',').slice(1).join(',').trim()].filter(Boolean).join(' · '); }
     else if(/te recogemos en el aeropuerto/i.test(t)){ key = 'Desde el aeropuerto'; sub = 'Se recoge en el aeropuerto y regresa al mismo aeropuerto.'; det = [cuando, dest && '→ ' + dest].filter(Boolean).join(' '); }
     else if(/domicilio/i.test(t)){ key = 'Desde su domicilio'; sub = 'Se recoge en el domicilio registrado y regresa a la misma dirección.'; det = [cuando, dest && '→ ' + dest].filter(Boolean).join(' '); }
     else if(/solo a tu regreso/i.test(t)){ key = 'Solo traslado de regreso'; sub = /del Hotel Marinaterra al aeropuerto/i.test(t) ? 'Del hotel sede al aeropuerto de Hermosillo para su vuelo de regreso (sin traslado a su llegada).' : 'Se le recibe al aterrizar de regreso.'; det = ((t.match(/el (\S+ \d+ de \S+), al aterrizar en (.+?) en el vuelo (.+?) \(llegada ([\d:]+) h\)/) || []).slice(1).join(' · ')) || t; }
@@ -2519,7 +2578,9 @@ function pytData(){
 /* Recorrido completo de una persona en orden de fecha y hora: traslado de ida, vuelos, pernocta en el Hotel NH y traslado de regreso. */
 function rutaDe(r){
   const ev = [], MESN = {noviembre:11, octubre:10, diciembre:12};
-  const tr = conTraslado(r) ? notaDe(r, 'tr') : '', pe = notaDe(r, 'pe');
+  const tc3 = r.tc && conTraslado(r) && /^(|Traslado terrestre desde.*)$/i.test(notaDe(r, 'tr')), tr = conTraslado(r) && !tc3 ? notaDe(r, 'tr') : '', pe = pernoc(r);
+  if(tc3){ ev.push({k: '2026-12-03 06:00', t: `🚐 Jue 3 dic · traslado terrestre desde ${tcase(r.tc)} → sede del evento (horario por confirmar)`}); ev.push({k: '2026-12-04 99', t: `🚐 Regreso · traslado terrestre a ${tcase(r.tc)} (horario por confirmar)`}); }
+  if(tieneHotel(r)) ev.push({k: (r.pe2 ? '2026-12-02 23:30' : '2026-12-03 23:10'), t: r.pe2 ? '🏨 Hotel NH T2 · check-in 2 dic, check-out 4 dic (2 noches)' : '🏨 Hotel NH T2 · check-in 3 dic, check-out 4 dic'});
   const corto = iso => fmtDate(iso);
   if(tr && !/solo a tu regreso/i.test(tr)){
     const m = tr.match(/el \S+ (\d+) de (\S+) a las ([\d:]+) h/), pt = tr.match(/punto de encuentro (.+?),/), dest = /Hotel NH/i.test(tr) ? 'Hotel NH' : /sede del evento/i.test(tr) ? 'sede del evento' : '';
@@ -2527,7 +2588,7 @@ function rutaDe(r){
     const iso = m ? `2026-${String(MESN[m[2]] || 11).padStart(2,'0')}-${m[1].padStart(2,'0')}` : '';
     ev.push({k: iso + ' ' + (m ? m[3].padStart(5,'0') : '00:00'), t: `🚗 ${iso ? corto(iso) + ' ' : ''}${m ? m[3] + ' h' : ''} · traslado desde ${desde}${dest ? ' → ' + dest : ''}`});
   }
-  if(pe) ev.push({k: '2026-11-02 23:00', t: '🏨 Pernocta Hotel NH · check-in 2 nov, check-out 3 nov'});
+
   [r.c1, r.ida, r.reg, r.c2].filter(Boolean).forEach(l => ev.push({k: l.f + ' ' + String(l.s || '').padStart(5,'0'), t: `✈️ ${corto(l.f)} · ${l.v} · ${l.o} ${l.s} → ${l.d} ${l.l}`}));
   if(tr){
     if(/solo a tu regreso/i.test(tr) && /del Hotel Marinaterra al aeropuerto/i.test(tr)) ev.push({k: '2026-11-05 00', t: '🚗 Jue 5 nov · traslado del Hotel Marinaterra al aeropuerto de Hermosillo'});
@@ -2538,19 +2599,19 @@ function rutaDe(r){
 }
 const rutaHTML = r => { const L = rutaDe(r); return L.length ? `<ol class="pruta">${L.map(t => `<li>${esc(t)}</li>`).join('')}</ol>` : ''; };
 /* Etiquetas por servicio que aplica a cada persona (sin más detalle) */
-const svcTags = r => (conTraslado(r) ? '<span class="ptag">🚗 Traslado</span>' : '') + (notaDe(r,'pe') ? '<span class="ptag">🏨 Hotel NH</span>' : '') + (tieneVuelo(r) ? '<span class="ptag">✈️ Vuelo</span>' : '') + (esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r)) ? '<span class="ptag" style="background:#FFF7E6">🚙 Llega por su cuenta</span>' : '');
+const svcTags = r => (conTraslado(r) ? '<span class="ptag">🚗 Traslado</span>' : '') + (pernoc(r) ? '<span class="ptag">🏨 Hotel NH</span>' : '') + (tieneVuelo(r) ? '<span class="ptag">✈️ Vuelo</span>' : '') + (esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r)) ? '<span class="ptag" style="background:#FFF7E6">🚙 Llega por su cuenta</span>' : '');
 /* Filtros de los cuadritos y del desglose: al tocar uno se muestra solo la lista de esas personas; al tocarlo otra vez vuelve a todo. */
 let PYT_F = '';
 const PYT_FIL = {
   all:  ['👥 Todos los invitados', r => true],
   tr:   ['🚗 Con traslado terrestre', r => conTraslado(r)],
-  pe:   ['🏨 Con pernocta en el Hotel NH', r => !!notaDe(r,'pe')],
-  tres: ['🚗+🏨+✈️ Traslado + pernocta + vuelo', r => conTraslado(r) && !!notaDe(r,'pe') && tieneVuelo(r)],
-  pev:  ['🏨+✈️ Pernocta + vuelo, sin traslado', r => !!notaDe(r,'pe') && !conTraslado(r)],
-  trv:  ['🚗+✈️ Traslado + vuelo, sin pernocta', r => conTraslado(r) && !notaDe(r,'pe') && tieneVuelo(r)],
-  trs:  ['🚗 Solo traslado terrestre (sin vuelo)', r => conTraslado(r) && !notaDe(r,'pe') && !tieneVuelo(r)],
-  loc:  ['🚙 Locales que llegan por su cuenta', r => esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r))],
-  sv:   ['✈️ Solo vuelo (sin traslado ni pernocta)', r => tieneVuelo(r) && !conTraslado(r) && !notaDe(r,'pe') && !esPorCuenta(r)]
+  pe:   ['🏨 Con pernocta en el Hotel NH', r => pernoc(r)],
+  tres: ['🚗+🏨+✈️ Traslado + pernocta + vuelo', r => conTraslado(r) && pernoc(r) && tieneVuelo(r)],
+  pev:  ['🏨+✈️ Pernocta + vuelo, sin traslado', r => pernoc(r) && !conTraslado(r)],
+  trv:  ['🚗+✈️ Traslado + vuelo, sin pernocta', r => conTraslado(r) && !pernoc(r) && tieneVuelo(r)],
+  trs:  ['🚗 Solo traslado terrestre (sin vuelo)', r => conTraslado(r) && !pernoc(r) && !tieneVuelo(r)],
+  loc:  ['🅿️ Locales (cita 12:00 h · estacionamiento)', r => esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r))],
+  sv:   ['✈️ Solo vuelo (sin traslado ni pernocta)', r => tieneVuelo(r) && !conTraslado(r) && !pernoc(r) && !esPorCuenta(r)]
 };
 document.addEventListener('click', e => { const b = e.target.closest('#pout [data-pf]'); if(!b) return; PYT_F = PYT_F === b.dataset.pf ? '' : b.dataset.pf; pytRender(); const t = document.querySelector('#pout .pres') || document.getElementById('pout'); t.scrollIntoView({block:'start', behavior:'smooth'}); });
 function pytRender(){
@@ -2576,24 +2637,24 @@ function pytRender(){
   h += `<div class="pgrp"><h3>🚗+🏨+✈️ Traslado + pernocta + vuelo</h3><p class="pw"><span class="pc">${tres.length} ${tres.length===1?'persona':'personas'}</span></p>`
     + tabla(tres.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
   const peSolo = pern.filter(r => !conTraslado(r));
-  h += `<div class="pgrp"><h3>🏨+✈️ Pernocta + vuelo (sin traslado)</h3><p class="pw"><span class="pc">${peSolo.length} ${peSolo.length===1?'persona':'personas'}</span> · llegan en vuelo a CDMX, duermen en el Hotel NH y vuelan a Hermosillo al día siguiente</p>`
+  h += `<div class="pgrp"><h3>🏨+✈️ Pernocta + vuelo (sin traslado)</h3><p class="pw"><span class="pc">${peSolo.length} ${peSolo.length===1?'persona':'personas'}</span> · llegan en vuelo a CDMX el miércoles 2 de diciembre y se hospedan en el Hotel NH T2 del 2 al 4 de diciembre</p>`
     + tabla(peSolo.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
-  h += `<div class="pgrp"><h3>🏨 Pernoctan en el Hotel NH Collection Mexico City Airport T2</h3><p class="pw"><span class="pc">${pern.length} ${pern.length===1?'persona':'personas'}</span> · a su llegada · check-in lunes 2 nov · check-out martes 3 nov</p>`
+  h += `<div class="pgrp"><h3>🏨 Pernoctan en el Hotel NH Collection Mexico City Airport T2</h3><p class="pw"><span class="pc">${pern.length} ${pern.length===1?'persona':'personas'}</span> · por ruta a su llegada · check-in miércoles 2 dic · check-out viernes 4 dic (incluye la noche del evento)</p>`
     + tabla(pern.map(r => { return `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`; })) + '</div>';
   h += `<div class="pgrp"><h3>🚗 Traslados terrestres por ciudad</h3><p class="pw"><span class="pc">${tras} ${tras===1?'persona':'personas'}</span></p></div>`;
   [...grupos].sort((a, b) => a[1].cd.localeCompare(b[1].cd, 'es')).forEach(([key, g]) => {
     h += `<div class="pgrp"><h3>${esc(key)}</h3><p class="pw"><span class="pc">${g.pax.length}</span>${g.sub ? ' · ' + esc(g.sub) : ''}</p>`
       + tabla(g.pax.map(({r, det}) => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
   });
-  h += `<div class="pgrp"><h3>🚙 Locales que llegan por su cuenta</h3><p class="pw"><span class="pc">${locales.length} ${locales.length===1?'persona':'personas'}</span> · sin vuelo ni traslado; llegan directo a la sede del evento.</p>`
+  h += `<div class="pgrp"><h3>🅿️ Locales (cita 12:00 h · estacionamiento)</h3><p class="pw"><span class="pc">${locales.length} ${locales.length===1?'persona':'personas'}</span> · sin vuelo ni traslado; cita a las 12:00 h en Torre Manacar con estacionamiento.</p>`
     + tabla(locales.map(r => { return `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`; })) + '</div>';
   $('#pout').innerHTML = h;
 }
 function pytTxt(){
-  const {pern, grupos, locales} = pytData(), L = ['*Traslados y pernoctas · ConoceMet*', '', `🏨 *Pernoctan en Hotel NH CDMX T2* (${pern.length}) · check-in 2 nov, check-out 3 nov`];
+  const {pern, grupos, locales} = pytData(), L = ['*Traslados y pernoctas · ConoceMet*', '', `🏨 *Pernoctan en Hotel NH CDMX T2* (${pern.length}) · check-in 2 dic, check-out 4 dic`];
   pern.forEach(r => L.push('• ' + tcase(r.n) + (conTraslado(r) ? ' (traslado)' : ' (vuelo)')));
   [...grupos].sort((a, b) => a[1].cd.localeCompare(b[1].cd, 'es')).forEach(([key, g]) => { L.push('', `🚗 *${key.replace(/^📍 /, '')}* (${g.pax.length})` + (g.sub ? '\n' + g.sub : '')); g.pax.forEach(({r, det}) => L.push('• ' + tcase(r.n) + (det ? ' — ' + det : ''))); });
-  L.push('', `🚙 *Locales que llegan por su cuenta* (${locales.length})`); locales.forEach(r => L.push('• ' + tcase(r.n) + (r.cd ? ' — ' + conEdo(r.cd) : '')));
+  L.push('', `🅿️ *Locales · cita 12:00 h con estacionamiento* (${locales.length})`); locales.forEach(r => L.push('• ' + tcase(r.n) + (r.cd ? ' — ' + conEdo(r.cd) : '')));
   return L.join('\n');
 }
 $('#pcopy').addEventListener('click', async () => { await claCopy(pytTxt()); $('#pmsg').textContent = 'Resumen copiado. Pégalo en WhatsApp.'; });
@@ -2618,14 +2679,14 @@ function kRows(){
   // Con vuelo: su vuelo. Sin vuelo en ese sentido (terrestre o por su cuenta): se incluye con su traslado.
   const MES = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
   const rows = DATA.map(r => { const l = kLeg(r);
-    if(l) return {r, l, n:r.n, f:l.f + ' ' + kHora(l), v:l.v, s:kSt(r.n)};
+    if(l) return Object.assign({r, l, n:r.n, f:l.f + ' ' + kHora(l), v:l.v, s:kSt(r.n)}, KON.m === 'lle' && r.pe2 ? {tag:'🏨 Llega 2 dic · pernocta por ruta (Hotel NH)'} : {});
     const t = notaDe(r, 'tr'), lle = KON.m === 'lle';
-    const cuenta = /por tu cuenta/i.test(t), tierra = !cuenta && (soloTierra(r) || !!t);
-    const v = cuenta ? 'Por su cuenta' : tierra ? 'Terrestre' : 'Sin vuelo asignado';
+    const cuenta = !!r.loc || /por tu cuenta/i.test(t), tierra = !cuenta && (soloTierra(r) || !!t);
+    const v = r.loc ? 'Local' : cuenta ? 'Por su cuenta' : tierra ? 'Terrestre' : r.vu ? 'Vuelo en emisión' : 'Sin vuelo asignado';
     const m = lle ? t.match(/el \S+ (\d+) de (\S+) a las ([\d:]+) h/) : null;
     const f = m ? `2026-${String(MES[m[2]]||11).padStart(2,'0')}-${m[1].padStart(2,'0')} ${m[3].padStart(5,'0')}` : (lle ? HOTEL.ci + ' 99:99' : HOTEL.co + ' 99:99');
-    const lab = m ? fmtDate(f.slice(0,10)) : (lle ? 'Mar 3 nov' : 'Jue 5 nov');
-    const det = cuenta ? (lle ? (/estacionamiento/i.test(t) ? 'Llega por su cuenta · estacionamiento' : 'Llega por su cuenta') : 'Regresa por su cuenta') : tierra ? (m ? `${m[3]} h · traslado terrestre` : 'Traslado terrestre') : 'Sin vuelo asignado';
+    const lab = m ? fmtDate(f.slice(0,10)) : fmtDate(lle ? HOTEL.ci : (r.loc ? HOTEL.ci : HOTEL.co));
+    const det = r.loc ? (lle ? 'Cita 12:00 h · estacionamiento Torre Manacar' : 'Regresa al terminar el evento') : r.tc && tierra && !m ? (lle ? `Traslado terrestre desde ${tcase(r.tc)} · horario por confirmar` : `Traslado terrestre a ${tcase(r.tc)} · horario por confirmar`) : cuenta ? (lle ? (/estacionamiento/i.test(t) ? 'Llega por su cuenta · estacionamiento' : 'Llega por su cuenta') : 'Regresa por su cuenta') : tierra ? (m ? `${m[3]} h · traslado terrestre` : 'Traslado terrestre') : 'Sin vuelo asignado';
     return {r, l:null, n:r.n, f, v, s:kSt(r.n), lab, det}; });
   /* Registros adicionales, cada uno con su propio check-in / no show:
      · traslados terrestres considerados (Metepec, Toluca, Puebla, Cuernavaca, domicilio…) con su hora;
@@ -2988,7 +3049,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 455;
+const APP_V = 465;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
