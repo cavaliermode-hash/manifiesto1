@@ -98,6 +98,7 @@ main{padding-block:16px 48px}
 .fc-fv{font:700 12.5px/1.2 var(--body)}
 .fc-m{min-width:0;padding:2px 14px;display:flex;flex-direction:column;justify-content:center}
 .fc-hm{padding-top:8px;font-size:12px;font-weight:600;color:var(--muted)}
+@media (max-width:560px){.itinweb .vfm + tr .vlogo,.itinweb .vlogo{display:none}.itinweb td.vk{width:62px!important}.itinweb td.vt{width:auto!important;white-space:nowrap}}
 .fc-seg{display:flex;align-items:center;gap:10px;padding:2px 0}
 .fc-end{display:flex;flex-direction:column;gap:2px;min-width:0}.fc-end.r{align-items:flex-end;text-align:right}
 .fc-t{font:700 21px/1 var(--mono);color:var(--ink)}
@@ -815,7 +816,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 </section>
 <section class="wrap ctl" id="cla" hidden>
   <h2 class="ct">Claves de reserva</h2>
-  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 💬 envía la confirmación por WhatsApp, 📲 envía la <b>invitación</b> por WhatsApp, 📨 copia el correo de <b>invitación</b> (con la propuesta de vuelos) y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
+  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 📲 envía la <b>invitación</b> por WhatsApp, 📨 copia el correo de <b>invitación</b> (con la propuesta de vuelos) y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
   <div class="rolbar" id="rolbar" role="group" aria-label="Filtrar por rol"></div>
   <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span id="cqn"></span></div>
   <div class="ktable-wrap"><table class="ktable ctab">
@@ -934,7 +935,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     </ul>
   </section>
   <div class="dcierre" id="cierre" hidden><p class="dimp"><b id="dimp-t">Importante.- Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.</b></p>
-    <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Equipo de Coordinación de Viajes</i></b></p></div>
+    <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.</p></div>
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
     <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a tu <b>coordinador de viajes</b>.</p></details>
@@ -1179,14 +1180,19 @@ function lineaTiempo(r){
       add(f, '12:30', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     add('', 0, {tipo: 'blk', i: b.i, t: b.t, rows: b.rows, text: b.text});
   });
+  add(HOTEL.ci, '13:00', {tipo: 'blk', i: '🍽️', t: 'Durante el evento · jueves 3 de diciembre', rows: [['Incluye', 'Comida, actividad y cena']]});
   legsI.forEach((l, j) => add(l.f, l.s, {tipo: 'vuelo', leg: l, dir: 'Ida', con: j < legsI.length - 1, pk: !j}));
   legsR.forEach((l, j) => add(l.f, l.s, {tipo: 'vuelo', leg: l, dir: 'Regreso', pk: !j}));
   if(!tierra && aplicaLlegada(r)){ const l = legsI.find(x => x.d === EV_AP); add(l.f, minDe(l.l) + 1, {tipo: 'verde', i: '📍', t: 'Recepción en el Aeropuerto de la Ciudad de México', text: LLEGA_TXT}); }
   if(tieneHotel(r)){ const h = hotelInfo(r), ci = isoDe(((h.lines.find(t => /^Check in/i.test(t)) || '').replace(/(\d+) (noviembre|diciembre)/, '$1 de $2'))) || HOTEL.ci;
     const hci = ((h.lines.find(t => /^Check in/i.test(t)) || '').match(/(\d{1,2}:\d{2})/) || [])[1] || '15:00';
-    const hT = r.pe2 ? '23:50' : '15:00';
-    add(ci, hT, {tipo: 'hotel', i: '🏨', t: r.pe2 ? 'Hospedaje del 2 al 4 de diciembre (2 noches)' : 'Hospedaje en el hotel sede', lines: h.lines.filter(t => !/^Check (out|in)/i.test(t)), nota: h.nota});
-    add(ci, hT, {tipo: 'info', i: '🛎️', t: 'Check-in del ' + HOTEL.n + (r.pe2 ? ' · a su llegada' : ' · ' + hci + ' h'), text: ''});
+    /* Como en la invitación: resguardo de equipaje, hospedaje (check in/out y noches) y, al final del día, traslado al hotel */
+    const lI = legsI.find(x => x.d === EV_AP), tA = lI ? minDe(lI.l) : (r.tc ? minDe('08:00') : minDe('12:00'));
+    if(r.pe2) add(lI ? lI.f : ci, lI ? tA + 2 : '23:50', {tipo: 'blk', i: '🏨', t: 'Hospedaje', rows: [['NH T2 Aeropuerto', 'Check in 2 dic (a su llegada) · Check out 4 dic · 2 noches']], nb: h.nota});
+    else {
+      if(!r.tc && !tierra) add(HOTEL.ci, tA + 2, {tipo: 'blk', i: '🧳', t: 'Resguardo de equipaje', rows: [['A su llegada', 'Su equipaje será resguardado en el Hotel NH T2 Aeropuerto, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; se le entregará a su regreso al hotel.']]});
+      add(HOTEL.ci, tA + 3, {tipo: 'blk', i: '🏨', t: 'Hospedaje', rows: [['NH T2 Aeropuerto', 'Check in 3 dic · Check out 4 dic · 1 noche']], nb: h.nota}); }
+    add(HOTEL.ci, '23:00', {tipo: 'verde', i: '🚐', t: 'Traslado al hotel', text: 'Al terminar la cena, a las 23:00 h, traslado al Hotel NH T2 Aeropuerto.'});
     if(r.pe2) add(HOTEL.ci, '11:00', {tipo: 'verde', i: '🚐', t: 'Traslado a la sede del evento', text: 'Del Hotel NH T2 Aeropuerto a MetLife Torre Manacar, piso 7. El horario se le confirmará previamente.'});
     add(HOTEL.co, '12:00', {tipo: 'info', i: '🛎️', t: 'Check-out del ' + HOTEL.n, text: ''}); }
   if(!tierra && aplicaRegreso(r) && !regHMO){ const l = legsR.find(x => x.o === EV_AP); add(l.f, minDe(l.s) - 1, {tipo: 'verde', i: '✈️', t: 'Del hotel a tu vuelo de regreso', text: REGRESO_TXT}); }
@@ -1195,7 +1201,7 @@ function lineaTiempo(r){
   S.forEach((x, k) => x.k = k);
   return S.sort((a, b) => a.f.localeCompare(b.f) || a.m - b.m || a.k - b.k);
 }
-const B_HL = /Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar/g;
+const B_HL = /resguardado en el Hotel NH T2 Aeropuerto|se le entregará a su regreso al hotel|Check in [23] dic|Check out 4 dic|Comida, actividad y cena|Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar/g;
 function notasHTML(r){
   const B = notaBloques(r); if(!B.length) return '';
   return `<section class="notas" aria-label="Indicaciones especiales"><h3>Indicaciones especiales para ti</h3>${B.map(b => `<div class="nblk"><p class="nbt"><span aria-hidden="true">${b.i}</span> ${esc(b.t)}</p>${b.rows ? `<dl>${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v).replace(B_HL, x => `<b>${x}</b>`)}</dd>`).join('')}</dl>` : `<p class="nbx">${esc(b.text)}</p>`}</div>`).join('')}</section>`;
@@ -1279,7 +1285,7 @@ function detailView(r){
       <p class="dname"><span class="est">Estimado(a)</span> <b>${esc(r.n)}</b></p>${viajeHecho(r) ? '' : `<p class="dsub dintro">${esc(INTRO_TXT).replace('ConoceMet by MetLife', '<mark class="dhl">ConoceMet by MetLife</mark>')}</p>`}
     </div>
     ${progViaje(r)}
-    ${viajeHecho(r) ? `<p class="dbye dfin">Gracias por acompañarnos en <b>ConoceMet by MetLife</b>. Le enviamos un cordial saludo y nos reiteramos a sus órdenes.&nbsp;&nbsp;<b><i>Equipo de Coordinación de Viajes</i></b></p>`
+    ${viajeHecho(r) ? `<p class="dbye dfin">Gracias por acompañarnos en <b>ConoceMet by MetLife</b>. Le enviamos un cordial saludo y nos reiteramos a sus órdenes.</p>`
       : `<section class="itinweb" aria-label="Su itinerario día por día">${mailHTML(r, 'web')}</section>`}
     <div id="agslot"></div>
     ${tripSteps(r)}
@@ -1363,7 +1369,7 @@ function resumenTxt(r){
   L.push('', 'PUNTOS IMPORTANTES',
     '- El check-in podrá realizarse 24 horas antes de la salida, si la aerolínea lo permite. De lo contrario, preséntate 2 horas antes en los mostradores.',
     '- Para administrar tu reserva usa únicamente las 6 letras de la clave en la página de la aerolínea.',
-    '', 'Consulta tu itinerario y la agenda del evento: ' + location.origin + location.pathname, '', 'Equipo de Coordinación de Viajes');
+    '', 'Consulta tu itinerario y la agenda del evento: ' + location.origin + location.pathname, '');
   return L.join('\n');
 }
 /* Correo: la misma información que el PDF (reserva, vuelos, traslados y pernoctas, sede, información general,
@@ -1385,7 +1391,7 @@ function mailTxt(r){
     else if(x.rows) x.rows.forEach(([k, v]) => L.push(`- ${k}: ${v}`)); else if(x.text) L.push(x.text); if(x.nb) L.push(x.nb); });
   if(!tierra){ L.push('', 'PUNTOS IMPORTANTES DE SU VUELO'); document.querySelectorAll('section.important li').forEach(li => L.push('- ' + li.innerText.trim())); }
   L.push('', 'Importante.- ' + impTxt(r),
-    '', 'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', CFG.firma || 'Equipo de Coordinación de Viajes');
+    '', 'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', CFG.firma || '');
   return L.join('\n');
 }
 /* Correo con formato (colores, tarjetas de vuelo, negritas y puntos importantes sombreados), igual que el PDF.
@@ -1419,6 +1425,18 @@ function mailHTML(r, enPDF){
           <td align="right" style="text-align:right">${M(esc(l.l || '-'), C ? 18 : 22)}<br>${T(esc(l.d), 12, INK, 'bold')} ${T(esc(cityOf(l.d)), 12, MUT)}</td>
         </tr></table></td></tr>`; });
     return `<tr><td style="padding:${C ? '2px 0 3px' : '4px 0 8px'}"><table width="100%" cellpadding="${C ? 3 : 6}" cellspacing="0" style="border:2px solid #CDE8D5;border-collapse:separate">${rows}</table></td></tr>`; };
+  // Correo de confirmación: mismo formato de itinerario que la propuesta de vuelos de la invitación ("IDA · día", logo, Salida/Llegada/Duración)
+  const cardM = (dir, l) => { const lg = LOGO_AL(l.v), m = legMin(l), du = m > 0 ? `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')} (Sin paradas)` : '';
+    const td = (t, st = '', cl = '') => `<td${cl ? ` class="${cl}"` : ''} style="padding:2px 6px 2px 0;${st}">${t}</td>`;
+    return `<tr class="vfm"><td style="padding:10px 0 2px">${T(dir.toUpperCase(), fs, G, 'bold')} ${T('· ' + esc(fV(l.f, true)), fs, '#222222')}</td></tr>
+    <tr><td style="padding:0 0 4px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#EFEFEF" style="background:#EFEFEF;padding:10px 12px"><table width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td width="100" valign="top" class="vlogo" style="width:100px;padding:4px 10px 0 0">${lg ? `<img src="${base.replace(/[^\/]*$/, '') + lg}" width="78" alt="${esc(String(l.v).replace(/\s*\d+$/, ''))}" style="width:78px;max-height:24px;height:auto;display:block;border:0">` : ''}</td>
+      <td valign="top"><table width="100%" cellpadding="0" cellspacing="0">
+        <tr><td colspan="3" style="padding:0 0 6px">${T(esc(lg ? LINEA(l.v).replace(/^(Aeromexico|Volaris|Viva Aerobus) /, 'Vuelo ') : LINEA(l.v)), fs, '#222222', 'bold')}</td></tr>
+        <tr>${td(T('Salida', fs, '#222222', 'bold'), 'width:90px', 'vk')}${td(T(esc(fV(l.f) + ' ' + (l.s || '')), fs, '#222222', 'bold'), 'width:190px', 'vt')}${td(T(esc(AERO_N[l.o] || l.o), fs, '#222222', 'bold'))}</tr>
+        <tr>${td(T('Llegada', fs, '#222222', 'bold'))}${td(T(esc(fV(l.f) + ' ' + (l.l || '')), fs, '#222222', 'bold'))}${td(T(esc(AERO_N[l.d] || l.d), fs, '#222222', 'bold'))}</tr>
+        <tr>${td(T('Duración', fs, '#222222'))}${td('')}${td(T(du, fs, '#222222'))}</tr>
+      </table></td></tr></table></td></tr></table></td></tr>`; };
   // PDF: tarjeta de vuelo en una sola línea por tramo, con la clave dentro del encabezado
   const cardC = (title, legs, fill, clave) => { legs = legs.filter(Boolean); if(!legs.length) return '';
     let rows = `<tr><td bgcolor="${fill}" style="background:${fill};padding:3px 10px" colspan="4">${W(esc(fmtDate(legs[0].f)), 12, 'bold')}&nbsp;&nbsp;${W(title.toUpperCase(), 11, 'bold', 'letter-spacing:1px')}&nbsp;&nbsp;${W(esc(cityOf(legs[0].o)) + ' &rarr; ' + esc(cityOf(legs[legs.length-1].d)), 12)}</td></tr>`;
@@ -1452,7 +1470,7 @@ function mailHTML(r, enPDF){
     if(WEB && !TL.length) b += p(T('Su itinerario de viaje ya concluyó. ¡Gracias por acompañarnos en <b>ConoceMet by MetLife</b>!', fs, INK));
     TL.forEach(x => { if(x.f !== fa){ fa = x.f; b += dia(x.f); }
       if(x.tipo === 'vuelo' && dos && x.pk) b += key(x.dir === 'Ida' ? 'Clave de reserva de ida' : 'Clave de reserva de regreso', x.dir === 'Ida' ? r.ci : r.cr);
-      if(x.tipo === 'vuelo') b += C ? cardC(x.dir, [x.leg], x.dir === 'Ida' ? G1 : G2, '') : card(x.dir, [x.leg], x.dir === 'Ida' ? G1 : G2, false);
+      if(x.tipo === 'vuelo') b += C ? cardC(x.dir, [x.leg], x.dir === 'Ida' ? G1 : G2, '') : (MAIL11 || WEB) ? cardM(x.dir, x.leg) : card(x.dir, [x.leg], x.dir === 'Ida' ? G1 : G2, false);
       else if(x.tipo === 'verde') b += verde(x.i + ' ' + esc(x.t), x.text === REGRESO_TXT ? `<b>${esc(x.text)}</b>` : esc(x.text).replace('MetLife', '<b>MetLife</b>'));
       else if(x.tipo === 'hotel') b += blk(x.i, x.t, `<tr><td colspan="2">${x.lines.map(t => T('• ' + esc(t).replace(HOTEL.n, `<b style="color:${INK}">${HOTEL.n}</b>`), C ? 11 : 13, INK)).join('<br>')}${x.nota ? '<br>' + T('⚠️ ' + esc(x.nota), C ? 11 : 13, INK, 'bold') : ''}</td></tr>`);
       else if(x.tipo === 'info') b += blk(x.i, x.t, x.text ? `<tr><td colspan="2">${T(esc(x.text), C ? 11 : 13, INK)}</td></tr>` : '');
@@ -1464,8 +1482,8 @@ function mailHTML(r, enPDF){
     b += `<tr><td bgcolor="#F0F8F2" style="background:#F0F8F2;border-left:4px solid ${G};padding:${C ? '5px 12px' : '10px 14px'}"><table cellpadding="0" cellspacing="0">${pts}</table></td></tr>`; }
   b += `<tr><td style="padding-top:${C ? 6 : 12}px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFF7E6" style="background:#FFF7E6;border-left:4px solid #E0A100;padding:${C ? '5px 12px;line-height:1.25' : '10px 14px'}">${T('Importante.- ' + impTxt(r), C ? 11 : fs, INK, 'bold')}</td></tr></table></td></tr>`;
   // (sin botón de PDF en el correo)
-  if(C) b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', 11) + '&nbsp;&nbsp;' + T('Equipo de Coordinación de Viajes', 11, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:4px');
-  else b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.')) + p(T((!WEB && CFG.firma) || 'Equipo de Coordinación de Viajes', fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), C ? 'padding-top:2px;padding-bottom:4px' : 'padding-top:6px;padding-bottom:10px');
+  if(C) b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', 11), 'padding-top:4px');
+  else b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.')) + (!WEB && CFG.firma ? p(T(esc(CFG.firma), fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:6px;padding-bottom:10px') : '');
   // PDF: 640 px fijos (cabe en una hoja). Correo: a lo ancho de la ventana del correo, hasta 1000 px, para leerse mejor.
   return C ? `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;font-family:Arial,sans-serif;background:#ffffff">${b}</table>`
     : `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;max-width:1000px;font-family:Calibri,Arial,sans-serif;font-size:11pt;background:#ffffff">${b}</table>`;
@@ -1678,7 +1696,7 @@ function waTxt(r){
     '👕 *Información general y dress code:*', base + 'dresscode-conocemet.jpg?v=410', '',
     '🔎 *Consulta tu reserva cuando quieras:*', base, '',
     '*Importante.-* ' + impTxt(r).replace('MetLife', '*MetLife*'), '',
-    'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', '*_Equipo de Coordinación de Viajes_*');
+    'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.');
   return L.join('\n');
 }
 /* ---------- Itinerario personal en PDF ---------- */
@@ -1807,7 +1825,6 @@ async function itinPDFtexto(r){
     document.querySelectorAll('section.important li').forEach(li => bul(li.innerText)); }
   y += 4; para('Importante.- ' + impTxt(r), {b:1});
   y += 2; para('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.');
-  para('Equipo de Coordinación de Viajes', {b:1, c:G});
   return doc.output('blob');
 }
 async function descargarPDF(r, msg, ver){
@@ -1864,7 +1881,7 @@ function vueloHTML(r, pie){ /* despedida siempre al final (búsqueda, Staff y ZI
     <div style="margin-top:16px;border-left:4px solid ${G};padding-left:9px;font:bold 15px Arial,sans-serif;color:${G};letter-spacing:.4px">PUNTOS IMPORTANTES DE SU VUELO</div>
     <div style="margin-top:6px;background:#F0F8F2;border-left:4px solid ${G};padding:8px 14px">${[...document.querySelectorAll('section.important li')].map(li => `<div style="display:flex;gap:8px;font:13px/1.55 Arial,sans-serif;color:#16301F;padding:2px 0"><span style="color:${G};font-weight:bold">•</span><span>${li.innerHTML.replace(/<b>/g, '<b style="color:#16301F">')}</span></div>`).join('')}</div>
     ${appBoxPDF(r)}
-    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.&nbsp;&nbsp;<i style="font-weight:bold;color:${G}">Equipo de Coordinación de Viajes</i></div>` : ''}
+    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.</div>` : ''}
   </div>`;
 }
 /* Propuesta de vuelos para la invitación: mismo formato que "Su viaje", sin claves (aún no se compra) */
@@ -2505,9 +2522,7 @@ function vFiltra(id){
 document.addEventListener('input', e => { if(VQ[e.target.id]) vFiltra(e.target.id); });
 addEventListener('DOMContentLoaded', () => Object.entries(VQ).forEach(([id, sel]) => { const c = $(sel); if(c) new MutationObserver(() => vFiltra(id)).observe(c, {childList:true, subtree:true}); }));
 /* Botones 📄 PDF, 💬 WhatsApp y ✉️ correo de una persona (Claves y Traslados y pernoctas) */
-function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}${TEL[n]
-      ? `<a class="cwa" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(waTxt(DATA[i]))}" target="_blank" rel="noopener" title="Enviar por WhatsApp a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp a ${esc(tcase(n))}">💬</a>`
-      : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${TEL[n] ? `<a class="cwa cwainv" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(invWa(DATA[i]))}" target="_blank" rel="noopener" title="WhatsApp de INVITACIÓN a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp de invitación a ${esc(tcase(n))}">📲</a>` : ''}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Copiar correo de INVITACIÓN de ${esc(tcase(n))} (con formato y la propuesta de vuelos)" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
+function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}${TEL[n] ? '' : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${TEL[n] ? `<a class="cwa cwainv" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(invWa(DATA[i]))}" target="_blank" rel="noopener" title="WhatsApp de INVITACIÓN a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp de invitación a ${esc(tcase(n))}">📲</a>` : ''}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Copiar correo de INVITACIÓN de ${esc(tcase(n))} (con formato y la propuesta de vuelos)" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
 function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const c = {}; DATA.forEach(r => { const k = (r.rol || 'SIN ROL').toUpperCase(); c[k] = (c[k] || 0) + 1; });
   const orden = Object.keys(c).sort((a, b) => (/^STAFF/.test(a) - /^STAFF/.test(b)) || c[b] - c[a] || a.localeCompare(b, 'es'));
@@ -2823,7 +2838,7 @@ const repSes = () => { try{ const v = JSON.parse(sessionStorage.getItem('repses'
 const repSave = pw => { try{ sessionStorage.setItem('repses', JSON.stringify({pw: pw || (repSes() || {}).pw || '', t: Date.now()})); }catch(e){} };
 /* Confirmado emitido OK y Bloqueo (Aeroméxico / emitido) OK cuentan juntos como un solo estatus */
 const ST_CONF = /^(CONFIRMADO EMITIDO|BLOQUEO (AEROMEXICO|EMITIDO)|INDIVIDUAL EMITIDO)|EMITIDO OK$/; // cualquier boleto emitido u OK de bloqueo
-function repNorm(R){ if(R && R.filas) R.filas.forEach(x => { const k = stKey(x.st); if(/^CONFIRMADO EMITIDO/.test(k)) x.st = 'INDIVIDUAL EMITIDO OK'; else if(/^BLOQUEO AEROMEXICO/.test(k)) x.st = 'BLOQUEO EMITIDO OK'; }); return R; }
+function repNorm(R){ if(R && R.filas) R.filas.forEach(x => { const k = stKey(x.st); if(/^CONFIRMADO EMITIDO/.test(k)) x.st = 'INDIVIDUAL EMITIDO OK'; else if(/^BLOQUEO/.test(k)) x.st = 'INDIVIDUAL EMITIDO OK'; }); return R; }
 async function repGate(){
   if(REP){ repSave(); return true; } if(!PACK || !PACK.rep) return false;
   const ses = repSes();
@@ -2833,7 +2848,7 @@ async function repGate(){
   catch(e){ alert('Contraseña incorrecta.'); return false; }
 }
 /* ---------- Reporte de telemarketing y presupuesto (solo Staff) ---------- */
-const REP_ST = [['PENDIENTE POR MANDAR LA INFORMACIÓN','#DDEBF7','#16301F'],['PENDIENTE CONFIRMAR PARTICIPANTE O INVITADO','#C9C400','#16301F'],['INDIVIDUAL EMITIDO OK','#70AD47','#0F2A12'],['BLOQUEO EMITIDO OK','#D9CCB0','#16301F'],['TERRESTRE CONFIRMADO','#9C5B2E','#FFFFFF'],['CANCELADO','#C00000','#FFFFFF']];
+const REP_ST = [['PENDIENTE POR MANDAR LA INFORMACIÓN','#DDEBF7','#16301F'],['PENDIENTE CONFIRMAR PARTICIPANTE O INVITADO','#C9C400','#16301F'],['INDIVIDUAL EMITIDO OK','#70AD47','#0F2A12'],['LOCAL CONFIRMADO','#FFF2CC','#16301F'],['TERRESTRE CONFIRMADO','#9C5B2E','#FFFFFF'],['CANCELADO','#C00000','#FFFFFF']];
 const RV = {v:'nom', st:'', q:'', sort:'n', dir:1}; // sin buscador en el Reporte (q siempre vacío)
 const REP_NOTA = 'Nota: el presupuesto aéreo incluye asientos y pago de equipaje. No incluye los costos de telemarketing ni de emisión.';
 const repNotaHTML = () => `<p class="rnota">📝 <b>Nota:</b> ${esc(REP_NOTA.replace(/^Nota: /, ''))}</p>`;
@@ -3042,7 +3057,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 473;
+const APP_V = 481;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
