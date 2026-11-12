@@ -276,7 +276,7 @@ table.rep{font-size:13px}
 .abtn:hover{background:var(--green);color:#fff}
 .dactions{margin-top:12px}
 .th-plain{display:block;padding:9px 8px;font:600 11px/1.2 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--green-dark,#0c4f23)}
-.cpdf{white-space:nowrap}.cpdf{vertical-align:middle;width:1%}.cbx{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:3px}.cpdf button,.cpdf .cwa{margin:0;text-align:center;width:30px;height:30px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;font-size:16px!important;line-height:1}.cpdf button{font:600 12px/1 var(--body);padding:6px 9px;margin:2px;border-radius:6px;border:1px solid var(--green);background:#fff;color:var(--green);cursor:pointer}.cpdf button{background:var(--green);color:#fff}
+.cvfrow td{background:#F7FAF7;padding:8px 10px 12px!important}.cvfbox table,.cvfbox tr,.cvfbox td,.cvfbox th{border:0!important;box-shadow:none!important;background-image:none!important}@media (max-width:560px){.cvfrow td{padding:6px 2px 10px!important}.cvfbox{zoom:.6;width:max-content;max-width:none}.cvfx{font-size:20px}}.cvfbox{max-width:760px;margin:0 auto}.cvfx{display:block;margin:10px auto 0;font:700 13px Arial,sans-serif;color:#1C6B2E;background:#fff;border:1px solid #1C6B2E;border-radius:999px;padding:6px 14px;cursor:pointer}.cpdf .cvf.on{background:#1C6B2E!important;color:#fff}.cpdf{white-space:nowrap}.cpdf{vertical-align:middle;width:1%}.cbx{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:3px}.cpdf button,.cpdf .cwa{margin:0;text-align:center;width:30px;height:30px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;font-size:16px!important;line-height:1}.cpdf button{font:600 12px/1 var(--body);padding:6px 9px;margin:2px;border-radius:6px;border:1px solid var(--green);background:#fff;color:var(--green);cursor:pointer}.cpdf button{background:var(--green);color:#fff}
 .cwa{display:inline-block;font:600 12px/1 var(--body);padding:6px 9px;margin:2px;border-radius:6px;background:#1FA855;color:#fff;text-decoration:none}.cwa.na{background:#eee;color:var(--muted)}.cwa.cml{background:#1E5BA8}.cpdf .ccopy{background:#fff!important;border:1.5px solid #1E5BA8!important;color:#1E5BA8}
 .pdf-msg{font-size:13px;color:var(--muted);margin-left:6px}
 .abtn2{font:700 14px var(--body);background:var(--green);color:#fff;border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
@@ -687,7 +687,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 .wpass-w>p{margin:0 0 12px}
 .wpasses{display:grid;gap:14px;justify-items:center;padding:6px 4px}
 .wpe{margin:10px 16px 0;padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.12);font-size:12px;font-weight:700}
-@media (min-width:900px) and (pointer:fine){.wpass-w{display:none!important}}
+@media (min-width:900px){.wpasses{grid-template-columns:repeat(auto-fit,minmax(320px,360px));justify-content:center;align-items:start}}
 .wpass{width:min(360px,100%);margin:0 auto;border-radius:16px;background:linear-gradient(180deg,#136c34,#0C4F23);color:#fff;box-shadow:0 12px 28px rgba(0,0,0,.22);overflow:hidden;font-family:Arial,Helvetica,sans-serif}
 .wpass small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
 .wpass span{display:block;font-size:15px;font-weight:700}
@@ -816,7 +816,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 </section>
 <section class="wrap ctl" id="cla" hidden>
   <h2 class="ct">Claves de reserva</h2>
-  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: ✈️ descarga el PDF solo de vuelos, 📲 envía la <b>invitación</b> por WhatsApp, 📨 copia el correo de <b>invitación</b> (con la propuesta de vuelos) y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
+  <p class="cs">Todas las claves en una sola lista. Ordena tocando el encabezado de cada columna; toca una clave para copiarla. En <b>Itinerario</b>: 🛫 muestra los vuelos con formato de invitación, 🎫 descarga el PDF solo de vuelos, 📲 envía la <b>invitación</b> por WhatsApp, 📨 copia el correo de <b>invitación</b> (con la propuesta de vuelos) y 📋 el de <b>confirmación</b> (itinerario con claves e información importante), con formato para pegarlo.</p>
   <div class="rolbar" id="rolbar" role="group" aria-label="Filtrar por rol"></div>
   <div class="csearch"><input id="cq" type="search" placeholder="🔍 Buscar por nombre o apellido" autocomplete="off" aria-label="Buscar por nombre o apellido"><button type="button" class="cx" aria-label="Borrar búsqueda" title="Borrar">✕</button><span id="cqn"></span></div>
   <div class="ktable-wrap"><table class="ktable ctab">
@@ -1258,7 +1258,7 @@ function passBox(r){
     return `<div class="wpass"><div class="wtop"><b>✈️ ${t}</b><div><small>Clave</small><span>${esc(cl || '—')}</span></div></div>
       <div class="wrt"><div><small>${esc(cityOf(a.o))}</small><strong>${esc(a.o)}</strong></div><i aria-hidden="true">✈</i><div><small>${esc(cityOf(z.d))}</small><strong>${esc(z.d)}</strong></div></div>
       ${L.map((l, k) => { const pern = k > 0 && L[k - 1].f !== l.f;
-        return `${pern ? '<div class="wpe">🏨 Pernocta en Hotel NH Collection México T2</div>' : k > 0 ? '<div class="wpe">🔁 Conexión</div>' : ''}
+        return `${pern ? '<div class="wpe">🏨 Pernocta en ${esc(HOTEL.n)}</div>' : k > 0 ? '<div class="wpe">🔁 Conexión</div>' : ''}
         <div class="wrow"><div><small>Vuelo</small><span>${esc(vCorto(l.v))}</span></div><div><small>Fecha</small><span>${esc(fCorta(l.f))}</span></div><div><small>Sale ${esc(l.o)}</small><span>${esc(l.s || '—')}</span></div><div><small>Llega ${esc(l.d)}</small><span>${esc(l.l || '—')}</span></div></div>`; }).join('')}
       <div class="wrow w2"><div><small>Pasajero</small><span>${esc(tcase(r.n))}</span></div></div>
       <div class="wcut"></div><p class="wfoot">No es pase de abordar. Haz tu check-in en la app de la aerolínea.</p></div>`; };
@@ -1284,7 +1284,6 @@ function detailView(r){
     <div class="dhello">
       <p class="dname"><span class="est">Estimado(a)</span> <b>${esc(r.n)}</b></p>${viajeHecho(r) ? '' : `<p class="dsub dintro">${esc(INTRO_TXT).replace('ConoceMet by MetLife', '<mark class="dhl">ConoceMet by MetLife</mark>')}</p>`}
     </div>
-    ${progViaje(r)}
     ${viajeHecho(r) ? `<p class="dbye dfin">Gracias por acompañarnos en <b>ConoceMet by MetLife</b>. Le enviamos un cordial saludo y nos reiteramos a sus órdenes.</p>`
       : `<section class="itinweb" aria-label="Su itinerario día por día">${mailHTML(r, 'web')}</section>`}
     <div id="agslot"></div>
@@ -1979,7 +1978,7 @@ function zipRoles(){ const el = document.getElementById('ziproles'); if(!el) ret
   const ks = Object.keys(c).sort((a, b) => (a === 'STAFF*') - (b === 'STAFF*') || c[b].length - c[a].length);
   c['NOSTAFF*'] = DATA.filter(r => !/^staff/i.test(r.rol || '')); ks.unshift('NOSTAFF*');
   el.innerHTML = `<h3>⬇️ Descargar PDF de vuelos por rol</h3><p class="cs">Cada botón baja un ZIP con los PDF de vuelos de ese rol, uno por persona, ordenados por llegada.</p><table class="ktable"><tbody>${ks.map(k => { const n = c[k].length, nv = c[k].filter(r => [r.c1, r.ida, r.reg, r.c2].some(Boolean)).length, t = k === 'STAFF*' ? 'STAFF' : k === 'NOSTAFF*' ? 'TODOS (SIN STAFF)' : k;
-    return `<tr${k === 'NOSTAFF*' ? ' class="zall"' : ''}><td class="kn">${esc(t)} <small style="font-weight:500;color:var(--muted)">(${n})</small></td><td class="zrb"><button type="button" data-zr="${esc(k)}" data-zt="v"${nv ? '' : ' disabled'}>✈️ Vuelos (${nv})</button></td></tr>`; }).join('')}</tbody></table><p id="ziprmsg" class="kmsg" role="status"></p>`; }
+    return `<tr${k === 'NOSTAFF*' ? ' class="zall"' : ''}><td class="kn">${esc(t)} <small style="font-weight:500;color:var(--muted)">(${n})</small></td><td class="zrb"><button type="button" data-zr="${esc(k)}" data-zt="v"${nv ? '' : ' disabled'}>🎫 Vuelos (${nv})</button></td></tr>`; }).join('')}</tbody></table><p id="ziprmsg" class="kmsg" role="status"></p>`; }
 function pdfDirecto(){
   const sp = new URLSearchParams(location.search), solo = !!sp.get('vpdf'), n = sp.get('pdf') || sp.get('vpdf'); if(!n) return false;
   pdfDirecto2(sp, solo, n.trim().toUpperCase()); return true;
@@ -2522,7 +2521,7 @@ function vFiltra(id){
 document.addEventListener('input', e => { if(VQ[e.target.id]) vFiltra(e.target.id); });
 addEventListener('DOMContentLoaded', () => Object.entries(VQ).forEach(([id, sel]) => { const c = $(sel); if(c) new MutationObserver(() => vFiltra(id)).observe(c, {childList:true, subtree:true}); }));
 /* Botones 📄 PDF, 💬 WhatsApp y ✉️ correo de una persona (Claves y Traslados y pernoctas) */
-function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">✈️</button>` : ''}${TEL[n] ? '' : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${TEL[n] ? `<a class="cwa cwainv" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(invWa(DATA[i]))}" target="_blank" rel="noopener" title="WhatsApp de INVITACIÓN a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp de invitación a ${esc(tcase(n))}">📲</a>` : ''}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Copiar correo de INVITACIÓN de ${esc(tcase(n))} (con formato y la propuesta de vuelos)" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
+function accBtns(i, vuelos){ const n = DATA[i].n; return `<td class="cpdf"><div class="cbx">${vuelos && [DATA[i].ida, DATA[i].reg, DATA[i].c1, DATA[i].c2].some(Boolean) ? `<button class="cvue cvf${CLA_VF.has(i) ? ' on' : ''}" data-cvf="${i}" title="Ver los vuelos de ${esc(tcase(n))}" aria-label="Ver los vuelos de ${esc(tcase(n))}" aria-expanded="${CLA_VF.has(i)}">🛫</button><button class="cvue" data-vpdf="${i}" title="Descargar el PDF de vuelos de ${esc(tcase(n))}" aria-label="PDF de vuelos de ${esc(tcase(n))}">🎫</button>` : ''}${TEL[n] ? '' : '<span class="cwa na" title="Sin teléfono registrado">—</span>'}${TEL[n] ? `<a class="cwa cwainv" href="https://wa.me/52${TEL[n]}?text=${encodeURIComponent(invWa(DATA[i]))}" target="_blank" rel="noopener" title="WhatsApp de INVITACIÓN a ${esc(tcase(n))} (${TEL[n]})" aria-label="WhatsApp de invitación a ${esc(tcase(n))}">📲</a>` : ''}<button class="ccopy cinv" type="button" data-cinv="${i}" title="Copiar correo de INVITACIÓN de ${esc(tcase(n))} (con formato y la propuesta de vuelos)" aria-label="Copiar invitación de ${esc(tcase(n))}">📨</button><button class="ccopy" type="button" data-cmail="${i}" title="Copiar correo de CONFIRMACIÓN de ${esc(tcase(n))} (itinerario con claves e información importante)" aria-label="Copiar confirmación de ${esc(tcase(n))}">📋</button></div></td>`; }
 function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const c = {}; DATA.forEach(r => { const k = (r.rol || 'SIN ROL').toUpperCase(); c[k] = (c[k] || 0) + 1; });
   const orden = Object.keys(c).sort((a, b) => (/^STAFF/.test(a) - /^STAFF/.test(b)) || c[b] - c[a] || a.localeCompare(b, 'es'));
@@ -2536,9 +2535,14 @@ function claRender(){ rolBar(); zipRoles();
   const cell = x => !x.ci && !x.cr ? '—' : (!x.cr || x.cr === x.ci) ? btn(x.ci) : !x.ci ? `<span class="cl">Regreso</span>${btn(x.cr)}`
     : `<span class="cl">Ida</span>${btn(x.ci)}<br><span class="cl">Regreso</span>${btn(x.cr)}`;
   const L = claRows(), qn = $('#cqn'); if(qn) qn.textContent = $('#cq').value.trim() ? `${L.length} de ${DATA.length}` : '';
-  $('#cbody').innerHTML = (L.length ? '' : '<tr><td colspan="4" class="cnone">Sin resultados para esa búsqueda.</td></tr>') + L.map(x => `<tr><td class="kn">${esc(x.n)}${rolTag(x.rol)}<small class="kll2">${esc(x.llt)}</small></td><td class="kll">${esc(x.llt)}</td><td class="cc">${cell(x)}</td>
-    ${accBtns(x.i, true)}</tr>`).join('');
+  $('#cbody').innerHTML = (L.length ? '' : '<tr><td colspan="4" class="cnone">Sin resultados para esa búsqueda.</td></tr>') + L.map(x => `<tr data-ci="${x.i}"><td class="kn">${esc(x.n)}${rolTag(x.rol)}<small class="kll2">${esc(x.llt)}</small></td><td class="kll">${esc(x.llt)}</td><td class="cc">${cell(x)}</td>
+    ${accBtns(x.i, true)}</tr>${CLA_VF.has(x.i) ? `<tr class="cvfrow"><td colspan="4"><div class="cvfbox">${vueloPropHTML(DATA[x.i])}<button type="button" class="cvfx" data-cvf="${x.i}">▲ Ocultar vuelos</button></div></td></tr>` : ''}`).join('');
 }
+/* Ver vuelos con formato de invitación: desplegable bajo el nombre; al abrir o cerrar regresa a su renglón en Claves */
+const CLA_VF = new Set();
+document.addEventListener('click', e => { const b = e.target.closest('[data-cvf]'); if(!b) return; e.preventDefault();
+  const i = +b.dataset.cvf; CLA_VF.has(i) ? CLA_VF.delete(i) : CLA_VF.add(i); claRender();
+  const tr = document.querySelector(`#cbody tr[data-ci="${i}"]`); if(tr){ const y = tr.getBoundingClientRect().top + scrollY - 70; scrollTo({top: Math.max(0, y), behavior: 'smooth'}); } });
 /* ---------- Traslados y pernoctas ---------- */
 const notaDe = (r, k) => ((r.notas || []).find(n => n.k === k) || {}).t || '';
 /* Quién tiene traslado real: la nota "Llegas por tu cuenta… estacionamiento" NO es traslado (son locales que llegan por su cuenta). */
@@ -3057,7 +3061,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 481;
+const APP_V = 487;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
