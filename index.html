@@ -759,6 +759,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 @media (prefers-reduced-motion:reduce){.vbar i,.cfl.flash .cfh,.agv-wait{animation:none!important}.prow-b,.abtn2{transition:none!important}}
 .disc{margin:2px 0 0;font:500 11.5px/1.3 var(--body);color:var(--muted)}
 @media (max-width:560px){.disc{font-size:10px}}
+.h3txt p.h3n{margin-top:10px}
 </style>
 </head>
 <body>
@@ -874,7 +875,8 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 <div class="wrap qhint-w"><div id="qhint" class="qhint hero3" hidden>
   <div class="h3txt">
     <h2 class="h3t">Consulta tu itinerario</h2>
-    <p><b>Escriba su nombre completo</b> (nombre(s) y apellidos) para consultar sus vuelos, traslados y hospedaje. Puede escribirlo con o sin acentos y con «ñ» o «n»; el resultado será el mismo.</p>
+    <p><b>Escriba su nombre completo</b> (nombre(s) y apellidos) para consultar los <b>servicios contemplados en su invitación</b> (vuelos, traslados y hospedaje, según corresponda).</p>
+    <p class="h3n">Puede escribirlo <b>con o sin acentos</b> y con <b>«ñ» o «n»</b>; el resultado será el mismo.</p>
   </div>
 </div></div>
 <div class="controls">
@@ -938,7 +940,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.</p></div>
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
-    <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a tu <b>coordinador de viajes</b>.</p></details>
+    <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a la <b>agencia de viajes</b>.</p></details>
     <details><summary>¿Tengo dos claves de reserva?</summary><p>Si tu vuelo de ida y tu vuelo de regreso tienen <b>claves distintas</b>, cada una aparece junto a su vuelo en tu itinerario y debes usar <b>la clave que corresponde a cada trayecto</b>. Si es la misma, aparece una sola vez como clave de ida y regreso.</p><p class="svc-n faq-n">Horarios en hora local de cada aeropuerto.</p></details>
     <details><summary>¿Qué pasa si llego antes del 3 o me voy después del 4 de diciembre?</summary><p>MetLife cubre únicamente <b>las noches de hotel y los traslados terrestres dentro de las fechas del evento (3 al 4 de diciembre) o por ruta</b>. Las noches o traslados adicionales <b>corren por tu cuenta</b>.</p></details>
     <details><summary>¿Cuándo y cómo hago el check-in de mis vuelos?</summary><p>Puedes hacerlo desde <b>24 horas antes</b> de tu vuelo en la app o en la página de la aerolínea, con tu <b>clave de reserva de 6 letras</b>. Si no es posible hacerlo en línea, preséntate en el mostrador de la aerolínea <b>2 horas antes</b> de tu vuelo.</p></details>
@@ -1115,7 +1117,7 @@ function notaBloques(r){
       ida.push({i:'🚙', t:'Llegada por su cuenta', rows:[['Fecha', m[2]], ['Llegada', 'Por su cuenta al ' + m[1] + ' (no aplica traslado terrestre)']]});
       reg.push({i:'🚙', t:'Regreso por su cuenta', rows:[['Fecha', m[3]], ['Regreso', 'Por su cuenta desde el ' + m[4] + ' (no aplica traslado terrestre)']]}); return; }
     if(n.k === 'tr' && (m = t.match(/^Traslado terrestre desde (.+?) a la sede del evento\. Te compartiremos/))){
-      ida.push({i:'🚐', t:'Traslado terrestre', rows:[['Fecha', 'Jueves 3 de diciembre'], ['Punto de encuentro y horario', 'Por confirmar. Se lo compartiremos al cierre del registro del evento.'], ['Desde', m[1]], ['Hacia', 'Hotel NH T2 Aeropuerto, donde para su mayor comodidad su equipaje será resguardado y se le entregará a su regreso al final del día'], ['Después', 'Del Hotel NH T2 Aeropuerto continuará el desplazamiento a la sede del evento: MetLife Torre Manacar, piso 7'], ['Punto de encuentro y horario', 'Se los compartiremos próximamente']]}); return; }
+      ida.push({i:'🚐', t:'Traslado terrestre', rows:[['Fecha', 'Jueves 3 de diciembre'], ['Punto de encuentro y horario', 'Por confirmar. Se lo compartiremos al cierre del registro del evento.'], ['Desde', m[1]], ['Hacia', 'Hotel NH T2 Aeropuerto, donde para su mayor comodidad su equipaje será resguardado y se le entregará a su regreso al final del día'], ['Después', 'Del Hotel NH T2 Aeropuerto continuará el desplazamiento a la sede del evento: MetLife Torre Manacar, piso 7']]}); return; }
     if(n.k === 'tr' && r.loc){
       ida.push({i:'🅿️', t:'Asistencia al evento', rows:[['Fecha', 'Jueves 3 de diciembre'], ['Sede', 'MetLife Torre Manacar, piso 7 (Av. Insurgentes Sur 1457, esquina Río Mixcoac)'], ['Cita', '12:00 h'], ['Estacionamiento', 'Aplica en Torre Manacar']]}); return; }
     if(n.k === 'tr' && /por tu cuenta/i.test(t)){
@@ -1195,13 +1197,16 @@ function lineaTiempo(r){
     add(HOTEL.ci, '23:00', {tipo: 'verde', i: '🚐', t: 'Traslado al hotel', text: 'Al terminar la cena, a las 23:00 h, traslado al Hotel NH T2 Aeropuerto.'});
     if(r.pe2) add(HOTEL.ci, '11:00', {tipo: 'verde', i: '🚐', t: 'Traslado a la sede del evento', text: 'Del Hotel NH T2 Aeropuerto a MetLife Torre Manacar, piso 7. El horario se le confirmará previamente.'});
     add(HOTEL.co, '12:00', {tipo: 'info', i: '🛎️', t: 'Check-out del ' + HOTEL.n, text: ''}); }
+  /* Terrestres: traslado de regreso a su ciudad, en orden cronológico (después del check-out, o al terminar el evento si no hay hotel) */
+  if(r.tc && !legsR.length && !conVueloInv(r)){ const hh = tieneHotel(r);
+    add(hh ? HOTEL.co : HOTEL.ci, hh ? '12:01' : '23:01', {tipo: 'blk', i: '🚐', t: 'Traslado terrestre de regreso', rows: [['Fecha', hh ? 'Viernes 4 de diciembre' : 'Jueves 3 de diciembre'], ['Desde', hh ? HOTEL.n : 'Sede del evento'], ['Hacia', tcase(r.tc)], ['Horario', 'Se le compartirá al finalizar el evento']]}); }
   if(!tierra && aplicaRegreso(r) && !regHMO){ const l = legsR.find(x => x.o === EV_AP); add(l.f, minDe(l.s) - 1, {tipo: 'verde', i: '✈️', t: 'Del hotel a tu vuelo de regreso', text: REGRESO_TXT}); }
   { const co = S.find(x => x.tipo === 'info' && /^Check-out/.test(x.t)), sal = S.filter(x => x.f === HOTEL.co && x !== co && (/regreso|aeropuerto/i.test(x.t || '') || x.dir === 'Regreso')).map(x => x.m);
     if(co && sal.length && Math.min(...sal) <= co.m) co.m = Math.min(...sal) - 1; } // el check-out va antes de salir del hotel
   S.forEach((x, k) => x.k = k);
   return S.sort((a, b) => a.f.localeCompare(b.f) || a.m - b.m || a.k - b.k);
 }
-const B_HL = /resguardado en el Hotel NH T2 Aeropuerto|se le entregará a su regreso al hotel|Check in [23] dic|Check out 4 dic|Comida, actividad y cena|Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar/g;
+const B_HL = /resguardado en el Hotel NH T2 Aeropuerto|se le entregará a su regreso al hotel|Check in [23] dic|Check out 4 dic|Comida, actividad y cena|Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar|al finalizar el evento/g;
 function notasHTML(r){
   const B = notaBloques(r); if(!B.length) return '';
   return `<section class="notas" aria-label="Indicaciones especiales"><h3>Indicaciones especiales para ti</h3>${B.map(b => `<div class="nblk"><p class="nbt"><span aria-hidden="true">${b.i}</span> ${esc(b.t)}</p>${b.rows ? `<dl>${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v).replace(B_HL, x => `<b>${x}</b>`)}</dd>`).join('')}</dl>` : `<p class="nbx">${esc(b.text)}</p>`}</div>`).join('')}</section>`;
@@ -3061,7 +3066,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 487;
+const APP_V = 493;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
@@ -3140,6 +3145,7 @@ cargaData().then(j=>{
     if(!tried){ location.replace(location.pathname+'?v='+j.app+Date.now()); return; } }
   PACK = j; if(OPEN_PIN) unlock(OPEN_PIN); else showGate(''); })
   .catch(()=>{ $('#out').innerHTML='<div class="empty">No se pudo cargar la información. Recarga la página.</div>'; });
+
 </script>
 </body>
 </html>
