@@ -1166,8 +1166,9 @@ function lineaTiempo(r){
     if(/por su cuenta$/.test(b.t) && val(R, 'Fecha')){ const f = isoDe(val(R, 'Fecha')), lr = legsR.find(x => x.f === f && x.d === 'MEX');
       add(f, b.t.startsWith('Llegada') ? '22:00' : (lr ? minDe(lr.l) + 1 : '17:00'), {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'Traslado terrestre'){ add(HOTEL.ci, '08:00', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
-    if(b.t === 'Asistencia al evento' && r.loc){
-      add(HOTEL.ci, '11:59', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
+    if(b.t === 'Asistencia al evento' && r.loc){ /* Locales: como en la invitación, en orden cronológico */
+      add(HOTEL.ci, '11:58', {tipo: 'blk', i: '🅿️', t: 'MetLife estará cubriendo', rows: [['Estacionamiento', 'Los días del evento · Torre Manacar'], ['Hospedaje', 'No aplica']]});
+      add(HOTEL.ci, '11:59', {tipo: 'verde', i: '📅', t: 'Cita', text: 'Jueves 3 de diciembre a las 12:00 h · MetLife Torre Manacar, piso 7 (Av. Insurgentes Sur 1457, esquina Río Mixcoac).'}); return; }
 
     if(b.t === 'Llegada por su cuenta'){
       add(HOTEL.ci, '14:00', {tipo: 'blk', i: '🚙', t: 'Llegada por su cuenta', rows: R.filter(x => x[0] !== 'Regreso')});
@@ -1206,7 +1207,7 @@ function lineaTiempo(r){
   S.forEach((x, k) => x.k = k);
   return S.sort((a, b) => a.f.localeCompare(b.f) || a.m - b.m || a.k - b.k);
 }
-const B_HL = /resguardado en el Hotel NH T2 Aeropuerto|se le entregará a su regreso al hotel|Check in [23] dic|Check out 4 dic|Comida, actividad y cena|Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar|al finalizar el evento/g;
+const B_HL = /resguardado en el Hotel NH T2 Aeropuerto|se le entregará a su regreso al hotel|Check in [23] dic|Check out 4 dic|Comida, actividad y cena|Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar|al finalizar el evento|Los días del evento|No aplica/g;
 function notasHTML(r){
   const B = notaBloques(r); if(!B.length) return '';
   return `<section class="notas" aria-label="Indicaciones especiales"><h3>Indicaciones especiales para ti</h3>${B.map(b => `<div class="nblk"><p class="nbt"><span aria-hidden="true">${b.i}</span> ${esc(b.t)}</p>${b.rows ? `<dl>${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v).replace(B_HL, x => `<b>${x}</b>`)}</dd>`).join('')}</dl>` : `<p class="nbx">${esc(b.text)}</p>`}</div>`).join('')}</section>`;
@@ -1561,8 +1562,8 @@ function invHTML(r, vImg){
     b += h2('Detalles de su participación');
     b += p(T('A continuación, le presentamos los detalles que <b>MetLife</b> estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.'), 'padding-bottom:4px');
     b += blk('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', '<b>Los días del evento</b> · Torre Manacar'], ['Hospedaje', '<b>No aplica</b>']]);
-    b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
     b += verde('📅 Cita', 'Jueves 3 de diciembre a las <b>12:00 h</b> · MetLife Torre Manacar, piso 7.');
+    b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
     b += imp(T('Le agradecería una confirmación de recepción de este mensaje.', INK, 'bold'));
     b += p(T('Si necesita más información o tiene preguntas específicas, no dude en ponerse en contacto.'), 'padding-top:8px');
     b += p(T('Continúo a sus órdenes.'), 'padding-top:8px') + p(T('Saludos cordiales,'), 'padding-top:8px');
@@ -1613,8 +1614,8 @@ function invWa(r){
   if(r.loc){
     L.push('', SEP, '📋 *DETALLES DE SU PARTICIPACIÓN*', SEP, '', 'A continuación, le presentamos los detalles que *MetLife* estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.');
     sec('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', '*Los días del evento* · Torre Manacar'], ['Hospedaje', '*No aplica*']]);
-    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Comida, actividad y cena*']]);
     sec('📅', 'Cita', [['', 'Jueves 3 de diciembre a las *12:00 h* · MetLife Torre Manacar, piso 7.']]);
+    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Comida, actividad y cena*']]);
     L.push('', '*Le agradecería una confirmación de recepción de este mensaje.*');
   } else {
     L.push('', SEP, '📋 *PARA SU PARTICIPACIÓN LE ESTAMOS CONSIDERANDO' + (vuelo ? ' - PROPUESTA DE VUELOS' : '') + '*', SEP);
@@ -3066,7 +3067,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 493;
+const APP_V = 496;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
