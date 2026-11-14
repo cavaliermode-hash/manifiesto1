@@ -937,7 +937,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     </ul>
   </section>
   <div class="dcierre" id="cierre" hidden><p class="dimp"><b id="dimp-t">Importante.- Le recordamos que MetLife cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.</b></p>
-    <p class="dbye">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.</p></div>
+    <p class="dbye" id="dbye">Le deseamos un excelente viaje y quedamos a sus órdenes para cualquier duda sobre su itinerario. Será un gusto contar con su presencia en ConoceMet by MetLife.</p></div>
   <section class="faq" aria-labelledby="faq-t">
     <h2 id="faq-t">Preguntas frecuentes</h2>
     <details><summary>No encuentro mi nombre, ¿qué hago?</summary><p>Escribe tu <b>nombre completo: todos tus nombres y tus dos apellidos</b>. Los acentos y el orden no importan. Si aun así no apareces o algún dato está mal, contacta a la <b>agencia de viajes</b>.</p></details>
@@ -1073,7 +1073,11 @@ const MET = 'Le recordamos que MetLife cubre las pernoctas y/o traslados terrest
 // Excepciones confirmadas por el equipo (noches adicionales pagadas por el invitado, etc.)
 const HOTEL_EXC = {};
 /* Recepción en el aeropuerto de Hermosillo (logo de MetLife): solo si su vuelo llega a Hermosillo dentro de las fechas del evento (3 al 5 nov). */
-const INTRO_TXT = 'Nos complace compartirle los detalles de su itinerario de viaje y asistencia a ConoceMet by MetLife.';
+/* Despedida profesional según el tipo de invitado (los locales no viajan) */
+const BYE_VIAJE = 'Le deseamos un excelente viaje y quedamos a sus órdenes para cualquier duda sobre su itinerario. Será un gusto contar con su presencia en ConoceMet by MetLife.';
+const BYE_LOCAL = 'Quedamos a sus órdenes para cualquier duda sobre su participación. Será un gusto contar con su presencia en ConoceMet by MetLife.';
+const despedida = r => (r && r.loc) ? BYE_LOCAL : BYE_VIAJE;
+const INTRO_TXT = 'Nos complace compartirle los detalles de su itinerario y asistencia a ConoceMet by MetLife.';
 const LLEGA_TXT = 'A tu llegada al Aeropuerto de la Ciudad de México te pedimos localizar el logo de MetLife para trasladarte a la sede del evento en Torre Manacar.';
 /* Claves: si la ida y el regreso tienen la misma clave se muestra una sola vez; si son distintas, se separan y se hace énfasis */
 const dosClaves = r => !!(r.ci && r.cr && r.ci !== r.cr);
@@ -1396,7 +1400,7 @@ function mailTxt(r){
     else if(x.rows) x.rows.forEach(([k, v]) => L.push(`- ${k}: ${v}`)); else if(x.text) L.push(x.text); if(x.nb) L.push(x.nb); });
   if(!tierra){ L.push('', 'PUNTOS IMPORTANTES DE SU VUELO'); document.querySelectorAll('section.important li').forEach(li => L.push('- ' + li.innerText.trim())); }
   L.push('', 'Importante.- ' + impTxt(r),
-    '', 'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', '', CFG.firma || '');
+    '', despedida(r), '', CFG.firma || '');
   return L.join('\n');
 }
 /* Correo con formato (colores, tarjetas de vuelo, negritas y puntos importantes sombreados), igual que el PDF.
@@ -1487,8 +1491,8 @@ function mailHTML(r, enPDF){
     b += `<tr><td bgcolor="#F0F8F2" style="background:#F0F8F2;border-left:4px solid ${G};padding:${C ? '5px 12px' : '10px 14px'}"><table cellpadding="0" cellspacing="0">${pts}</table></td></tr>`; }
   b += `<tr><td style="padding-top:${C ? 6 : 12}px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFF7E6" style="background:#FFF7E6;border-left:4px solid #E0A100;padding:${C ? '5px 12px;line-height:1.25' : '10px 14px'}">${T('Importante.- ' + impTxt(r), C ? 11 : fs, INK, 'bold')}</td></tr></table></td></tr>`;
   // (sin botón de PDF en el correo)
-  if(C) b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.', 11), 'padding-top:4px');
-  else b += p(T('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.')) + (!WEB && CFG.firma ? p(T(esc(CFG.firma), fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:6px;padding-bottom:10px') : '');
+  if(C) b += p(T(despedida(r), 11), 'padding-top:4px');
+  else b += p(T(despedida(r))) + (!WEB && CFG.firma ? p(T(esc(CFG.firma), fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:6px;padding-bottom:10px') : '');
   // PDF: 640 px fijos (cabe en una hoja). Correo: a lo ancho de la ventana del correo, hasta 1000 px, para leerse mejor.
   return C ? `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;font-family:Arial,sans-serif;background:#ffffff">${b}</table>`
     : `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;max-width:1000px;font-family:Calibri,Arial,sans-serif;font-size:11pt;background:#ffffff">${b}</table>`;
@@ -1701,7 +1705,7 @@ function waTxt(r){
     '👕 *Información general y dress code:*', base + 'dresscode-conocemet.jpg?v=410', '',
     '🔎 *Consulta tu reserva cuando quieras:*', base, '',
     '*Importante.-* ' + impTxt(r).replace('MetLife', '*MetLife*'), '',
-    'Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.');
+    despedida(r));
   return L.join('\n');
 }
 /* ---------- Itinerario personal en PDF ---------- */
@@ -1829,7 +1833,7 @@ async function itinPDFtexto(r){
   if(!tierra){ head('Puntos importantes de su vuelo');
     document.querySelectorAll('section.important li').forEach(li => bul(li.innerText)); }
   y += 4; para('Importante.- ' + impTxt(r), {b:1});
-  y += 2; para('Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.');
+  y += 2; para(despedida(r));
   return doc.output('blob');
 }
 async function descargarPDF(r, msg, ver){
@@ -1886,7 +1890,7 @@ function vueloHTML(r, pie){ /* despedida siempre al final (búsqueda, Staff y ZI
     <div style="margin-top:16px;border-left:4px solid ${G};padding-left:9px;font:bold 15px Arial,sans-serif;color:${G};letter-spacing:.4px">PUNTOS IMPORTANTES DE SU VUELO</div>
     <div style="margin-top:6px;background:#F0F8F2;border-left:4px solid ${G};padding:8px 14px">${[...document.querySelectorAll('section.important li')].map(li => `<div style="display:flex;gap:8px;font:13px/1.55 Arial,sans-serif;color:#16301F;padding:2px 0"><span style="color:${G};font-weight:bold">•</span><span>${li.innerHTML.replace(/<b>/g, '<b style="color:#16301F">')}</span></div>`).join('')}</div>
     ${appBoxPDF(r)}
-    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">Le enviamos un cordial saludo deseándole un buen viaje y nos reiteramos a sus órdenes.</div>` : ''}
+    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">${despedida(r)}</div>` : ''}
   </div>`;
 }
 /* Propuesta de vuelos para la invitación: mismo formato que "Su viaje", sin claves (aún no se compra) */
@@ -2069,6 +2073,7 @@ function agMover(dentro){ const ag = document.getElementById('agenda'), inf = do
     tabs.querySelectorAll('[data-day]').forEach(b => b.hidden = !vis.includes(+b.dataset.day)); tabs.style.gridTemplateColumns = `repeat(${Math.max(1, vis.length)},1fr)`;
     if(!fin && !vis.includes(+AG_DAY)) renderAgenda(vis[0]);
     ag.hidden = fin; inf.hidden = fin; if(imp && r) imp.hidden = viajeHecho(r);
+    { const db = document.getElementById('dbye'); if(db && r) db.textContent = despedida(r); }
     const vh = !!r && viajeHecho(r), ci = document.getElementById('cierre'), fq = document.querySelector('section.faq'); // viaje concluido: sin Importante, despedida ni preguntas
     if(ci) ci.hidden = vh; if(fq) fq.hidden = vh; }
   else { ag.hidden = false; tabs.querySelectorAll('[data-day]').forEach(b => b.hidden = false); tabs.style.gridTemplateColumns = ''; { const fq = document.querySelector('section.faq'); if(fq) fq.hidden = false; }
@@ -3067,7 +3072,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 496;
+const APP_V = 498;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
