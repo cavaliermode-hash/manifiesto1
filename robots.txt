@@ -1,0 +1,11 @@
+# Vista previa del link en WhatsApp, Facebook, X, LinkedIn y Slack
+User-agent: facebookexternalhit
+User-agent: WhatsApp
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: Slackbot
+Allow: /
+
+# Buscadores: no rastrear (sitio privado para invitados)
+User-agent: *
+Disallow: /
