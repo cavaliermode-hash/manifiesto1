@@ -656,6 +656,9 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 #cla td.kll{font-size:11.5px;color:var(--muted);white-space:nowrap}
 #cla .kll2{display:none}
 @media (max-width:560px){#cla td.kll,#cla th:nth-child(2){display:none}#cla .ktable td{padding:3px 3px!important}#cla .cpdf button,#cla .cpdf .cwa{width:22px!important;height:24px!important;font-size:12px!important}#cla .ctab td.cc{font-size:11px}#cla .ctab td.cc button{padding:2px 3px}#cla .rtag{font-size:8px;padding:2px 4px;margin-left:3px}#cla .kll2{display:block;font:500 10.5px/1.3 var(--body);color:var(--muted);text-transform:none;margin-top:2px}}
+.pgbar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:10px 0 6px;font:14px var(--body);color:var(--muted)}.pgbar b{color:var(--ink)}.pgbar button{font:700 13px var(--body);padding:8px 14px;border-radius:999px;border:1.5px solid var(--green-dark);background:#fff;color:var(--green-dark);cursor:pointer}.pgbar button:disabled{opacity:.4;cursor:default}
+.ktable tr[hidden],.rtab tr[hidden]{display:none!important}
+.zprog{display:block;width:100%;max-width:360px;height:10px;margin-top:6px;accent-color:var(--green-dark)}
 .zipbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 2px}.zipbar button{font:700 13px var(--body);padding:8px 12px;border-radius:8px;border:1.5px solid var(--green);background:var(--green);color:#fff;cursor:pointer}.zipbar button+button{background:#fff;color:var(--green)}.zipbar button:disabled{opacity:.55;cursor:wait}#zipmsg{font-size:12.5px;color:var(--muted)}
 .rolbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}.rolbar button{font:600 12px var(--body);padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink,#16301F);cursor:pointer}.rolbar button b{font-weight:800;margin-left:2px}.rolbar button.st{border-color:#9DB8DA;color:#1E5BA8}.rolbar button.on{background:var(--green);border-color:var(--green);color:#fff}.rolbar button.st.on{background:#1E5BA8;border-color:#1E5BA8;color:#fff}
 .ziproles{margin-top:18px}.ziproles h3{margin:0 0 2px;font:700 16px/1.2 var(--display);color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em}.ziproles .ktable{border:1px solid var(--line);border-radius:10px;overflow:hidden;width:100%}.ziproles td{padding:6px 8px!important}.zrb{text-align:right;white-space:nowrap}.zrb button{font:700 12px var(--body);padding:6px 10px;margin-left:6px;border-radius:7px;border:1.5px solid var(--green);background:#fff;color:var(--green);cursor:pointer}.zrb button:first-child{background:var(--green);color:#fff}.zrb button:disabled{opacity:.45;cursor:not-allowed}
@@ -1977,17 +1980,20 @@ async function zipTodos(tipo, rol){
   if(!L.length){ msg.textContent = 'No hay PDF para ese grupo.'; ZIPPING = false; bs.forEach(b => b.disabled = false); return; }
   DLG = true;
   try{
-    const JSZip = await loadZip(), zip = new JSZip(), usados = {};
-    for(let k = 0; k < L.length; k++){ const r = L[k];
-      msg.textContent = `Generando ${k + 1} de ${L.length}: ${tcase(r.n)}…`;
-      const blob = tipo === 'v' ? await vueloPDF(r) : await itinPDF(r);
-      let nom = tcase(r.n); usados[nom] = (usados[nom] || 0) + 1; if(usados[nom] > 1) nom += ' ' + usados[nom];
-      zip.file(nom + '.pdf', blob); }
-    msg.textContent = 'Comprimiendo…';
-    const z = await zip.generateAsync({type:'blob'}), url = URL.createObjectURL(z), a = document.createElement('a');
-    a.href = url; a.download = (tipo === 'v' ? 'PDF vuelos' : 'Itinerarios') + (rol != null ? ' - ' + (rol === 'STAFF*' ? 'STAFF' : rol === 'NOSTAFF*' ? 'TODOS SIN STAFF' : rol) : '') + ' - ConoceMet by MetLife.zip'; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-    msg.textContent = `✓ Listo: ${L.length} PDF en el ZIP.`;
+    const JSZip = await loadZip(), LOTE = 100, partes = Math.ceil(L.length / LOTE), usados = {};
+    const nomZip = (tipo === 'v' ? 'PDF vuelos' : 'Itinerarios') + (rol != null ? ' - ' + (rol === 'STAFF*' ? 'STAFF' : rol === 'NOSTAFF*' ? 'TODOS SIN STAFF' : rol) : '');
+    for(let p = 0; p < partes; p++){ const zip = new JSZip(), ini = p * LOTE, fin = Math.min(L.length, ini + LOTE);
+      for(let k = ini; k < fin; k++){ const r = L[k];
+        msg.innerHTML = `Generando ${k + 1} de ${L.length}${partes > 1 ? ` (parte ${p + 1} de ${partes})` : ''}: ${esc(tcase(r.n))}… <progress class="zprog" max="${L.length}" value="${k + 1}"></progress>`;
+        const blob = tipo === 'v' ? await vueloPDF(r) : await itinPDF(r);
+        let nom = tcase(r.n); usados[nom] = (usados[nom] || 0) + 1; if(usados[nom] > 1) nom += ' ' + usados[nom];
+        zip.file(nom + '.pdf', blob); await new Promise(res => setTimeout(res, 0)); }
+      msg.innerHTML = `Comprimiendo${partes > 1 ? ` parte ${p + 1} de ${partes}` : ''}… <progress class="zprog" max="${L.length}" value="${fin}"></progress>`;
+      const z = await zip.generateAsync({type:'blob'}), url = URL.createObjectURL(z), a = document.createElement('a');
+      a.href = url; a.download = nomZip + (partes > 1 ? ` - parte ${p + 1} de ${partes}` : '') + ' - ConoceMet by MetLife.zip'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      if(p < partes - 1) await new Promise(res => setTimeout(res, 1200)); }
+    msg.textContent = partes > 1 ? `✓ Listo: ${L.length} PDF en ${partes} archivos ZIP (de hasta ${LOTE} cada uno).` : `✓ Listo: ${L.length} PDF en el ZIP.`;
   }catch(e){ msg.textContent = 'No se pudo generar el ZIP. Revisa tu conexión e intenta de nuevo.'; }
   finally{ ZIPPING = false; bs.forEach(b => b.disabled = false); setTimeout(() => { DLG = false; awaySince = 0; }, 800); }
 }
@@ -2274,7 +2280,9 @@ function tierraLeg(r, lle){
 }
 const ctlLeg = r => { const lle = CTL.tab === 'lle'; return (lle ? r.ida : r.reg) || tierraLeg(r, lle); };
 const ctlHora = l => { const v = String((CTL.tab === 'lle' ? l.l : l.s) || ''); return v === '—' ? '—' : v.padStart(5,'0'); };
-const ctlSt = n => (CTL.marks[CTL.tab] || {})[n] || 'pe';
+/* Invitado cancelado en el Excel (estatus CANCELADO): cuenta como no show en Llegadas/Salidas y Concentrados */
+const CANC = new Map(); const esCancel = n => { if(!CANC.has(n) || CANC.size !== DATA.length){ CANC.clear(); DATA.forEach(r => CANC.set(r.n, /CANCEL/i.test(r.st || ''))); } return !!CANC.get(n); };
+const ctlSt = n => esCancel(n) ? 'ns' : (CTL.marks[CTL.tab] || {})[n] || 'pe';
 /* Traslados terrestres considerados (punto de encuentro, domicilio, aeropuerto, regreso a su ciudad) como "vuelos" de Llegadas/Salidas,
    con hora de salida y llegada estimada para que también pasen a En ruta y a Llegados. */
 const TR_TZ = t => /san carlos|marinaterra|hermosillo|sede|los mochis/i.test(t) ? -7 : -6;
@@ -2443,7 +2451,7 @@ function ctlRender(){
         const pern = lle && (r.notas||[]).some(n => n.k === 'pe') ? '<span class="ctag">Hotel NH</span>' : '';
         const sig = (G.pe || G.cl) && r.ida ? `<small class="csig">sigue ${esc(fmtDate(r.ida.f))} · ${esc(r.ida.v)} ${esc(r.ida.o)} ${esc(r.ida.s)} → ${esc(r.ida.d)}</small>`
           : G.cx && r.reg ? `<small class="csig">viene de ${esc(fmtDate(r.reg.f))} · ${esc(r.reg.v)} ${esc(r.reg.o)} → ${esc(r.reg.d)} ${esc(r.reg.l)}</small>` : '';
-        return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${sig}</li>`; }).join('') + '</ul></section>';
+        return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${esCancel(r.n) ? ' <small class="ktag">❌ Cancelado</small>' : ''}${sig}</li>`; }).join('') + '</ul></section>';
   });
   alUI();
   setTimeout(cvApply, 0);
@@ -2559,12 +2567,30 @@ function claRender(){ rolBar(); zipRoles();
   const L = claRows(), qn = $('#cqn'); if(qn) qn.textContent = $('#cq').value.trim() ? `${L.length} de ${DATA.length}` : '';
   $('#cbody').innerHTML = (L.length ? '' : '<tr><td colspan="4" class="cnone">Sin resultados para esa búsqueda.</td></tr>') + L.map(x => `<tr data-ci="${x.i}"><td class="kn">${esc(x.n)}${rolTag(x.rol)}<small class="kll2">${esc(x.llt)}</small></td><td class="kll">${esc(x.llt)}</td><td class="cc">${cell(x)}</td>
     ${accBtns(x.i, true)}</tr>${CLA_VF.has(x.i) ? `<tr class="cvfrow"><td colspan="4"><div class="cvfbox">${vueloPropHTML(DATA[x.i])}<button type="button" class="cvfx" data-cvf="${x.i}">▲ Ocultar vuelos</button></div></td></tr>` : ''}`).join('');
+  paginar($('#cbody'), 'cla');
 }
 /* Ver vuelos con formato de invitación: desplegable bajo el nombre; al abrir o cerrar regresa a su renglón en Claves */
 const CLA_VF = new Set();
 document.addEventListener('click', e => { const b = e.target.closest('[data-cvf]'); if(!b) return; e.preventDefault();
   const i = +b.dataset.cvf; CLA_VF.has(i) ? CLA_VF.delete(i) : CLA_VF.add(i); claRender();
   const tr = document.querySelector(`#cbody tr[data-ci="${i}"]`); if(tr){ const y = tr.getBoundingClientRect().top + scrollY - 70; scrollTo({top: Math.max(0, y), behavior: 'smooth'}); } });
+/* ---------- Paginación para eventos grandes: 50 renglones por página (la búsqueda y los filtros siguen aplicando a todos) ---------- */
+const PAGE = 50, PG = {}, PGN = {};
+function paginar(tb, key){ if(!tb) return;
+  const G = []; [...tb.children].forEach(tr => { if(tr.classList.contains('cvfrow') && G.length) G[G.length - 1].push(tr); else G.push([tr]); });
+  const tabla = tb.closest('table'), cont = (tabla && tabla.closest('.ktable-wrap')) || tabla; if(!cont) return;
+  let bar = cont.nextElementSibling; if(!(bar && bar.classList.contains('pgbar') && bar.dataset.pg === key)){ bar = null; }
+  const n = G.length; if(PGN[key] !== n){ PG[key] = 0; PGN[key] = n; }
+  if(n <= PAGE){ G.flat().forEach(tr => tr.hidden = false); if(bar) bar.remove(); return; }
+  const pages = Math.ceil(n / PAGE); PG[key] = Math.max(0, Math.min(PG[key] || 0, pages - 1));
+  G.forEach((g, i) => { const v = Math.floor(i / PAGE) === PG[key]; g.forEach(tr => tr.hidden = !v); });
+  if(!bar){ bar = document.createElement('div'); bar.className = 'pgbar'; bar.dataset.pg = key; cont.after(bar); }
+  const a = PG[key] * PAGE + 1, b = Math.min(n, (PG[key] + 1) * PAGE);
+  bar.innerHTML = `<button type="button" data-pgk="${key}" data-pgd="-1"${PG[key] ? '' : ' disabled'}>◀ Anterior</button><span>Página <b>${PG[key] + 1}</b> de ${pages} · ${a}–${b} de ${n}</span><button type="button" data-pgk="${key}" data-pgd="1"${PG[key] < pages - 1 ? '' : ' disabled'}>Siguiente ▶</button>`;
+  bar._tb = tb; }
+document.addEventListener('click', e => { const b = e.target.closest('[data-pgk]'); if(!b) return; e.preventDefault();
+  const k = b.dataset.pgk, bar = b.closest('.pgbar'); PG[k] = (PG[k] || 0) + (+b.dataset.pgd); paginar(bar._tb, k);
+  const t = bar._tb.closest('table'); if(t){ const y = t.getBoundingClientRect().top + scrollY - 80; scrollTo({top: Math.max(0, y), behavior: 'smooth'}); } });
 /* ---------- Traslados y pernoctas ---------- */
 const notaDe = (r, k) => ((r.notas || []).find(n => n.k === k) || {}).t || '';
 /* Quién tiene traslado real: la nota "Llegas por tu cuenta… estacionamiento" NO es traslado (son locales que llegan por su cuenta). */
@@ -2705,7 +2731,7 @@ $('#clcopy').addEventListener('click', async () => {
   await claCopy(L.join('\n')); $('#cmsg2').textContent = 'Resumen copiado. Pégalo en WhatsApp.'; });
 /* ---------- Concentrado de llegadas ---------- */
 const KON = {sort:'f', dir:1, filter:'all', m:'lle'};
-const kSt = n => (CTL.marks[KON.m] || {})[n] || 'pe';
+const kSt = n => esCancel(n) ? 'ns' : (CTL.marks[KON.m] || {})[n] || 'pe';
 const kLeg = r => KON.m === 'lle' ? r.ida : r.reg;
 const kHora = l => String((KON.m === 'lle' ? l.l : l.s) || '').padStart(5,'0');
 const kRank = {ok:0, ns:1, pe:2};
@@ -2727,7 +2753,7 @@ function kRows(){
      · vuelo por ruta un día antes para pernoctar en México (llegadas) y conexión a su ciudad (salidas). */
   const lle = KON.m === 'lle', t0 = CTL.tab; CTL.tab = KON.m; const extra = [];
   try{ rows.forEach(x => { const r = x.r;
-    trLegs(r).forEach((l, i) => { const y = {r, l:null, n:r.n, k:r.n + '#tr' + i, f:l.f + ' ' + (l.l === '—' ? '99:99' : l.l), v:'Traslado terrestre', lab:fmtDate(l.f), det:(l.l === '—' ? '' : l.l + ' h · ') + l.route, tag:'🚐 Traslado terrestre', tl:l};
+    (r.loc ? [] : trLegs(r)).forEach((l, i) => { const y = {r, l:null, n:r.n, k:r.n + '#tr' + i, f:l.f + ' ' + (l.l === '—' ? '99:99' : l.l), v:'Traslado terrestre', lab:fmtDate(l.f), det:(l.l === '—' ? '' : l.l + ' h · ') + l.route, tag:'🚐 Traslado terrestre', tl:l};
       if(!x.l && !x.k && x.v === 'Terrestre' && !x.rep){ Object.assign(x, y, {k:r.n, tag:''}); x.rep = 1; } else extra.push(y); });
     const c = lle ? r.c1 : r.c2, base = lle ? r.ida : r.reg;
     if(c && c.f && base && (lle ? c.f !== base.f : true)) extra.push({r, l:c, n:r.n, k:r.n + (lle ? '#pe' : '#cx'), f:c.f + ' ' + kHora(c), v:c.v,
@@ -2738,7 +2764,7 @@ function kRows(){
   /* Llegadas: el check-in es automático al aterrizar el vuelo o llegar el traslado (según horario); solo el No show se marca a mano */
   { CTL.tab = KON.m; // llegadas y regresos: check-in automático al aterrizar o llegar
     try{ rows.forEach(x => { const l = x.l || x.tl || tierraLeg(x.r, lle); x.fase = l && l.f ? faseVuelo(l) : 'prog';
-      x.s = (CTL.marks[KON.m] || {})[x.k] === 'ns' ? 'ns' : x.fase === 'ater' ? 'ok' : 'pe'; }); }
+      x.s = esCancel(x.n) || (CTL.marks[KON.m] || {})[x.k] === 'ns' ? 'ns' : x.fase === 'ater' ? 'ok' : 'pe'; }); }
     finally{ CTL.tab = t0; } }
   const k = KON.sort;
   rows.sort((a,b) => { let c = k==='s' ? kRank[a.s]-kRank[b.s] : String(a[k]).localeCompare(String(b[k]),'es');
@@ -2783,12 +2809,13 @@ function konRender(){
   document.querySelectorAll('#con .ktable th button').forEach(b => { if(b.dataset.sort === KON.sort){ b.setAttribute('aria-sort', KON.dir>0?'ascending':'descending'); b.querySelector('span').dataset.a = KON.dir>0?'▲':'▼'; } else b.removeAttribute('aria-sort'); });
   const rows = all.filter(x => KON.filter === 'all' || x.s === KON.filter);
   $('#kbody').innerHTML = rows.map(x => { const l = x.l;
-    return `<tr class="st-${x.s}${x.tag ? ' kx' : ''}"><td class="kn">${esc(x.n)}${rolTag((DATA.find(r => r.n === x.n) || {}).rol || (stTag(x.n) ? 'STAFF' : ''))}${x.tag ? `<small class="ktag">${esc(x.tag)}</small>` : ''}</td>${l ? `<td class="kf">${esc(fmtDate(l.f))}<small>${esc(lle ? l.l : l.s)} · ${esc(l.o)}→${esc(l.d)}</small></td>
+    return `<tr class="st-${x.s}${x.tag ? ' kx' : ''}"><td class="kn">${esc(x.n)}${rolTag((DATA.find(r => r.n === x.n) || {}).rol || (stTag(x.n) ? 'STAFF' : ''))}${x.tag ? `<small class="ktag">${esc(x.tag)}</small>` : ''}${esCancel(x.n) ? '<small class="ktag">❌ Cancelado en el Excel (no show)</small>' : ''}</td>${l ? `<td class="kf">${esc(fmtDate(l.f))}<small>${esc(lle ? l.l : l.s)} · ${esc(l.o)}→${esc(l.d)}</small></td>
       <td class="kv">${esc(l.v)}</td>` : `<td class="kf">${esc(x.lab)}<small>${x.v === 'Por su cuenta' ? '🚗' : '🚐'} ${esc(x.det)}</small></td><td class="kv">${esc(x.v)}</td>`}<td><div class="kb">${true ? `<span class="kauto ${x.s}">${x.s === 'ns' ? '✗ No show' : x.s === 'ok' ? '✓ Check-in' : x.fase === 'ruta' ? '✈️ En camino' : lle ? '🕒 Por llegar' : '🕒 Por salir'}</span>
       <button class="bns" data-n="${esc(x.k || x.n)}" data-s="ns" aria-pressed="${x.s==='ns'}">${x.s === 'ns' ? '↺ Quitar no show' : '✗ No show'}</button>` : `<button class="bok" data-n="${esc(x.k || x.n)}" data-s="ok" aria-pressed="${x.s==='ok'}">✓ Check-in</button>
       <button class="bns" data-n="${esc(x.k || x.n)}" data-s="ns" aria-pressed="${x.s==='ns'}">✗ No show</button>
       <button class="bpe" data-n="${esc(x.k || x.n)}" data-s="pe" aria-pressed="${x.s==='pe'}">⏳ Pendiente</button>`}</div></td></tr>`; }).join('')
     || '<tr><td colspan="4" class="cnote">No hay invitados en este filtro.</td></tr>';
+  paginar($('#kbody'), 'kon');
 }
 document.querySelectorAll('#con .ktable th button').forEach(b => b.addEventListener('click', () => {
   if(KON.sort === b.dataset.sort) KON.dir *= -1; else { KON.sort = b.dataset.sort; KON.dir = 1; } konRender(); }));
@@ -2919,12 +2946,12 @@ function repRender(){
     const t = sumR(L), stc = st => (REP_ST.find(([l]) => stKey(l) === stKey(st)) || ['', '#eee', '#333']);
     const th = (k2, lab, cls = '') => `<th class="${cls}"><button type="button" data-rso="${k2}">${lab}${RV.sort === k2 ? (RV.dir > 0 ? ' ▲' : ' ▼') : ''}</button></th>`;
     h += `${RV.st ? `<p class="cs">Filtro: <b>${esc(RV.st)}</b> · <button type="button" class="lnk" data-rst="${esc(RV.st)}" style="all:unset;cursor:pointer;color:var(--green);font-weight:700;text-decoration:underline">quitar filtro</button></p>` : ''}
-      <div class="ktable-wrap"><table class="rtab"><thead><tr>${th('n', 'Nombre')}${th('tarifa', 'Tarifa', 'hm')}${th('iva', 'IVA', 'hm')}${th('otros', 'Otros imp.', 'hm')}${th('total', 'Total')}</tr></thead>
+      <div class="ktable-wrap"><table class="rtab rlist"><thead><tr>${th('n', 'Nombre')}${th('tarifa', 'Tarifa', 'hm')}${th('iva', 'IVA', 'hm')}${th('otros', 'Otros imp.', 'hm')}${th('total', 'Total')}</tr></thead>
       <tbody>${L.map(x => { const [, bg, fg] = stc(x.st); return `<tr><td><b>${esc(tcase(x.n))}</b> <span class="rs" style="background:${bg};color:${fg}">${esc(x.st || 'SIN ESTATUS')}</span> <small style="color:var(--muted)">${esc(rolVer(x.rol))}</small></td><td class="hm">${mxn(x.tarifa)}</td><td class="hm">${mxn(x.iva)}</td><td class="hm">${mxn(x.otros)}</td><td><b>${mxn(x.total)}</b></td></tr>`; }).join('')}</tbody>
       <tfoot><tr><td>Total (${L.length})</td><td class="hm">${mxn(t.tarifa)}</td><td class="hm">${mxn(t.iva)}</td><td class="hm">${mxn(t.otros)}</td><td>${mxn(t.total)}</td></tr></tfoot></table></div>
       ${repNotaHTML()}<div class="ctools"><button type="button" class="rdl">⬇️ Descargar reporte en Excel</button></div>`;
   }
-  el.innerHTML = h;
+  el.innerHTML = h; paginar(el.querySelector('.rlist tbody'), 'rep');
 }
 document.addEventListener('click', e => {
   const v = e.target.closest('.rmode [data-rv]'); if(v){ RV.v = v.dataset.rv; repRender(); return; }
@@ -3083,7 +3110,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 501;
+const APP_V = 505;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
