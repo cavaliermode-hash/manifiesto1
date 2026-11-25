@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><title>Staff</title></head>
+<body style="font-family:system-ui,sans-serif;color:#555;padding:24px">Cargando…
+<script>
+fetch('./index.html', {cache: 'no-store'}).then(r => r.text()).then(h => {
+  h = h.replace(/<meta name="robots"[^>]*>/i, '<meta name="robots" content="noindex,nofollow,noarchive">')
+       .replace(/<meta (property|name)="(og|twitter):[^>]*>\s*/gi, '');
+  document.open(); document.write(h); document.close();
+}).catch(() => { document.body.textContent = 'No se pudo cargar. Revisa tu conexión y recarga la página.'; });
+</script></body></html>

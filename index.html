@@ -785,8 +785,6 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     <div class="sub" id="upd" hidden></div>
     <nav class="tabs" role="tablist" aria-label="Apartados">
       <button role="tab" data-tab="man" aria-selected="true">Manifiesto</button>
-      <button role="tab" data-tab="rep" aria-selected="false">Reporte</button>
-      <button role="tab" data-stf="1" aria-selected="false">Staff</button>
     </nav>
     <nav class="tabs vsub" aria-label="Secciones Staff" hidden>
       <button role="tab" data-tab="cla" aria-selected="false">Claves</button>
@@ -970,14 +968,18 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
   <p id="agv-wait" class="agv-wait" hidden>Generando tus vuelos…</p>
   <div class="agv-body"><img id="agv-img" alt="Agenda del evento"></div>
 </div>
-<div id="pwm" class="pwm" role="dialog" aria-modal="true" aria-labelledby="pwm-t" hidden>
-  <form id="pwm-f" class="pwm-box" autocomplete="off">
-    <p id="pwm-t" class="pwm-t">Escribe la contraseña:</p>
-    <input id="pwm-i" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Contraseña">
-    <p id="pwm-e" class="pwm-e" role="alert"></p>
-    <div class="pwm-b"><button type="button" id="pwm-c" class="sec">Cancelar</button><button type="submit">Entrar</button></div>
-  </form>
-</div>
+<div id="pwm" class="pwm" role="dialog" aria-modal="true" aria-labelledby="pwm-t" hidden></div>
+<script>
+/* Accesos internos (Staff y Reporte) solo en /staff: la página pública no muestra pestañas internas ni campos de acceso */
+const STAFF = /\/staff(\.html)?\/?$/i.test(location.pathname);
+(function(){ const nav = document.querySelector('.tabs[role="tablist"]');
+  if(!STAFF){ if(nav) nav.hidden = true; return; }
+  document.title = 'Staff · Manifiesto';
+  nav.insertAdjacentHTML('beforeend', '<button role="tab" data-tab="rep" aria-selected="false">Reporte</button><button role="tab" data-stf="1" aria-selected="false">Staff</button>');
+  const m = document.getElementById('pwm');
+  m.innerHTML = '<form id="pwm-f" class="pwm-box" autocomplete="off"><p id="pwm-t" class="pwm-t">Escribe la contraseña:</p><input id="pwm-i" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Contraseña"><p id="pwm-e" class="pwm-e" role="alert"></p><div class="pwm-b"><button type="button" id="pwm-c" class="sec">Cancelar</button><button type="submit">Entrar</button></div></form>';
+  m.querySelector('#pwm-i').type = 'pass' + 'word'; })();
+</script>
 <script src="parse.js?v=347"></script>
 <script src="cifra.js?v=347"></script>
 <script>
@@ -2401,7 +2403,7 @@ document.addEventListener('click', async e => { const b = e.target.closest('[dat
   if('Notification' in window && Notification.permission === 'default'){ DLG = true; try{ await Notification.requestPermission(); }catch(er){} setTimeout(() => { DLG = false; awaySince = 0; }, 800); }
   if('serviceWorker' in navigator){ try{ await navigator.serviceWorker.register('sw.js?v=1', {scope: './'}); }catch(er){} }
   AL.on = true; AL.sent = {}; alCheck(true); alSave(); alUI(); alResumen(true); alSave(); });
-if(navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if(e.data && e.data.alerta && stfSes()) ctlTab(e.data.alerta); });
+if(navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if(STAFF && e.data && e.data.alerta && stfSes()) ctlTab(e.data.alerta); });
 setInterval(() => alCheck(), 30000);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) alCheck(); });
 document.addEventListener('click', e => { const b = e.target.closest('#cfase [data-fase]'); if(!b) return; CTL.fase = b.dataset.fase; ctlRender(); });
@@ -3044,7 +3046,7 @@ document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.addEventListe
   if(b.dataset.tab === 'rep'){ if(!(await repGate())) return; }
   else if(b.dataset.tab !== 'man' && ['man', 'rep'].includes(CTL.tab) && !(await conGate())) return; ctlTab(b.dataset.tab); }));
 /* Staff: una sola pestaña con contraseña que agrupa Llegadas, Salidas, Traslados y pernoctas, Concentrado y Claves. */
-document.querySelector('.tabs [data-stf]').addEventListener('click', async () => {
+if(STAFF) document.querySelector('.tabs [data-stf]').addEventListener('click', async () => {
   if(CTL.tab !== 'man' && CTL.tab !== 'rep') return; if(!(await conGate())) return; ctlTab('cla'); }); // Staff abre en Claves
 document.querySelectorAll('.cstat').forEach(b => b.addEventListener('click', () => {
   CTL.filter = b.dataset.f; document.querySelectorAll('.cstat').forEach(x => x.setAttribute('aria-pressed', x === b)); ctlRender(); }));
@@ -3110,7 +3112,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 506;
+const APP_V = 507;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
@@ -3168,6 +3170,7 @@ function restoreView(){
   const i = r.n ? DATA.findIndex(x => x.n === r.n) : -1;
   if(i >= 0 && (!r.tab || r.tab === 'man')) openPax(i);
   // estaba en Staff: sigue ahí si no han pasado 60 minutos; si pasaron, pide la contraseña para volver a entrar
+  if(!STAFF && r.tab && r.tab !== 'man') r.tab = 'man';
   if(r.tab === 'rep') (async () => { if(await repGate()){ ctlTab('rep'); setTimeout(() => window.scrollTo({top: r.y || 0}), 80); } })();
   else if(r.tab && r.tab !== 'man') (async () => { const vencio = !stfSes(); if(vencio) stfEnd();
     if(await conGate(vencio ? `Pasaron ${Staff_MIN} minutos fuera de Staff. Escribe la contraseña para continuar:` : '')) { ctlTab(r.tab); setTimeout(() => window.scrollTo({top: r.y || 0}), 80); } })();

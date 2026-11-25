@@ -8,6 +8,6 @@ self.addEventListener('notificationclick', e => {
   e.waitUntil(self.clients.matchAll({type: 'window', includeUncontrolled: true}).then(L => {
     const c = L.find(x => x.url.includes(self.registration.scope));
     if(c){ c.postMessage({alerta: tab}); return c.focus(); }
-    return self.clients.openWindow('./?app=1#' + tab);
+    return self.clients.openWindow('./staff?app=1#' + tab);
   }));
 });

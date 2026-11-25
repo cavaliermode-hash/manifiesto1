@@ -5,6 +5,7 @@ User-agent: Twitterbot
 User-agent: LinkedInBot
 User-agent: Slackbot
 Allow: /
+Disallow: /staff
 
 # Buscadores: no rastrear (sitio privado para invitados)
 User-agent: *
