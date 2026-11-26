@@ -1187,7 +1187,7 @@ function lineaTiempo(r){
       add(f, b.t.startsWith('Llegada') ? '22:00' : (lr ? minDe(lr.l) + 1 : '17:00'), {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'Traslado terrestre'){ add(HOTEL.ci, '08:00', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'Asistencia al evento' && r.loc){ /* Locales: como en la invitación, en orden cronológico */
-      add(HOTEL.ci, '11:58', {tipo: 'blk', i: '🅿️', t: 'MetLife estará cubriendo', rows: [['Estacionamiento', 'Los días del evento · Torre Manacar'], ['Hospedaje', 'No aplica']]});
+      add(HOTEL.ci, '11:58', {tipo: 'blk', i: '🅿️', t: 'MetLife estará cubriendo', rows: [['Estacionamiento', r.est ? 'Los días del evento · Torre Manacar' : 'No aplica'], ['Hospedaje', 'No aplica']]});
       add(HOTEL.ci, '11:59', {tipo: 'verde', i: '📅', t: 'Cita', text: 'Jueves 3 de diciembre a las 12:00 h · MetLife Torre Manacar, piso 7 (Av. Insurgentes Sur 1457, esquina Río Mixcoac).'}); return; }
 
     if(b.t === 'Llegada por su cuenta'){
@@ -1582,7 +1582,7 @@ function invHTML(r, vImg){
   if(r.loc){ // Locales: texto propio, con agenda adjunta
     b += h2('Detalles de su participación');
     b += p(T('A continuación, le presentamos los detalles que <b>MetLife</b> estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.'), 'padding-bottom:4px');
-    b += blk('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', '<b>Los días del evento</b> · Torre Manacar'], ['Hospedaje', '<b>No aplica</b>']]);
+    b += blk('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', r.est ? '<b>Los días del evento</b> · Torre Manacar' : '<b>No aplica</b>'], ['Hospedaje', '<b>No aplica</b>']]);
     b += verde('📅 Cita', 'Jueves 3 de diciembre a las <b>12:00 h</b> · MetLife Torre Manacar, piso 7.');
     b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
     b += imp(T('Le agradecería una confirmación de recepción de este mensaje.', INK, 'bold'));
@@ -1635,7 +1635,7 @@ function invWa(r){
     (CFG.ag ? `Le escribo de *${CFG.ag}* en representación de *MetLife*` : 'Le escribimos en representación de *MetLife*') + ' para dar seguimiento a su participación al evento *ConoceMet by MetLife*, que se llevará a cabo el *jueves 3 de diciembre de 2026* en *MetLife Torre Manacar, piso 7* (Av. Insurgentes Sur 1457, esquina Río Mixcoac, Ciudad de México).');
   if(r.loc){
     L.push('', SEP, '📋 *DETALLES DE SU PARTICIPACIÓN*', SEP, '', 'A continuación, le presentamos los detalles que *MetLife* estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.');
-    sec('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', '*Los días del evento* · Torre Manacar'], ['Hospedaje', '*No aplica*']]);
+    sec('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', r.est ? '*Los días del evento* · Torre Manacar' : '*No aplica*'], ['Hospedaje', '*No aplica*']]);
     sec('📅', 'Cita', [['', 'Jueves 3 de diciembre a las *12:00 h* · MetLife Torre Manacar, piso 7.']]);
     sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Comida, actividad y cena*']]);
     L.push('', '*Le agradecería una confirmación de recepción de este mensaje.*');
@@ -3115,7 +3115,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 513;
+const APP_V = 515;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
