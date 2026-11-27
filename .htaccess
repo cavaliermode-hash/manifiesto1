@@ -1,0 +1,27 @@
+# Hostinger (Apache/LiteSpeed): misma conducta que GitHub Pages / Netlify
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+RewriteEngine On
+# Forzar HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# /staff -> staff.html (y cualquier /pagina -> pagina.html si existe)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+# No servir archivos internos del repositorio
+RewriteRule ^(\.git|README\.md|netlify\.toml|CNAME) - [F,L]
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|json|js|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "^staff\.html$">
+    Header set X-Robots-Tag "noindex, nofollow, noarchive"
+  </FilesMatch>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

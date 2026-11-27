@@ -658,7 +658,7 @@ button.ptile{font:inherit;cursor:pointer;width:100%;transition:transform .08s,bo
 .zprog{display:block;width:100%;max-width:360px;height:10px;margin-top:6px;accent-color:var(--green-dark)}
 .zipbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 2px}.zipbar button{font:700 13px var(--body);padding:8px 12px;border-radius:8px;border:1.5px solid var(--green);background:var(--green);color:#fff;cursor:pointer}.zipbar button+button{background:#fff;color:var(--green)}.zipbar button:disabled{opacity:.55;cursor:wait}#zipmsg{font-size:12.5px;color:var(--muted)}
 .rolbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}.rolbar button{font:600 12px var(--body);padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink,#16301F);cursor:pointer}.rolbar button b{font-weight:800;margin-left:2px}.rolbar button.st{border-color:#9DB8DA;color:#1E5BA8}.rolbar button.on{background:var(--green);border-color:var(--green);color:#fff}.rolbar button.st.on{background:#1E5BA8;border-color:#1E5BA8;color:#fff}
-.ziproles{margin-top:18px}.ziproles h3{margin:0 0 2px;font:700 16px/1.2 var(--display);color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em}.ziproles .ktable{border:1px solid var(--line);border-radius:10px;overflow:hidden;width:100%}.ziproles td{padding:6px 8px!important}.zrb{text-align:right;white-space:nowrap}.zrb button{font:700 12px var(--body);padding:6px 10px;margin-left:6px;border-radius:7px;border:1.5px solid var(--green);background:#fff;color:var(--green);cursor:pointer}.zrb button:first-child{background:var(--green);color:#fff}.zrb button:disabled{opacity:.45;cursor:not-allowed}
+.ziproles{margin-top:18px}.ziproles h3{margin:0 0 2px;font:700 16px/1.2 var(--display);color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em}.ziproles .ktable{border:1px solid var(--line);border-radius:10px;overflow:hidden;width:100%}.ziproles td{padding:6px 8px!important}.zrb{text-align:right;white-space:nowrap}.zrb button{font:700 12px var(--body);padding:6px 10px;margin-left:6px;border-radius:7px;border:1.5px solid var(--green);background:#fff;color:var(--green);cursor:pointer}.zrb button[data-zr]{background:var(--green);color:#fff}.zrb button:disabled{opacity:.45;cursor:not-allowed}
 @media (max-width:560px){.zrb{white-space:normal}.zrb button{margin:2px 0 2px 4px;padding:5px 7px;font-size:11px}}
 .ziproles tr.zall td{background:#F0F8F2;font-weight:800}
 .dcierre{margin:18px 0 6px}.dcierre .dimp{margin:0;background:#FFF7E6;border-left:4px solid #E0A100;padding:10px 14px;color:var(--ink);line-height:1.45}.dcierre .dbye{margin:12px 2px 0;color:var(--ink)}.dcierre .dbye i{color:#1C6B2E}
@@ -771,6 +771,8 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
 .disc{margin:2px 0 0;font:500 11.5px/1.3 var(--body);color:var(--muted)}
 @media (max-width:560px){.disc{font-size:10px}}
 .h3txt p.h3n{margin-top:10px}
+.ncp{border:0;background:none;cursor:pointer;font-size:12px;padding:0 3px;margin-left:4px;opacity:.65;vertical-align:middle;line-height:1} .ncp:hover{opacity:1}
+.cvchip.on{background:#136c34;color:#fff;border-color:#136c34} #ziproles .zver{background:#fff;color:#136c34;border:1px solid #136c34;margin-right:6px}
 </style>
 </head>
 <body>
@@ -940,7 +942,7 @@ main a:not([class]):hover,.foot a:hover{color:var(--acc)!important;text-decorati
     <h2 id="imp-t">Puntos importantes de su vuelo</h2>
     <ul>
       <li>El <b>check-in</b> podrá realizarse <b>24 horas antes</b> de la salida del itinerario, si la aerolínea lo permite. De lo contrario, deberá presentarse <b>2 horas antes</b> en los mostradores de la línea aérea.</li>
-      <li>Identifique la clave con la leyenda <b>Reserva de la aerolínea</b>.</li>
+      <li>Identifique la clave con la leyenda <b>Clave de Reserva</b>.</li>
       <li>Para administrar su reserva o confirmar su itinerario utilice <b>únicamente las 6 letras de la reservación</b> para entrar a la página de la aerolínea.</li>
       <li><b>Qué necesita llevar:</b> una <b>identificación oficial vigente</b> (INE o pasaporte) <b>con el mismo nombre de su reserva</b>, y su <b>clave de reserva o pase de abordar</b>.</li>
     </ul>
@@ -1203,7 +1205,7 @@ function lineaTiempo(r){
       add(f, '12:30', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     add('', 0, {tipo: 'blk', i: b.i, t: b.t, rows: b.rows, text: b.text});
   });
-  add(HOTEL.ci, '13:00', {tipo: 'blk', i: '🍽️', t: 'Durante el evento · jueves 3 de diciembre', rows: [['Incluye', 'Comida, actividad y cena']]});
+  add(HOTEL.ci, '13:00', {tipo: 'blk', i: '🍽️', t: 'Durante el evento · jueves 3 de diciembre', rows: [['Incluye', 'Alimentos programados de acuerdo con la agenda del evento.']]});
   legsI.forEach((l, j) => add(l.f, l.s, {tipo: 'vuelo', leg: l, dir: 'Ida', con: j < legsI.length - 1, pk: !j}));
   legsR.forEach((l, j) => add(l.f, l.s, {tipo: 'vuelo', leg: l, dir: 'Regreso', pk: !j}));
   if(!tierra && aplicaLlegada(r)){ const l = legsI.find(x => x.d === EV_AP); add(l.f, minDe(l.l) + 1, {tipo: 'verde', i: '📍', t: 'Recepción en el Aeropuerto de la Ciudad de México', text: LLEGA_TXT}); }
@@ -1228,7 +1230,7 @@ function lineaTiempo(r){
   S.forEach((x, k) => x.k = k);
   return S.sort((a, b) => a.f.localeCompare(b.f) || a.m - b.m || a.k - b.k);
 }
-const B_HL = /llegada un día antes|pernocta por ruta|Terminal 2|Aerotrén|jueves 3 de diciembre|resguardado en el Hotel NH T2 Aeropuerto|se le entregará a su regreso al hotel|Check in [23] dic|Check out 4 dic|Comida, actividad y cena|Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar|al finalizar el evento|Los días del evento|No aplica/g;
+const B_HL = /llegada un día antes|pernocta por ruta|Terminal 2|Aerotrén|jueves 3 de diciembre|resguardado en el Hotel NH T2 Aeropuerto|se le entregará a su regreso al hotel|Check in [23] dic|Check out 4 dic|Alimentos programados|Hotel NH T2 Aeropuerto|Hotel NH Collection Mexico City Airport T2|Torre Manacar|al finalizar el evento|Los días del evento|No aplica/g;
 function notasHTML(r){
   const B = notaBloques(r); if(!B.length) return '';
   return `<section class="notas" aria-label="Indicaciones especiales"><h3>Indicaciones especiales para ti</h3>${B.map(b => `<div class="nblk"><p class="nbt"><span aria-hidden="true">${b.i}</span> ${esc(b.t)}</p>${b.rows ? `<dl>${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v).replace(B_HL, x => `<b>${x}</b>`)}</dd>`).join('')}</dl>` : `<p class="nbx">${esc(b.text)}</p>`}</div>`).join('')}</section>`;
@@ -1438,7 +1440,7 @@ function mailHTML(r, enPDF){
   const h2 = t => `<tr data-h="1"><td style="padding:${C ? '9px 0 2px' : '16px 0 6px'}"><table cellpadding="0" cellspacing="0"><tr><td width="4" bgcolor="${G}" style="background:${G};width:4px">&nbsp;</td><td style="padding-left:8px">${T(t.toUpperCase(), C ? 12 : 14, G, 'bold', 'Arial,sans-serif', 'letter-spacing:.5px')}</td></tr></table></td></tr>`;
   const caja = (tit, inner) => `<tr><td style="padding:${C ? '6px 0 2px' : '12px 0 4px'}"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFFBEF" style="background:#FFFBEF;border:1.5px solid #F2D58A;border-radius:12px;padding:${C ? '6px 10px' : '12px 14px'}">${T(esc(tit.toUpperCase()), C ? 12 : 15, '#6B4A00', 'bold', 'Arial,sans-serif', 'letter-spacing:.6px')}<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:${C ? 2 : 6}px">${inner}</table></td></tr></table></td></tr>`;
   const p = (t, st = '') => `<tr><td style="font-family:${MAIL11 ? 'Calibri,Arial,sans-serif' : 'Arial,sans-serif'};font-size:${MAIL11 ? '11pt' : fs + 'px'};line-height:${C ? 1.3 : 1.45};${C ? 'padding:1px 4px;' : ''}color:${INK};${st}">${t}</td></tr>`;
-  const key = (lab, v) => `<tr><td style="padding:${C ? '2px 0' : '6px 0'}"><table cellpadding="${C ? 3 : 6}" cellspacing="0"><tr><td bgcolor="${HB}" style="background:${HB};border:2px solid ${G};border-radius:8px;padding:${C ? '3px 10px' : '6px 12px'}">${W(lab.toUpperCase(), C ? 11 : 12, 'bold', 'letter-spacing:.5px')}&nbsp;&nbsp;${T(esc(v), C ? 15 : 18, ON, 'bold', "'Courier New',monospace", 'letter-spacing:2px')}</td></tr></table></td></tr>`;
+  const key = (lab, v) => `<tr><td style="padding:${C ? '2px 0' : '6px 0'}"><table cellpadding="${C ? 3 : 6}" cellspacing="0"><tr><td bgcolor="${HB}" style="background:${HB};border:2px solid ${G};border-radius:8px;padding:${C ? '3px 10px' : '6px 12px'}">${W(lab.toUpperCase(), C ? 11 : 12, 'normal', 'letter-spacing:.5px')}&nbsp;&nbsp;${T(esc(v), C ? 15 : 18, ON, 'bold', "'Courier New',monospace", 'letter-spacing:2px')}</td></tr></table></td></tr>`;
   const card = (title, legs, fill, sinTitulo) => { legs = legs.filter(Boolean); if(!legs.length) return '';
     let rows = `<tr><td bgcolor="${fill}" style="background:${fill};padding:${pv}px 12px" colspan="2">${W(esc(fmtDate(legs[0].f)), 13)}${sinTitulo ? '' : '&nbsp;&nbsp;' + W(title.toUpperCase(), 13, 'bold', 'letter-spacing:1px')}&nbsp;&nbsp;${W(esc(cityOf(legs[0].o)) + ' &rarr; ' + esc(cityOf(legs[legs.length-1].d)), 13)}</td></tr>`;
     legs.forEach((l, i) => {
@@ -1476,10 +1478,11 @@ function mailHTML(r, enPDF){
     return (clave ? key(title === 'Ida' ? 'Clave de reserva de ida' : 'Clave de reserva de regreso', clave) : '') + `<tr><td style="padding:1px 0 3px"><table width="100%" cellpadding="0" cellspacing="0" style="border:1.5px solid #CDE8D5;border-collapse:separate">${rows}</table></td></tr>`; };
   let b = !C ? '' : `<tr><td bgcolor="${HB}" style="background:${HB};padding:${C ? '6px 12px' : '14px 18px'}">${C ? W('CONOCEMET BY METLIFE', 15, 'bold') + '&nbsp;&nbsp;' + W('· MANIFIESTO DE ITINERARIO', 10, 'bold', 'letter-spacing:1px') : W('MANIFIESTO DE ITINERARIO', 11, 'bold', 'letter-spacing:1.5px') + '<br>' + W('CONOCEMET BY METLIFE', 20, 'bold')}</td></tr>`;
   b += p(`${T('Estimado(a)', C ? 13 : 15, MUT)} ${T(esc(r.n.toUpperCase()), C ? 15 : 17, INK, 'bold')}`, C ? 'padding-top:6px' : 'padding-top:12px');
+  if(MAIL11) b += p(T('&nbsp;', fs, INK)); // renglón en blanco entre el saludo y la introducción (correo)
   b += p(T(esc(INTRO_TXT).replace('ConoceMet by MetLife', `<b style="color:${INK}">ConoceMet by MetLife</b>`), C ? 12 : fs, INK), C ? 'padding-top:2px;padding-bottom:2px' : 'padding-top:4px;padding-bottom:4px');
   /* Itinerario en orden cronológico, agrupado por día */
   const b0 = b.length;
-  if(!tierra && !(WEB && viajeHecho(r))){ const u = claveUna(r); b += p(T('Datos de su reservación aérea', C ? 14 : 16, G, 'bold'), C ? 'padding-top:8px;padding-bottom:2px' : 'padding-top:14px;padding-bottom:4px');
+  if(!tierra && !(WEB && viajeHecho(r))){ const u = claveUna(r); b += MAIL11 ? p(T('Adjunto encontrará su <b>boleto electrónico</b>. Le solicitamos <b>verificar nombre, ruta, fechas y horarios de vuelo</b>, y <b>notificarnos de inmediato cualquier discrepancia</b> para realizar los ajustes necesarios.', fs, INK), 'padding-top:14px;padding-bottom:4px') : p(T('Datos de su reservación aérea', C ? 14 : 16, G, 'bold'), C ? 'padding-top:8px;padding-bottom:2px' : 'padding-top:14px;padding-bottom:4px');
     if(dos) b += p(T('Su viaje tiene dos claves de reserva distintas: la clave de ida aparece en su vuelo de ida y la clave de regreso en su vuelo de regreso.', C ? 11 : fs, INK)); else if(!r.ida && !r.reg && !r.c1 && !r.c2) b += p(T('Sus vuelos están en proceso de emisión. En cuanto estén confirmados verá aquí su clave de reserva y sus horarios.', C ? 11 : fs, INK)); else if(!u.k || /^[\s\-–—]*$/.test(u.k)) b += p(T('Su clave de reserva se compartirá en cuanto esté confirmada.', C ? 11 : fs, INK)); else b += key(u.lab, u.k); }
   { const blkRows = rows => (rows || []).map(([k, v]) => `<tr><td valign="top" width="${C ? 104 : 120}" style="width:${C ? 104 : 120}px;padding:${C ? '0 6px 0 0' : '1px 8px 1px 0'}">${T(esc(k), C ? 10 : 12, MUT, 'bold')}</td><td style="padding:${C ? '0;line-height:1.25' : '1px 0;line-height:1.35'}">${T(esc(v).replace(B_HL, x => `<b style="color:${INK}">${x}</b>`), C ? 11 : 13, INK)}</td></tr>`).join('');
     const blk = (ic, t, inner) => `<tr><td style="padding:${C ? '3px 0' : '5px 0'}"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;border:1.5px solid #EBCB72;border-left:5px solid #E0A100;border-radius:8px;padding:${C ? '3px 9px' : '6px 11px'}">${T(ic + ' ' + esc(t.toUpperCase()), C ? 10 : 12, '#6B4A00', 'bold', 'Arial,sans-serif', 'letter-spacing:.5px')}<table cellpadding="0" cellspacing="0" style="margin-top:${C ? 1 : 2}px">${inner}</table></td></tr></table></td></tr>`;
@@ -1559,7 +1562,7 @@ function invPartes(r){
   }
   if(tieneHotel(r)) L.push(`<b>Hospedaje</b> 1 noche en el ${esc(HOTEL.n)} (check in 3 de diciembre · check out 4 de diciembre).`);
   if(tieneHotel(r)) L.push(`<b>Resguardo de equipaje:</b> a su llegada a la Ciudad de México, su equipaje será resguardado en el ${esc(HOTEL.n)}, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; se le entregará a su regreso al hotel.`);
-  L.push('<b>Comida, actividad y cena</b> del evento.');
+  L.push('<b>Alimentos programados</b> de acuerdo con la agenda del evento.');
   return L;
 }
 const fDia = f => { if(!f) return ''; const d = new Date(f + 'T12:00:00'); return ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][d.getDay()] + ' ' + d.getDate() + ' ' + ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]; };
@@ -1584,7 +1587,7 @@ function invHTML(r, vImg){
     b += p(T('A continuación, le presentamos los detalles que <b>MetLife</b> estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.'), 'padding-bottom:4px');
     b += blk('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', r.est ? '<b>Los días del evento</b> · Torre Manacar' : '<b>No aplica</b>'], ['Hospedaje', '<b>No aplica</b>']]);
     b += verde('📅 Cita', 'Jueves 3 de diciembre a las <b>12:00 h</b> · MetLife Torre Manacar, piso 7.');
-    b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
+    b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Alimentos programados</b> de acuerdo con la agenda del evento.']]);
     b += imp(T('Le agradecería una confirmación de recepción de este mensaje.', INK, 'bold'));
     b += p(T('Si necesita más información o tiene preguntas específicas, no dude en ponerse en contacto.'), 'padding-top:8px');
     b += p(T('Continúo a sus órdenes.'), 'padding-top:8px') + p(T('Saludos cordiales,'), 'padding-top:8px');
@@ -1607,7 +1610,7 @@ function invHTML(r, vImg){
   }
   if(hotel && !r.pe2 && !tc) b += blk('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será <b>resguardado en el ${esc(HOTEL.n)}</b>, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; <b>se le entregará a su regreso al hotel</b>.`]]);
   if(hotel && !r.pe2) b += blk('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '<b>Check in 3 dic</b> · <b>Check out 4 dic</b> · 1 noche']]);
-  b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Comida, actividad y cena</b>']]);
+  b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Alimentos programados</b> de acuerdo con la agenda del evento.']]);
   if(hotel) b += verde('🚐 Traslado al hotel', 'Al terminar la cena, a las <b>23:00 h</b>, traslado al <b>Hotel NH T2 Aeropuerto</b>.');
   if(tc) b += blk('🚐', 'Traslado terrestre de regreso', [['Desde', '<b>' + (hotel ? esc(HOTEL.n) : 'Sede del evento') + '</b>'], ['Hacia', '<b>' + tc + '</b>'], ['Horario', 'Se le compartirá <b>al finalizar el evento</b>']]);
   else b += verde('✈️ Vuelo de regreso', 'El <b>Hotel NH T2 Aeropuerto</b> está dentro de la <b>Terminal 2</b> del aeropuerto; si su vuelo sale de la <b>Terminal 1</b>, puede cambiar de terminal en el <b>Aerotrén</b>.');
@@ -1637,7 +1640,7 @@ function invWa(r){
     L.push('', SEP, '📋 *DETALLES DE SU PARTICIPACIÓN*', SEP, '', 'A continuación, le presentamos los detalles que *MetLife* estará cubriendo con base en su registro y alineado a la agenda el cual le adjuntamos.');
     sec('🅿️', 'MetLife estará cubriendo', [['Estacionamiento', r.est ? '*Los días del evento* · Torre Manacar' : '*No aplica*'], ['Hospedaje', '*No aplica*']]);
     sec('📅', 'Cita', [['', 'Jueves 3 de diciembre a las *12:00 h* · MetLife Torre Manacar, piso 7.']]);
-    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Comida, actividad y cena*']]);
+    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Alimentos programados* de acuerdo con la agenda del evento.']]);
     L.push('', '*Le agradecería una confirmación de recepción de este mensaje.*');
   } else {
     L.push('', SEP, '📋 *PARA SU PARTICIPACIÓN LE ESTAMOS CONSIDERANDO' + (vuelo ? ' - PROPUESTA DE VUELOS' : '') + '*', SEP);
@@ -1653,7 +1656,7 @@ function invWa(r){
     }
     if(hotel && !r.pe2){ if(!tc) sec('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será *resguardado en el ${HOTEL.n}*, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; *se le entregará a su regreso al hotel*.`]]);
       sec('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '*Check in 3 dic* · *Check out 4 dic* · 1 noche']]); }
-    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Comida, actividad y cena*']]);
+    sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Alimentos programados* de acuerdo con la agenda del evento.']]);
     if(hotel) sec('🚐', 'Traslado al hotel', [['', 'Al terminar la cena, a las *23:00 h*, traslado al *Hotel NH T2 Aeropuerto*.']]);
     if(tc) sec('🚐', 'Traslado terrestre de regreso', [['Desde', `*${hotel ? HOTEL.n : 'Sede del evento'}*`], ['Hacia', `*${tc}*`], ['Horario', 'Se le compartirá *al finalizar el evento*']]);
     else sec('✈️', 'Vuelo de regreso', [['', 'El *Hotel NH T2 Aeropuerto* está dentro de la *Terminal 2* del aeropuerto; si su vuelo sale de la *Terminal 1*, puede cambiar de terminal en el *Aerotrén*.']]);
@@ -1979,14 +1982,14 @@ let ZIPPING = false;
 async function zipTodos(tipo, rol){
   if(ZIPPING) return; ZIPPING = true;
   const msg = rol != null ? $('#ziprmsg') : $('#zipmsg'), bs = [...document.querySelectorAll('#zipv, #zipi, #ziproles button')]; bs.forEach(b => b.disabled = true);
-  const enRol = r => rol === 'NOSTAFF*' ? !/^staff/i.test(r.rol || '') : rol === 'STAFF*' ? /^staff/i.test(r.rol || '') : (r.rol || 'SIN ROL').toUpperCase() === rol;
+  const enRol = r => rol === 'VUELO*' ? conVue(r) : rol === 'NOSTAFF*' ? !/^staff/i.test(r.rol || '') : rol === 'STAFF*' ? /^staff/i.test(r.rol || '') : (r.rol || 'SIN ROL').toUpperCase() === rol;
   const base = rol != null ? DATA.map((r, i) => ({...llegaDe(r), i, r})).filter(x => enRol(x.r)).sort((a, b) => a.ll.localeCompare(b.ll) || a.r.n.localeCompare(b.r.n, 'es')).map(x => x.r) : claRows().map(x => DATA[x.i]);
   const L = base.filter(r => tipo === 'i' || [r.c1, r.ida, r.reg, r.c2].some(Boolean));
   if(!L.length){ msg.textContent = 'No hay PDF para ese grupo.'; ZIPPING = false; bs.forEach(b => b.disabled = false); return; }
   DLG = true;
   try{
     const JSZip = await loadZip(), LOTE = 100, partes = Math.ceil(L.length / LOTE), usados = {};
-    const nomZip = (tipo === 'v' ? 'PDF vuelos' : 'Itinerarios') + (rol != null ? ' - ' + (rol === 'STAFF*' ? 'STAFF' : rol === 'NOSTAFF*' ? 'TODOS SIN STAFF' : rol) : '');
+    const nomZip = (tipo === 'v' ? 'PDF vuelos' : 'Itinerarios') + (rol != null ? ' - ' + (rol === 'STAFF*' ? 'STAFF' : rol === 'NOSTAFF*' ? 'TODOS SIN STAFF' : rol === 'VUELO*' ? 'SOLO CON VUELO O CLAVE' : rol) : '');
     for(let p = 0; p < partes; p++){ const zip = new JSZip(), ini = p * LOTE, fin = Math.min(L.length, ini + LOTE);
       for(let k = ini; k < fin; k++){ const r = L[k];
         msg.innerHTML = `Generando ${k + 1} de ${L.length}${partes > 1 ? ` (parte ${p + 1} de ${partes})` : ''}: ${esc(tcase(r.n))}… <progress class="zprog" max="${L.length}" value="${k + 1}"></progress>`;
@@ -2008,9 +2011,9 @@ document.addEventListener('click', e => { if(e.target.id === 'zipv') zipTodos('v
 function zipRoles(){ const el = document.getElementById('ziproles'); if(!el) return;
   const c = {}; DATA.forEach(r => { const k = /^staff/i.test(r.rol || '') ? 'STAFF*' : (r.rol || 'SIN ROL').toUpperCase(); (c[k] = c[k] || []).push(r); });
   const ks = Object.keys(c).sort((a, b) => (a === 'STAFF*') - (b === 'STAFF*') || c[b].length - c[a].length);
-  c['NOSTAFF*'] = DATA.filter(r => !/^staff/i.test(r.rol || '')); ks.unshift('NOSTAFF*');
-  el.innerHTML = `<h3>⬇️ Descargar PDF de vuelos por rol</h3><p class="cs">Cada botón baja un ZIP con los PDF de vuelos de ese rol, uno por persona, ordenados por llegada.</p><table class="ktable"><tbody>${ks.map(k => { const n = c[k].length, nv = c[k].filter(r => [r.c1, r.ida, r.reg, r.c2].some(Boolean)).length, t = k === 'STAFF*' ? 'STAFF' : k === 'NOSTAFF*' ? 'TODOS (SIN STAFF)' : k;
-    return `<tr${k === 'NOSTAFF*' ? ' class="zall"' : ''}><td class="kn">${esc(t)} <small style="font-weight:500;color:var(--muted)">(${n})</small></td><td class="zrb"><button type="button" data-zr="${esc(k)}" data-zt="v"${nv ? '' : ' disabled'}>🎫 Vuelos (${nv})</button></td></tr>`; }).join('')}</tbody></table><p id="ziprmsg" class="kmsg" role="status"></p>`; }
+  c['NOSTAFF*'] = DATA.filter(r => !/^staff/i.test(r.rol || '')); c['VUELO*'] = DATA.filter(conVue); ks.unshift('NOSTAFF*', 'VUELO*');
+  el.innerHTML = `<h3>⬇️ Descargar PDF de vuelos por rol</h3><p class="cs">Cada botón baja un ZIP con los PDF de vuelos de ese rol, uno por persona, ordenados por llegada.</p><table class="ktable"><tbody>${ks.map(k => { const n = c[k].length, nv = c[k].filter(r => [r.c1, r.ida, r.reg, r.c2].some(Boolean)).length, t = k === 'STAFF*' ? 'STAFF' : k === 'NOSTAFF*' ? 'TODOS (SIN STAFF)' : k === 'VUELO*' ? '✈️ SOLO CON VUELO O CLAVE' : k;
+    return `<tr${k === 'NOSTAFF*' ? ' class="zall"' : ''}><td class="kn">${esc(t)} <small style="font-weight:500;color:var(--muted)">(${n})</small></td><td class="zrb">${k === 'VUELO*' ? '<button type="button" class="zver" data-zver="1" title="Ver la lista en Claves">👁 Ver lista</button> ' : ''}<button type="button" data-zr="${esc(k)}" data-zt="v"${nv ? '' : ' disabled'}>🎫 Vuelos (${nv})</button></td></tr>`; }).join('')}</tbody></table><p id="ziprmsg" class="kmsg" role="status"></p>`; }
 function pdfDirecto(){
   const sp = new URLSearchParams(location.search), solo = !!sp.get('vpdf'), n = sp.get('pdf') || sp.get('vpdf'); if(!n) return false;
   pdfDirecto2(sp, solo, n.trim().toUpperCase()); return true;
@@ -2525,11 +2528,15 @@ function llegaDe(r){
 }
 const rolVer = rol => /^staff/i.test(rol || '') ? 'STAFF' + (/INSPECCI/i.test(rol) ? ' · VISITA DE INSPECCIÓN' : '') : String(rol || ''); // staff sin distinguir agencia o MetLife
 const rolTag = rol => rol ? `<span class="rtag">${esc(rolVer(rol).toUpperCase())}</span>` : '';
+document.addEventListener('click', e => { const b = e.target.closest('[data-ncp]'); if(!b) return; e.stopPropagation(); const n = b.dataset.ncp, ok = () => { b.textContent = '✓'; setTimeout(() => b.textContent = '📋', 1400); };
+  Promise.resolve().then(() => navigator.clipboard.writeText(n)).then(ok).catch(() => { const ta = document.createElement('textarea'); ta.value = n; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(err){} ta.remove(); }); });
+const conVue = r => !/CANCEL/i.test(r.st || '') && ([r.c1, r.ida, r.reg, r.c2].some(Boolean) || !!(r.ci || r.cr || r.cl)); // activos con vuelo o clave (sin cancelados / no show)
 function claRows(){
   const rows = DATA.map((r, i) => ({i, n:r.n, ci:r.ci || (!r.cr ? r.cl || '' : ''), cr:r.cr || '', ...llegaDe(r), rol:r.rol || ''}));
   const k = CLA.sort;
   rows.sort((a,b) => { const v = x => k==='ci' ? (x.ci || x.cr) : x[k]; let c = (k==='n' ? 0 : (!v(a)) - (!v(b))) || String(v(a)).localeCompare(String(v(b)),'es'); if(!c) c = a.n.localeCompare(b.n,'es'); return c * CLA.dir; });
   if(CLA.rol){ const f = CLA.rol === 'STAFF*' ? (x => /^staff/i.test(x.rol)) : (x => x.rol.toUpperCase() === CLA.rol); for(let k = rows.length - 1; k >= 0; k--) if(!f(rows[k])) rows.splice(k, 1); }
+  if(CLA.vue) for(let k = rows.length - 1; k >= 0; k--) if(!conVue(DATA[rows[k].i])) rows.splice(k, 1);
   const q = norm($('#cq') ? $('#cq').value : '').split(/\s+/).filter(Boolean); // buscador: todas las palabras escritas deben aparecer en el nombre o la clave
   return q.length ? rows.filter(x => { const t = norm(x.n + ' ' + x.ci + ' ' + x.cr); return q.every(w => t.includes(w)); }) : rows;
 }
@@ -2562,7 +2569,11 @@ function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const orden = Object.keys(c).sort((a, b) => (/^STAFF/.test(a) - /^STAFF/.test(b)) || c[b] - c[a] || a.localeCompare(b, 'es'));
   const nSt = DATA.filter(r => /^staff/i.test(r.rol || '')).length;
   const chip = (k, t, n) => `<button type="button" data-rol="${esc(k)}" class="${CLA.rol === k ? 'on' : ''}${/^STAFF/.test(k) ? ' st' : ''}" aria-pressed="${CLA.rol === k}">${esc(t)} <b>${n}</b></button>`;
-  el.innerHTML = chip('', 'Todos', DATA.length) + orden.filter(k => !/^STAFF/.test(k)).map(k => chip(k, k, c[k])).join('') + (nSt ? chip('STAFF*', 'STAFF', nSt) : ''); }
+  const nV = DATA.filter(conVue).length;
+  el.innerHTML = chip('', 'Todos', DATA.length) + orden.filter(k => !/^STAFF/.test(k)).map(k => chip(k, k, c[k])).join('') + (nSt ? chip('STAFF*', 'STAFF', nSt) : '')
+    + `<button type="button" data-cvue="1" class="cvchip${CLA.vue ? ' on' : ''}" aria-pressed="${!!CLA.vue}" title="Mostrar solo quienes tienen vuelo o clave de reserva">✈️ Con vuelo o clave <b>${nV}</b></button>`; }
+document.addEventListener('click', e => { const b = e.target.closest('#rolbar [data-cvue], #ziproles [data-zver]'); if(!b) return; CLA.vue = b.dataset.zver ? true : !CLA.vue; claRender();
+  if(b.dataset.zver){ const t = document.getElementById('rolbar'); if(t) t.scrollIntoView({behavior:'smooth', block:'start'}); } });
 document.addEventListener('click', e => { const b = e.target.closest('#rolbar [data-rol]'); if(!b) return; CLA.rol = CLA.rol === b.dataset.rol ? '' : b.dataset.rol; claRender(); });
 function claRender(){ rolBar(); zipRoles();
   document.querySelectorAll('#cla .ktable th button').forEach(b => { if(b.dataset.sort === CLA.sort){ b.setAttribute('aria-sort', CLA.dir>0?'ascending':'descending'); b.querySelector('span').dataset.a = CLA.dir>0?'▲':'▼'; } else b.removeAttribute('aria-sort'); });
@@ -2570,7 +2581,7 @@ function claRender(){ rolBar(); zipRoles();
   const cell = x => !x.ci && !x.cr ? '—' : (!x.cr || x.cr === x.ci) ? btn(x.ci) : !x.ci ? `<span class="cl">Regreso</span>${btn(x.cr)}`
     : `<span class="cl">Ida</span>${btn(x.ci)}<br><span class="cl">Regreso</span>${btn(x.cr)}`;
   const L = claRows(), qn = $('#cqn'); if(qn) qn.textContent = $('#cq').value.trim() ? `${L.length} de ${DATA.length}` : '';
-  $('#cbody').innerHTML = (L.length ? '' : '<tr><td colspan="4" class="cnone">Sin resultados para esa búsqueda.</td></tr>') + L.map(x => `<tr data-ci="${x.i}"><td class="kn">${esc(x.n)}${rolTag(x.rol)}<small class="kll2">${esc(x.llt)}</small></td><td class="kll">${esc(x.llt)}</td><td class="cc">${cell(x)}</td>
+  $('#cbody').innerHTML = (L.length ? '' : '<tr><td colspan="4" class="cnone">Sin resultados para esa búsqueda.</td></tr>') + L.map(x => `<tr data-ci="${x.i}"><td class="kn">${esc(x.n)}<button type="button" class="ncp" data-ncp="${esc(x.n)}" title="Copiar nombre" aria-label="Copiar nombre de ${esc(tcase(x.n))}">📋</button>${rolTag(x.rol)}<small class="kll2">${esc(x.llt)}</small></td><td class="kll">${esc(x.llt)}</td><td class="cc">${cell(x)}</td>
     ${accBtns(x.i, true)}</tr>${CLA_VF.has(x.i) ? `<tr class="cvfrow"><td colspan="4"><div class="cvfbox">${vueloPropHTML(DATA[x.i])}<button type="button" class="cvfx" data-cvf="${x.i}">▲ Ocultar vuelos</button></div></td></tr>` : ''}`).join('');
   paginar($('#cbody'), 'cla');
 }
@@ -2768,7 +2779,7 @@ function kRows(){
   rows.forEach(x => { if(!x.k){ x.k = x.n; } if(x.k === x.n) x.s = kSt(x.n); });
   /* Llegadas: el check-in es automático al aterrizar el vuelo o llegar el traslado (según horario); solo el No show se marca a mano */
   { CTL.tab = KON.m; // llegadas y regresos: check-in automático al aterrizar o llegar
-    try{ rows.forEach(x => { const l = x.l || x.tl || tierraLeg(x.r, lle); x.fase = l && l.f ? faseVuelo(l) : 'prog';
+    try{ rows.forEach(x => { const l = (x.r.loc && !x.l) ? {terr:true, f:HOTEL.ci, l:'12:00', s:'23:00'} : (x.l || x.tl || tierraLeg(x.r, lle)); x.fase = l && l.f ? faseVuelo(l) : 'prog';
       x.s = esCancel(x.n) || (CTL.marks[KON.m] || {})[x.k] === 'ns' ? 'ns' : x.fase === 'ater' ? 'ok' : 'pe'; }); }
     finally{ CTL.tab = t0; } }
   const k = KON.sort;
@@ -3115,7 +3126,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 515;
+const APP_V = 525;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
