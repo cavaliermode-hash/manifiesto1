@@ -2665,7 +2665,7 @@ const INV = () => DATA.filter(r => !r.staff); // invitados sin staff (Traslados 
 function pytData(){
   const by = (a, b) => a.n.localeCompare(b.n, 'es');
   const pern = INV().filter(pernoc).sort(by), grupos = new Map();
-  const locales = INV().filter(r => !ctaNoLocal(r) && !tieneVuelo(r) && (esPorCuenta(r) || !conTraslado(r))).sort(by);
+  const locales = INV().filter(r => !/CANCEL/i.test(r.st || '') && !ctaNoLocal(r) && !tieneVuelo(r) && (esPorCuenta(r) || !conTraslado(r))).sort(by);
   INV().filter(conTraslado).sort(by).forEach(r => {
     const t = notaDe(r, 'tr'), m = t.match(/punto de encuentro (.+?)(?:, para llevarte|\. A tu regreso)/i), cd = ciudadTr(r, t);
     const cuando = (t.match(/el (\S+ \d+ de \S+) a las ([\d:]+ h)/) || []).slice(1).join(' · ') || (t.match(/a las ([\d:]+ h)/) || [])[1] || '';
@@ -2720,7 +2720,8 @@ const PYT_FIL = {
   pcu:  ['🚙 Por su cuenta, no locales (sin traslado ni vuelo)', r => ctaNoLocal(r)],
   trv:  ['🚗+✈️ Traslado + vuelo, sin pernocta', r => conTraslado(r) && !pernoc(r) && tieneVuelo(r)],
   trs:  ['🚗 Solo traslado terrestre (sin vuelo)', r => conTraslado(r) && !pernoc(r) && !tieneVuelo(r)],
-  loc:  ['🅿️ Locales (cita 12:00 h · estacionamiento)', r => !ctaNoLocal(r) && !tieneVuelo(r) && (esPorCuenta(r) || !conTraslado(r))],
+  dec:  ['❌ Declinan invitación', r => /CANCEL/i.test(r.st || '')],
+  loc:  ['🅿️ Locales (cita 12:00 h · estacionamiento)', r => !/CANCEL/i.test(r.st || '') && !ctaNoLocal(r) && !tieneVuelo(r) && (esPorCuenta(r) || !conTraslado(r))],
   sv:   ['✈️ Solo vuelo (sin traslado ni pernocta)', r => tieneVuelo(r) && !conTraslado(r) && !pernoc(r)]
 };
 document.addEventListener('click', e => { const b = e.target.closest('#pout [data-pf]'); if(!b) return; PYT_F = PYT_F === b.dataset.pf ? '' : b.dataset.pf; pytRender(); const t = document.querySelector('#pout .pres') || document.getElementById('pout'); t.scrollIntoView({block:'start', behavior:'smooth'}); });
@@ -2733,7 +2734,7 @@ function pytRender(){
   const porCd = new Map(); grupos.forEach(g => porCd.set(g.cd, (porCd.get(g.cd) || 0) + g.pax.length));
   const tile = (k, t, sub, cls = '') => `<button type="button" class="ptile ${cls}${on(k)}" data-pf="${k}" aria-pressed="${PYT_F === k}"><b>${N(k)}</b><span>${t}</span>${sub ? `<small>${sub}</small>` : ''}</button>`;
   const chip = (k, t) => `<button type="button" class="pchip${on(k)}" data-pf="${k}" aria-pressed="${PYT_F === k}">${t} <b>${N(k)}</b></button>`;
-  const ex = ['tres','pev','pcu','trv','trs','loc','sv'], suma = ex.reduce((a, k) => a + N(k), 0);
+  const ex = ['tres','pev','pcu','trv','trs','loc','sv','dec'], suma = ex.reduce((a, k) => a + N(k), 0);
   let h = `<div class="pdesg"><b>Desglose exacto (cada persona una sola vez) · toca para ver la lista:</b>
     ${ex.map(k => chip(k, PYT_FIL[k][0])).join('')}
     <span class="tot">Total <b>${suma}</b>${suma === INV().length ? ' ✔' : ' ⚠ no cuadra con ' + INV().length}</span></div>
@@ -3162,7 +3163,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 542;
+const APP_V = 543;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
