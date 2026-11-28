@@ -1023,6 +1023,8 @@ const porCuentaR = r => !!r.loc || (r.notas || []).some(n => n.k === 'tr' && /po
 const viajeTxt = r => porCuentaR(r) ? 'Llega por su cuenta a la sede del evento.' : 'Viaje por traslado terrestre.';
 const soloTierra = r => !r.ida && !r.reg && !r.c1 && !r.c2 && !r.vu && (r.loc || r.tc || /TERRESTRE/.test(r.st || '') || (r.notas || []).some(n => n.k === 'tr'));
 /* Hotel del evento: solo foráneos (con vuelo o con pernocta indicada en el Excel); los locales no llevan hospedaje */
+/* Llegan antes del día del evento (vuelo de ida que aterriza antes del check in, p. ej. 2 dic): pernocta por ruta desde su llegada */
+function llegadaPrevia(L){ (L || []).forEach(r => { const leg = r.ida || r.c1; if(!r.loc && leg && leg.f && leg.f < HOTEL.ci && !/CANCEL/i.test(r.st || '')){ r.pe = 1; r.pe2 = 1; } }); }
 const tieneHotel = r => !r.loc && !!(r.pe || r.vu || r.ida || r.reg || r.c1 || r.c2 || (r.notas || []).some(n => n.k === 'pe'));
 function tierraBlock(r){
   const det = r.loc ? 'Participante local: tu cita es a las 12:00 h en MetLife Torre Manacar, piso 7. Aplica estacionamiento en Torre Manacar.' : porCuentaR(r) ? 'Llegas por tu cuenta a la sede del evento; revisa tus indicaciones especiales.' : (r.notas || []).some(n => n.k === 'tr') ? 'Revisa los detalles en tus indicaciones especiales.' : 'Tu viaje al evento es por traslado terrestre.';
@@ -1138,6 +1140,8 @@ function notaBloques(r){
     if(n.k === 'tr' && (m = t.match(/^Sin traslado terrestre: llegas por tu cuenta al (.+?) el (.+?) y a tu regreso el (.+?) te trasladas por tu cuenta desde el (.+?)\.$/))){
       ida.push({i:'🚙', t:'Llegada por su cuenta', rows:[['Fecha', m[2]], ['Llegada', 'Por su cuenta al ' + m[1] + ' (no aplica traslado terrestre)']]});
       reg.push({i:'🚙', t:'Regreso por su cuenta', rows:[['Fecha', m[3]], ['Regreso', 'Por su cuenta desde el ' + m[4] + ' (no aplica traslado terrestre)']]}); return; }
+    if(n.k === 'tr' && (m = t.match(/^Solo regreso por tu cuenta el (.+?) desde (?:el |la )?(.+?) \(/))){ // vuelo solo de ida; regresa por su cuenta
+      reg.push({i:'🚙', t:'Regreso por su cuenta', rows:[['Fecha', m[1]], ['Regreso', 'Por su cuenta desde ' + m[2] + ' (no requiere vuelo de regreso)']]}); return; }
     if(n.k === 'tr' && (m = t.match(/^Traslado terrestre desde (.+?) a la sede del evento\. Te compartiremos/))){
       ida.push({i:'🚐', t:'Traslado terrestre', rows:[['Fecha', 'Jueves 3 de diciembre'], ['Punto de encuentro y horario', 'Por confirmar. Se lo compartiremos al cierre del registro del evento.'], ['Desde', m[1]], ['Hacia', 'Hotel NH T2 Aeropuerto, donde para su mayor comodidad su equipaje será resguardado y se le entregará a su regreso al final del día'], ['Después', 'Del Hotel NH T2 Aeropuerto continuará el desplazamiento a la sede del evento: MetLife Torre Manacar, piso 7']]}); return; }
     if(n.k === 'tr' && r.loc){
@@ -1186,7 +1190,7 @@ function lineaTiempo(r){
   notaBloques(r).forEach(b => {
     const R = b.rows || [], sinP = R.filter(x => x[0] !== 'Periodo');
     if(/por su cuenta$/.test(b.t) && val(R, 'Fecha')){ const f = isoDe(val(R, 'Fecha')), lr = legsR.find(x => x.f === f && x.d === 'MEX');
-      add(f, b.t.startsWith('Llegada') ? '22:00' : (lr ? minDe(lr.l) + 1 : '17:00'), {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
+      add(f, b.t.startsWith('Llegada') ? (/al evento/i.test(val(R, 'Llegada')) ? 0 : '22:00') : (lr ? minDe(lr.l) + 1 : '17:00'), {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'Traslado terrestre'){ add(HOTEL.ci, '08:00', {tipo: 'blk', i: b.i, t: b.t, rows: R}); return; }
     if(b.t === 'Asistencia al evento' && r.loc){ /* Locales: como en la invitación, en orden cronológico */
       add(HOTEL.ci, '11:58', {tipo: 'blk', i: '🅿️', t: 'MetLife estará cubriendo', rows: [['Estacionamiento', r.est ? 'Los días del evento · Torre Manacar' : 'No aplica'], ['Hospedaje', 'No aplica']]});
@@ -1461,8 +1465,8 @@ function mailHTML(r, enPDF){
       <td width="100" valign="top" class="vlogo" style="width:100px;padding:4px 10px 0 0">${lg ? `<img src="${base.replace(/[^\/]*$/, '') + lg}" width="78" alt="${esc(String(l.v).replace(/\s*\d+$/, ''))}" style="width:78px;max-height:24px;height:auto;display:block;border:0">` : ''}</td>
       <td valign="top"><table width="100%" cellpadding="0" cellspacing="0">
         <tr><td colspan="3" style="padding:0 0 6px">${T(esc(lg ? LINEA(l.v).replace(/^(Aeromexico|Volaris|Viva Aerobus) /, 'Vuelo ') : LINEA(l.v)), fs, '#222222', 'bold')}</td></tr>
-        <tr>${td(T('Salida', fs, '#222222', 'bold'), 'width:90px', 'vk')}${td(T(esc(fV(l.f) + ' ' + (l.s || '')), fs, '#222222', 'bold'), 'width:190px', 'vt')}${td(T(esc(AERO_N[l.o] || l.o), fs, '#222222', 'bold'))}</tr>
-        <tr>${td(T('Llegada', fs, '#222222', 'bold'))}${td(T(esc(fV(l.f) + ' ' + (l.l || '')), fs, '#222222', 'bold'))}${td(T(esc(AERO_N[l.d] || l.d), fs, '#222222', 'bold'))}</tr>
+        <tr>${td(T('Salida', fs, '#222222', 'bold'), 'width:90px', 'vk')}${td(T(esc(fV(l.f) + ' ' + (l.s || '')), fs, '#222222', 'bold'), 'width:190px', 'vt')}${td(T(C ? esc(AERO_CD(l.o)) : AERO_B(l.o), fs, '#222222', C ? 'bold' : 'normal'))}</tr>
+        <tr>${td(T('Llegada', fs, '#222222', 'bold'))}${td(T(esc(fV(l.f) + ' ' + (l.l || '')), fs, '#222222', 'bold'))}${td(T(C ? esc(AERO_CD(l.d)) : AERO_B(l.d), fs, '#222222', C ? 'bold' : 'normal'))}</tr>
         <tr>${td(T('Duración', fs, '#222222'))}${td('')}${td(T(du, fs, '#222222'))}</tr>
       </table></td></tr></table></td></tr></table></td></tr>`; };
   // PDF: tarjeta de vuelo en una sola línea por tramo, con la clave dentro del encabezado
@@ -1511,8 +1515,9 @@ function mailHTML(r, enPDF){
     b += `<tr><td bgcolor="#F0F8F2" style="background:#F0F8F2;border-left:4px solid ${G};padding:${C ? '5px 12px' : '10px 14px'}"><table cellpadding="0" cellspacing="0">${pts}</table></td></tr>`; }
   b += `<tr><td style="padding-top:${C ? 6 : 12}px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#FFF7E6" style="background:#FFF7E6;border-left:4px solid #E0A100;padding:${C ? '5px 12px;line-height:1.25' : '10px 14px'}">${T('Importante.- ' + impTxt(r), C ? 11 : fs, INK, 'bold')}</td></tr></table></td></tr>`;
   // (sin botón de PDF en el correo)
-  if(C) b += p(T(despedida(r), 11), 'padding-top:4px');
-  else b += p(T(despedida(r))) + (!WEB && CFG.firma ? p(T(esc(CFG.firma), fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:6px;padding-bottom:10px') : '');
+  const byeB = esc(despedida(r)).replace('ConoceMet by MetLife', '<b>ConoceMet by MetLife</b>');
+  if(C) b += p(T(byeB, 11), 'padding-top:4px');
+  else b += p(T(byeB)) + (!WEB && CFG.firma ? p(T(esc(CFG.firma), fs, G, 'bold', 'Arial,sans-serif', 'font-style:italic'), 'padding-top:6px;padding-bottom:10px') : '');
   // PDF: 640 px fijos (cabe en una hoja). Correo: a lo ancho de la ventana del correo, hasta 1000 px, para leerse mejor.
   return C ? `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;font-family:Arial,sans-serif;background:#ffffff">${b}</table>`
     : `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;max-width:1000px;font-family:Calibri,Arial,sans-serif;font-size:11pt;background:#ffffff">${b}</table>`;
@@ -1595,12 +1600,27 @@ function invHTML(r, vImg){
   }
   b += h2(vuelo ? 'Para su participación le estamos considerando - Propuesta de vuelos' : 'Para su participación le estamos considerando');
   // Orden cronológico: llegada → vuelo/traslado → recepción → resguardo de equipaje → evento → traslado al hotel → hospedaje → regreso
-  const tc = !vuelo && r.tc ? esc(tcase(r.tc)) : '';
+  const tc = !vuelo && r.tc ? esc(tcase(r.tc)) : '', cta = !vuelo && porCuentaR(r); // cta: llega y regresa por su cuenta (sin traslado terrestre)
   const reg = [r.reg, r.c2].filter(Boolean), regF = reg[0] ? fDia(reg[0].f).replace(/^(\w+) (\d+) (\w+)$/, '$1 $2 $3') : 'Viernes 4 dic';
-  if(tc){
+  if(cta){
+    b += blk('🚙', 'Llegada por su cuenta', [['Fecha', '<b>Jueves 3 de diciembre</b>'], ['Llegada', 'Por su cuenta, directo a la sede del evento (<b>MetLife Torre Manacar, piso 7</b>). <b>No aplica traslado terrestre.</b>']]);
+  } else if(tc){
     b += blk('🚐', 'Traslado terrestre de llegada', [['Fecha', '<b>Jueves 3 de diciembre</b>'], ['Punto de encuentro y horario', 'Por confirmar. Se lo compartiremos al cierre del registro del evento.'], ['Desde', '<b>' + tc + '</b>'], ['Hacia', '<b>Hotel NH T2 Aeropuerto</b>, donde para su mayor comodidad su equipaje será <b>resguardado</b> y se le entregará a su regreso al final del día.'], ['Después', 'Del Hotel NH T2 Aeropuerto continuará el desplazamiento a la sede del evento: <b>MetLife Torre Manacar, piso 7</b>.']]);
   } else {
-    b += vImg ? p(`<img src="${vImg}" width="640" alt="Propuesta de vuelos" style="width:640px;max-width:100%;height:auto;display:block;border:0">`) : ida.length || r.reg ? p('&nbsp;') + p('&nbsp;') : p(T('Su vuelo se encuentra en proceso de emisión.'));
+    const legsP = [[r.c1, 'Ida'], [r.ida, 'Ida'], [r.reg, 'Regreso'], [r.c2, 'Regreso']].filter(x => x[0]);
+    const imgB = location.href.replace(/[?#].*$/, '').replace(/[^\/]*$/, ''), Tb = (t, w = 'normal') => T(t, '#222222', w);
+    const cardI = (dir, l) => { const lg = LOGO_AL(l.v), m = legMin(l), du = m > 0 ? `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')} (Sin paradas)` : '';
+      const td = (t, st = '') => `<td style="padding:2px 6px 2px 0;${st}">${t}</td>`;
+      return `<tr><td style="padding:10px 0 2px">${T(dir.toUpperCase(), G, 'bold')} ${Tb('· ' + esc(fV(l.f, true)))}</td></tr>
+      <tr><td style="padding:0 0 4px"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#EFEFEF" style="background:#EFEFEF;padding:10px 12px"><table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td width="100" valign="top" style="width:100px;padding:4px 10px 0 0">${lg ? `<img src="${imgB + lg}" width="78" alt="${esc(String(l.v).replace(/\s*\d+$/, ''))}" style="width:78px;max-height:24px;height:auto;display:block;border:0">` : ''}</td>
+        <td valign="top"><table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td colspan="3" style="padding:0 0 6px">${Tb(esc(lg ? LINEA(l.v).replace(/^(Aeromexico|Volaris|Viva Aerobus) /, 'Vuelo ') : LINEA(l.v)), 'bold')}</td></tr>
+          <tr>${td(Tb('Salida', 'bold'), 'width:90px')}${td(Tb(esc(fV(l.f) + ' ' + (l.s || '')), 'bold'), 'width:190px')}${td(Tb(AERO_B(l.o)))}</tr>
+          <tr>${td(Tb('Llegada', 'bold'))}${td(Tb(esc(fV(l.f) + ' ' + (l.l || '')), 'bold'))}${td(Tb(AERO_B(l.d)))}</tr>
+          <tr>${td(Tb('Duración'))}${td('')}${td(Tb(du))}</tr>
+        </table></td></tr></table></td></tr></table></td></tr>`; };
+    b += legsP.length ? legsP.map(([l, d]) => cardI(d, l)).join('') + p(T('Horarios en hora local de cada aeropuerto.', MUT), 'font-size:9pt;padding-bottom:4px') : ida.length || r.reg ? p('&nbsp;') + p('&nbsp;') : p(T('Su vuelo se encuentra en proceso de emisión.'));
     b += blk('🧳', 'Su vuelo incluye', [['Boleto de avión', 'Clase <b>turista</b>'], ['Equipaje de mano', 'En cabina, máximo <b>15 kg</b>'], ['Equipaje documentado', r.nd ? '<b>N/A</b>' : 'Máximo <b>25 kg</b>'], ['Asientos', '<b>Asignados</b>']]);
     if(r.pe2){
       b += verde('📍 ' + LLEGA2_T, esc(LLEGA2_TXT).replace(B_HL, x => `<b>${x}</b>`));
@@ -1608,17 +1628,19 @@ function invHTML(r, vImg){
       b += verde('🚐 Traslado a la sede del evento', esc(SEDE2_TXT).replace(B_HL, x => `<b>${x}</b>`));
     } else b += `<tr><td style="padding:5px 0"><table width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#E3F1E7" style="background:#E3F1E7;border:2px solid ${G};border-radius:8px;padding:8px 12px;line-height:1.4">${T('📍 Recepción en el Aeropuerto de la Ciudad de México y traslado a la sede del evento (MetLife Torre Manacar, piso 7).', INK, 'bold')}</td></tr></table></td></tr>`;
   }
-  if(hotel && !r.pe2 && !tc) b += blk('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será <b>resguardado en el ${esc(HOTEL.n)}</b>, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; <b>se le entregará a su regreso al hotel</b>.`]]);
+  if(hotel && !r.pe2 && !tc && !cta) b += blk('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será <b>resguardado en el ${esc(HOTEL.n)}</b>, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; <b>se le entregará a su regreso al hotel</b>.`]]);
   if(hotel && !r.pe2) b += blk('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '<b>Check in 3 dic</b> · <b>Check out 4 dic</b> · 1 noche']]);
   b += blk('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '<b>Alimentos programados</b> de acuerdo con la agenda del evento.']]);
   if(hotel) b += verde('🚐 Traslado al hotel', 'Al terminar la cena, a las <b>23:00 h</b>, traslado al <b>Hotel NH T2 Aeropuerto</b>.');
-  if(tc) b += blk('🚐', 'Traslado terrestre de regreso', [['Desde', '<b>' + (hotel ? esc(HOTEL.n) : 'Sede del evento') + '</b>'], ['Hacia', '<b>' + tc + '</b>'], ['Horario', 'Se le compartirá <b>al finalizar el evento</b>']]);
+  if(cta) b += blk('🚙', 'Regreso por su cuenta', [['Fecha', hotel ? '<b>Viernes 4 de diciembre</b>' : '<b>Jueves 3 de diciembre</b>, al terminar el evento'], ['Desde', '<b>' + (hotel ? esc(HOTEL.n) : 'Sede del evento') + '</b>'], ['Regreso', 'Por su cuenta. <b>No aplica traslado terrestre.</b>']]);
+  else if(tc) b += blk('🚐', 'Traslado terrestre de regreso', [['Fecha', hotel ? '<b>Viernes 4 de diciembre</b>' : '<b>Jueves 3 de diciembre</b>'], ['Desde', '<b>' + (hotel ? esc(HOTEL.n) : 'Sede del evento') + '</b>'], ['Hacia', '<b>' + tc + '</b>'], ['Horario', 'Se le compartirá <b>al finalizar el evento</b>']]);
+  else if(!r.reg && !r.c2 && /^Solo regreso por tu cuenta/.test(notaDe(r, 'tr'))) b += blk('🚙', 'Regreso por su cuenta', [['Fecha', '<b>Viernes 4 de diciembre</b>'], ['Desde', '<b>' + esc(HOTEL.n) + '</b>'], ['Regreso', 'Por su cuenta. <b>No requiere vuelo de regreso.</b>']]);
   else b += verde('✈️ Vuelo de regreso', 'El <b>Hotel NH T2 Aeropuerto</b> está dentro de la <b>Terminal 2</b> del aeropuerto; si su vuelo sale de la <b>Terminal 1</b>, puede cambiar de terminal en el <b>Aerotrén</b>.');
   if(vuelo){
     b += imp(T('Importante.- ', INK, 'bold') + T('Si desea realizar algún cambio de fecha u horario posterior a su confirmación, esto generará un <b>cargo por cambio</b> y posiblemente <b>diferencia de tarifa</b>, los cuales tendrán que ser cubiertos por su parte.') + '<br><br>' + T('Le recordamos que <b>MetLife</b> cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.'));
     b += p(T('Esperamos su validación respondiendo con la siguiente leyenda: <b>“Estoy de acuerdo con el itinerario de vuelo, proceder con la compra”</b>.'), 'padding-top:12px');
   }
-  if(tc) b += imp(T('Le agradecería una confirmación de recepción de este mensaje.', INK, 'bold'));
+  if(tc || cta) b += imp(T('Le agradecería una confirmación de recepción de este mensaje.', INK, 'bold'));
   b += p(T('Si necesita más información o tiene preguntas específicas, no dude en ponerse en contacto.'), 'padding-top:12px');
   b += p(T('Continúo a sus órdenes.'), 'padding-top:8px') + p(T('Saludos cordiales,'), 'padding-top:8px');
   return `<table width="100%" cellpadding="4" cellspacing="0" style="width:100%;max-width:1000px;font-family:Calibri,Arial,sans-serif;font-size:11pt;background:#ffffff">${b}</table>`;
@@ -1632,7 +1654,7 @@ const invTxt = r => invHTML(r).replace(/<br>/g, '\n').replace(/<table/g, '\n<tab
 function invWa(r){
   const base = location.origin + location.pathname.replace(/[^\/]*$/, ''), SEP = '━━━━━━━━━━━━━━', L = [];
   const sec = (ic, t, rows) => { L.push('', `${ic} *${t.toUpperCase()}*`); rows.forEach(([k, v]) => L.push(k ? `• *${k}:* ${v}` : `• ${v}`)); };
-  const vuelo = conVueloInv(r), hotel = tieneHotel(r), tc = !vuelo && r.tc ? tcase(r.tc) : '';
+  const vuelo = conVueloInv(r), hotel = tieneHotel(r), tc = !vuelo && r.tc ? tcase(r.tc) : '', cta = !vuelo && porCuentaR(r);
   const fl = (lab, l) => [`${lab === 'IDA' ? '🛫' : '🛬'} *${lab} · ${l.v}*`, `• ${fmtDate(l.f)} · ${cityOf(l.o)} ${l.s} h → ${cityOf(l.d)} ${l.l} h`];
   L.push(`👋 Estimado(a) *${r.n.toUpperCase()}*`, '', 'Esperando se encuentre bien, reciba un cordial saludo' + (CFG.yo ? `, mi nombre es *${CFG.yo}*.` : '.'), '',
     (CFG.ag ? `Le escribo de *${CFG.ag}* en representación de *MetLife*` : 'Le escribimos en representación de *MetLife*') + ' para dar seguimiento a su participación al evento *ConoceMet by MetLife*, que se llevará a cabo el *jueves 3 de diciembre de 2026* en *MetLife Torre Manacar, piso 7* (Av. Insurgentes Sur 1457, esquina Río Mixcoac, Ciudad de México).');
@@ -1644,7 +1666,8 @@ function invWa(r){
     L.push('', '*Le agradecería una confirmación de recepción de este mensaje.*');
   } else {
     L.push('', SEP, '📋 *PARA SU PARTICIPACIÓN LE ESTAMOS CONSIDERANDO' + (vuelo ? ' - PROPUESTA DE VUELOS' : '') + '*', SEP);
-    if(tc) sec('🚐', 'Traslado terrestre de llegada', [['Fecha', '*Jueves 3 de diciembre*'], ['Punto de encuentro y horario', 'Por confirmar. Se lo compartiremos al cierre del registro del evento.'], ['Desde', `*${tc}*`], ['Hacia', '*Hotel NH T2 Aeropuerto*, donde para su mayor comodidad su equipaje será *resguardado* y se le entregará a su regreso al final del día.'], ['Después', 'Del Hotel NH T2 Aeropuerto continuará el desplazamiento a la sede del evento: *MetLife Torre Manacar, piso 7*.']]);
+    if(cta) sec('🚙', 'Llegada por su cuenta', [['Fecha', '*Jueves 3 de diciembre*'], ['Llegada', 'Por su cuenta, directo a la sede del evento (*MetLife Torre Manacar, piso 7*). *No aplica traslado terrestre.*']]);
+    else if(tc) sec('🚐', 'Traslado terrestre de llegada', [['Fecha', '*Jueves 3 de diciembre*'], ['Punto de encuentro y horario', 'Por confirmar. Se lo compartiremos al cierre del registro del evento.'], ['Desde', `*${tc}*`], ['Hacia', '*Hotel NH T2 Aeropuerto*, donde para su mayor comodidad su equipaje será *resguardado* y se le entregará a su regreso al final del día.'], ['Después', 'Del Hotel NH T2 Aeropuerto continuará el desplazamiento a la sede del evento: *MetLife Torre Manacar, piso 7*.']]);
     else {
       const leg = [r.c1, r.ida].filter(Boolean).map(l => fl('IDA', l)).concat([r.reg, r.c2].filter(Boolean).map(l => fl('REGRESO', l)));
       L.push(''); if(leg.length) leg.forEach(x => L.push(...x)); else L.push('Su vuelo se encuentra en proceso de emisión.');
@@ -1654,15 +1677,17 @@ function invWa(r){
         sec('🚐', 'Traslado a la sede del evento', [['', SEDE2_TXT.replace(B_HL, x => `*${x}*`)]]); }
       else L.push('', '📍 *Recepción en el Aeropuerto de la Ciudad de México y traslado a la sede del evento (MetLife Torre Manacar, piso 7).*');
     }
-    if(hotel && !r.pe2){ if(!tc) sec('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será *resguardado en el ${HOTEL.n}*, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; *se le entregará a su regreso al hotel*.`]]);
+    if(hotel && !r.pe2){ if(!tc && !cta) sec('🧳', 'Resguardo de equipaje', [['A su llegada', `Su equipaje será *resguardado en el ${HOTEL.n}*, donde se hospedará, para su mayor comodidad en el desplazamiento a la sede del evento; *se le entregará a su regreso al hotel*.`]]);
       sec('🏨', 'Hospedaje', [['NH T2 Aeropuerto', '*Check in 3 dic* · *Check out 4 dic* · 1 noche']]); }
     sec('🍽️', 'Durante el evento · jueves 3 de diciembre', [['Incluye', '*Alimentos programados* de acuerdo con la agenda del evento.']]);
     if(hotel) sec('🚐', 'Traslado al hotel', [['', 'Al terminar la cena, a las *23:00 h*, traslado al *Hotel NH T2 Aeropuerto*.']]);
-    if(tc) sec('🚐', 'Traslado terrestre de regreso', [['Desde', `*${hotel ? HOTEL.n : 'Sede del evento'}*`], ['Hacia', `*${tc}*`], ['Horario', 'Se le compartirá *al finalizar el evento*']]);
+    if(cta) sec('🚙', 'Regreso por su cuenta', [['Fecha', hotel ? '*Viernes 4 de diciembre*' : '*Jueves 3 de diciembre*, al terminar el evento'], ['Desde', `*${hotel ? HOTEL.n : 'Sede del evento'}*`], ['Regreso', 'Por su cuenta. *No aplica traslado terrestre.*']]);
+    else if(tc) sec('🚐', 'Traslado terrestre de regreso', [['Fecha', hotel ? '*Viernes 4 de diciembre*' : '*Jueves 3 de diciembre*'], ['Desde', `*${hotel ? HOTEL.n : 'Sede del evento'}*`], ['Hacia', `*${tc}*`], ['Horario', 'Se le compartirá *al finalizar el evento*']]);
+    else if(!r.reg && !r.c2 && /^Solo regreso por tu cuenta/.test(notaDe(r, 'tr'))) sec('🚙', 'Regreso por su cuenta', [['Fecha', '*Viernes 4 de diciembre*'], ['Desde', `*${HOTEL.n}*`], ['Regreso', 'Por su cuenta. *No requiere vuelo de regreso.*']]);
     else sec('✈️', 'Vuelo de regreso', [['', 'El *Hotel NH T2 Aeropuerto* está dentro de la *Terminal 2* del aeropuerto; si su vuelo sale de la *Terminal 1*, puede cambiar de terminal en el *Aerotrén*.']]);
     if(vuelo) L.push('', SEP, '', '*Importante.-* Si desea realizar algún cambio de fecha u horario posterior a su confirmación, esto generará un *cargo por cambio* y posiblemente *diferencia de tarifa*, los cuales tendrán que ser cubiertos por su parte.', '',
       'Le recordamos que *MetLife* cubre las pernoctas y/o traslados terrestres necesarios, siempre que este aplique, dentro de las fechas del evento.', '',
-      'Esperamos su validación respondiendo con la siguiente leyenda: *“Estoy de acuerdo con el itinerario de vuelo, proceder con la compra”*.');    if(tc) L.push('', '*Le agradecería una confirmación de recepción de este mensaje.*');
+      'Esperamos su validación respondiendo con la siguiente leyenda: *“Estoy de acuerdo con el itinerario de vuelo, proceder con la compra”*.');    if(tc || cta) L.push('', '*Le agradecería una confirmación de recepción de este mensaje.*');
   }
   L.push('', '🗓️ *Agenda del evento:*', base + 'agenda-conocemet-invitacion.jpg', '',
     'Si necesita más información o tiene preguntas específicas, no dude en ponerse en contacto.', '', 'Continúo a sus órdenes.', '', 'Saludos cordiales,');
@@ -1727,7 +1752,7 @@ function waTxt(r){
     '👕 *Información general y dress code:*', base + 'dresscode-conocemet.jpg?v=410', '',
     '🔎 *Consulta tu reserva cuando quieras:*', base, '',
     '*Importante.-* ' + impTxt(r).replace('MetLife', '*MetLife*'), '',
-    despedida(r));
+    despedida(r).replace('ConoceMet by MetLife', '*ConoceMet by MetLife*'));
   return L.join('\n');
 }
 /* ---------- Itinerario personal en PDF ---------- */
@@ -1883,7 +1908,11 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-pdf]
   const r = DATA[+(b.dataset.pdfv ?? b.dataset.pdf)]; DLG = true; setTimeout(() => { DLG = false; awaySince = 0; }, 3000);
   window.open(location.pathname + '?pdf=' + encodeURIComponent(r.n) + '&v=' + APP_V + '.' + Date.now(), '_blank'); /* v: evita que el navegador use una versión guardada */ });
 /* ---------- PDF solo de vuelos (formato "Su viaje") ---------- */
-const AERO_N = {MEX:'Mexico City, (Benito Juarez Intl)', HMO:'Hermosillo, (I.Pesqueira Garcia)', GDL:'Guadalajara, (Miguel Hidalgo y Costilla Intl)', MTY:'Monterrey, (Gral. Mariano Escobedo Intl)', MID:'Merida, (Manuel Crescencio Rejon Intl)', QRO:'Queretaro, (Queretaro Intl)', CUL:'Culiacan, (Fedl. de Bachigualato Intl)', ACA:'Acapulco, (Juan N. Alvarez Intl)', TIJ:'Tijuana, (Gral. Abelardo L. Rodriguez Intl)', PBC:'Puebla, (Hermanos Serdan Intl)', TLC:'Toluca, (Lic. Adolfo Lopez Mateos Intl)', NLU:'Santa Lucia, (Felipe Angeles Intl)', LMM:'Los Mochis, (Valle del Fuerte Intl)'};
+/* Diccionario IATA (iata-mexico.csv): «Ciudad, (Aeropuerto)» */
+const AERO_N = {AGU:"Aguascalientes, (Aeropuerto Internacional Aguascalientes)",MXL:"Mexicali, (Aeropuerto Internacional General Rodolfo Sánchez Taboada)",TIJ:"Tijuana, (Aeropuerto Internacional General Abelardo L. Rodríguez)",CSW:"Cabo San Lucas, (Aeropuerto Internacional Cabo San Lucas)",CUA:"Comondú, (Aeropuerto Nacional Ciudad Constitución)",GUB:"Guerrero Negro, (Aeropuerto Guerrero Negro)",LAP:"La Paz, (Aeropuerto Internacional Manuel Márquez de León)",LTO:"Loreto, (Aeropuerto Internacional Loreto)",SRL:"Mulegé, (Aeropuerto Palo Verde)",SJD:"San José del Cabo, (Aeropuerto Internacional Los Cabos)",CPE:"Campeche, (Aeropuerto Internacional Ingeniero Alberto Acuña Ongay)",CME:"Ciudad del Carmen, (Aeropuerto Internacional Ciudad del Carmen)",TAP:"Tapachula, (Aeropuerto Internacional Tapachula)",TGZ:"Tuxtla Gutiérrez, (Aeropuerto Internacional Ángel Albino Corzo)",CUU:"Chihuahua, (Aeropuerto Internacional General Roberto Fierro Villalobos)",CJS:"Ciudad Juárez, (Aeropuerto Internacional Abraham González)",MEX:"Ciudad de México, (Aeropuerto Internacional Benito Juárez de la Ciudad de México (AICM))",PDS:"Piedras Negras, (Aeropuerto Internacional Piedras Negras)",SLW:"Saltillo, (Aeropuerto Internacional Plan de Guadalupe)",TRC:"Torreón, (Aeropuerto Internacional Francisco Sarabia Tinoco)",CLQ:"Colima, (Aeropuerto Internacional Licenciado Miguel de la Madrid)",ZLO:"Manzanillo, (Aeropuerto Internacional Playa de Oro)",DGO:"Durango, (Aeropuerto Internacional General Guadalupe Victoria)",TLC:"Toluca, (Aeropuerto Internacional Adolfo López Mateos)",NLU:"Zumpango (Ciudad de México), (Aeropuerto Internacional Felipe Ángeles (AIFA))",BJX:"Silao, (Aeropuerto Internacional de Guanajuato (Bajío))",ACA:"Acapulco, (Aeropuerto Internacional General Juan N. Álvarez)",ZIH:"Ixtapa, (Aeropuerto Internacional Ixtapa-Zihuatanejo)",GDL:"Guadalajara, (Aeropuerto Internacional de Guadalajara)",PVR:"Puerto Vallarta, (Aeropuerto Internacional Lic. Gustavo Díaz Ordaz (Puerto Vallarta))",MLM:"Morelia, (Aeropuerto Internacional General Francisco J. Mujica)",UPN:"Uruapan, (Aeropuerto Internacional de Uruapan)",TPQ:"Tepic, (Aeropuerto Nacional Amado Nervo)",MTY:"Monterrey, (Aeropuerto Internacional de Monterrey)",HUX:"Huatulco, (Aeropuerto Internacional Bahías de Huatulco)",IZT:"Ixtepec, (Aeropuerto Nacional de Ixtepec)",OAX:"Oaxaca, (Aeropuerto Internacional de Oaxaca)",PXM:"Puerto Escondido, (Aeropuerto Internacional Puerto Escondido)",PBC:"Puebla, (Aeropuerto Internacional Hermanos Serdán)",QRO:"Querétaro, (Aeropuerto Intercontinental Querétaro)",CUN:"Cancún, (Aeropuerto Internacional de Cancún)",CTM:"Chetumal, (Aeropuerto Internacional Chetumal)",CZM:"Cozumel, (Aeropuerto Internacional Cozumel)",TQO:"Tulum, (Aeropuerto Internacional Felipe Carrillo Puerto de Tulum)",SLP:"San Luis Potosí, (Aeropuerto Internacional Ponciano Arriaga)",CUL:"Culiacán, (Aeropuerto Internacional de Culiacán)",LMM:"Los Mochis, (Aeropuerto Internacional Valle del Fuerte)",MZT:"Mazatlán, (Aeropuerto Internacional General Rafael Buelna)",CEN:"Ciudad Obregón, (Aeropuerto Internacional Ciudad Obregón)",GYM:"Guaymas, (Aeropuerto Internacional General José María Yáñez)",HMO:"Hermosillo, (Aeropuerto Internacional General Ignacio L. Pesqueira)",PPE:"Puerto Peñasco, (Aeropuerto Internacional Mar de Cortés)",VSA:"Villahermosa, (Aeropuerto Internacional Carlos Rovirosa Pérez)",CVM:"Ciudad Victoria, (Aeropuerto Internacional General Pedro Jose Mendez)",MAM:"Matamoros, (Aeropuerto Internacional General Servando Canales)",NLD:"Nuevo Laredo, (Aeropuerto Internacional Quetzalcóatl)",REX:"Reynosa, (Aeropuerto Internacional General Lucio Blanco)",TAM:"Tampico, (Aeropuerto Internacional General Francisco Javier Mina)",MTT:"Minatitlán, (Aeropuerto Internacional Minatitlán/Coatzacoalcos)",PAZ:"Poza Rica, (Aeropuerto Nacional El Tajín)",VER:"Veracruz, (Aeropuerto Internacional General Heriberto Jara)",MID:"Mérida, (Aeropuerto Internacional Manuel Crescencio Rejón)",ZCL:"Zacatecas, (Aeropuerto Internacional General Leobardo C. Ruiz)",BHL:"Ensenada, (Aeropuerto Bahía de los Ángeles)",ESE:"Ensenada, (Aeropuerto Internacional Ensenada (/ El Ciprés Air Base))",SFH:"Mexicali, (Aeropuerto Internacional San Felipe)",SNQ:"San Quintín, (San Quintín Military Airstrip)",PCO:"La Ribera, (Aeropuerto Punta Colorada)",AJS:"Mulegé, (Aeropuerto Punta Abreojos)",MUG:"Mulegé, (Aeropuerto Mulege)",PCV:"Mulegé, (Aeropuerto Punta Chivato)",SGM:"Mulegé, (Aeropuerto San Ignacio)",CJT:"Comitán, (Aeropuerto San Antonio Copalar)",PQM:"Palenque, (Aeropuerto Internacional Palenque)",NCG:"Nuevo Casas Grandes, (Aeropuerto Municipal de Nuevo Casas Grandes)",ACN:"Ciudad Acuña, (Aeropuerto Internacional Ciudad Acuña)",LOV:"Monclova, (Aeropuerto Internacional Monclova)",AZP:"Atizapán de Zaragoza, (Aeropuerto Nacional Jorge Jiménez Cantú)",CYW:"Celaya, (Aeropuerto Nacional Captain Rogelio Castillo)",LOM:"Lagos de Moreno, (Aeropuerto Francisco Primo de Verdad y Ramos)",AZG:"Apatzingán, (Aeropuerto Apatzingán - Pablo L. Sidar)",LZC:"Lázaro Cárdenas, (Aeropuerto Lázaro Cárdenas)",ZMM:"Zamora, (Aeropuerto Zamora)",CVJ:"Cuernavaca, (Aeropuerto Internacional General Mariano Matamoros)",NTR:"Monterrey, (Aeropuerto Internacional Del Norte)",SCX:"Salina Cruz, (Estación Aeronaval de Salina Cruz)",TCN:"Tehuacán, (Aeropuerto Nacional Tehuacán)",ISJ:"Isla Mujeres, (Aeropuerto Nacional Isla Mujeres)",PCM:"Playa del Carmen, (Aeropuerto Nacional Playa del Carmen)",TUY:"Tulum, (Base Aeronaval de Tulum)",TSL:"Tamuín, (Aeropuerto Nacional Tamuín)",CNA:"Cananea, (Aeropuerto Nacional Cananea)",NOG:"Nogales, (Aeropuerto Internacional Nogales)",UAC:"San Luis Río Colorado, (Aeropuerto San Luis Río Colorado)",XAL:"Álamos, (Aeropuerto Álamos)",MMC:"Ciudad Mante, (Aeropuerto Nacional Ciudad Mante Los Huastecas)",JAL:"Xalapa, (Aeropuerto El Lencero)",CZA:"Chichén Itzá, (Aeropuerto Internacional Chichén Itzá)",TZM:"Tizimín, (Aeródromo de Cupul)"};
+const AERO_PDF = (k, fz = 11) => { const t = String(AERO_N[k] || k), i = t.indexOf(', ('); return i < 0 ? esc(t) : `${esc(t.slice(0, i))} <span style="font-size:${fz}px;font-weight:normal;color:#555">${esc(t.slice(i + 2))}</span>`; }; // PDF: ciudad + (aeropuerto) en letra chica
+const AERO_B = k => { const t = String(AERO_N[k] || k), i = t.indexOf(', ('); return i < 0 ? `<b>${esc(t)}</b>` : `<b>${esc(t.slice(0, i))}</b>${esc(t.slice(i))}`; }; // ciudad en negrita, aeropuerto normal
+const AERO_CD = k => String(AERO_N[k] || k).split(', (')[0]; // PDF: solo la ciudad
 const LINEA = v => { const m = String(v || '').match(/^(.*?)\s*(\d+)$/); if(!m) return v; const al = m[1].toUpperCase(), c = {AEROMEXICO:['Aeromexico','AM'], VOLARIS:['Volaris','Y4'], 'VIVA AEROBUS':['Viva Aerobus','VB']}[al]; return c ? `${c[0]} ${c[1]} ${m[2]}` : v; };
 const LOGO_AL = v => ({AEROMEXICO:'logo-am.png', VOLARIS:'logo-y4.png', 'VIVA AEROBUS':'logo-vb.png'})[String(v || '').toUpperCase().replace(/\s*\d+$/, '')] || '';
 const DIAV = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], MESV = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1897,8 +1926,8 @@ function vueloHTML(r, pie){ /* despedida siempre al final (búsqueda, Staff y ZI
       <td style="padding:10px 12px 10px 4px">
         <table style="width:100%;border-collapse:collapse;font:12px Arial,sans-serif;color:#222">
           <tr><td colspan="2" style="font:bold 15px Arial,sans-serif;padding:2px 0 8px">${esc(LOGO_AL(l.v) ? LINEA(l.v).replace(/^(Aeromexico|Volaris|Viva Aerobus) /, 'Vuelo ') : LINEA(l.v))}</td><td colspan="2" style="text-align:right;padding:2px 0 8px">${clave && !misma ? `<span style="font:bold 11px Arial,sans-serif;color:${G};letter-spacing:.4px">CLAVE DE RESERVA${lab ? ' DE ' + lab : ''}</span> <span style="font:bold 15px 'Courier New',monospace;color:#111;letter-spacing:2px;border:2px solid ${G};border-radius:5px;padding:2px 7px">${esc(clave)}</span>` : ''}</td></tr>
-          <tr><td style="width:90px;font-weight:bold;padding:2px 0">Salida</td><td style="width:170px;font-weight:bold">${fV(l.f)} ${esc(l.s || '')}</td><td style="font-weight:bold">${esc(AERO_N[l.o] || l.o)} (+)</td><td></td></tr>
-          <tr><td style="font-weight:bold;padding:2px 0">Llegada</td><td style="font-weight:bold">${fV(l.f)} ${esc(l.l || '')}</td><td style="font-weight:bold">${esc(AERO_N[l.d] || l.d)} (+)</td><td></td></tr>
+          <tr><td style="width:90px;font-weight:bold;padding:2px 0">Salida</td><td style="width:170px;font-weight:bold">${fV(l.f)} ${esc(l.s || '')}</td><td>${AERO_B(l.o)}</td><td></td></tr>
+          <tr><td style="font-weight:bold;padding:2px 0">Llegada</td><td style="font-weight:bold">${fV(l.f)} ${esc(l.l || '')}</td><td>${AERO_B(l.d)}</td><td></td></tr>
           <tr><td style="padding:2px 0">Duración</td><td></td><td>${dur(l)}</td><td></td></tr>
         </table></td></tr></table>`;
   return `<div style="width:760px;background:#fff;padding:26px 30px 30px;box-sizing:border-box;font-family:Arial,sans-serif">
@@ -1912,26 +1941,26 @@ function vueloHTML(r, pie){ /* despedida siempre al final (búsqueda, Staff y ZI
     <div style="margin-top:16px;border-left:4px solid ${G};padding-left:9px;font:bold 15px Arial,sans-serif;color:${G};letter-spacing:.4px">PUNTOS IMPORTANTES DE SU VUELO</div>
     <div style="margin-top:6px;background:#F0F8F2;border-left:4px solid ${G};padding:8px 14px">${[...document.querySelectorAll('section.important li')].map(li => `<div style="display:flex;gap:8px;font:13px/1.55 Arial,sans-serif;color:#16301F;padding:2px 0"><span style="color:${G};font-weight:bold">•</span><span>${li.innerHTML.replace(/<b>/g, '<b style="color:#16301F">')}</span></div>`).join('')}</div>
     ${appBoxPDF(r)}
-    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">${despedida(r)}</div>` : ''}
+    ${true ? `<div style="margin-top:16px;font:13px Arial,sans-serif;color:#222">${esc(despedida(r)).replace('ConoceMet by MetLife', '<b>ConoceMet by MetLife</b>')}</div>` : ''}
   </div>`;
 }
 /* Propuesta de vuelos para la invitación: mismo formato que "Su viaje", sin claves (aún no se compra) */
 function vueloPropHTML(r){
   const G = '#1C6B2E', ida = [r.c1, r.ida].filter(Boolean), reg = [r.reg, r.c2].filter(Boolean);
   const dur = l => { const m = legMin(l); return m > 0 ? `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')} (Sin paradas)` : ''; };
-  const leg = (l, lab) => `<div style="font:15px Arial,sans-serif;color:#222;margin:14px 0 4px 2px"><b style="color:${G}">${lab}</b> · ${fV(l.f, true)}</div>
+  const leg = (l, lab) => `<div style="font:18px Arial,sans-serif;color:#222;margin:16px 0 5px 2px"><b style="color:${G}">${lab}</b> · ${fV(l.f, true)}</div>
     <table style="width:100%;border-collapse:collapse;background:#EFEFEF"><tr>
-      <td style="width:96px;vertical-align:top;padding:12px 6px 10px 12px">${LOGO_AL(l.v) ? `<div style="width:84px;height:30px;display:flex;align-items:center"><img src="${LOGO_AL(l.v)}" style="max-width:78px;max-height:24px;display:block" alt=""></div>` : '<div style="width:40px;height:40px;border:1px solid #c9c9c9;background:#e2e2e2;display:flex;align-items:center;justify-content:center;font-size:22px;color:#9a9a9a">✈</div>'}</td>
-      <td style="padding:10px 12px 10px 4px">
-        <table style="width:100%;border-collapse:collapse;font:12px Arial,sans-serif;color:#222">
-          <tr><td colspan="3" style="font:bold 15px Arial,sans-serif;padding:2px 0 8px">${esc(LOGO_AL(l.v) ? LINEA(l.v).replace(/^(Aeromexico|Volaris|Viva Aerobus) /, 'Vuelo ') : LINEA(l.v))}</td></tr>
-          <tr><td style="width:90px;font-weight:bold;padding:2px 0">Salida</td><td style="width:170px;font-weight:bold">${fV(l.f)} ${esc(l.s || '')}</td><td style="font-weight:bold">${esc(AERO_N[l.o] || l.o)}</td></tr>
-          <tr><td style="font-weight:bold;padding:2px 0">Llegada</td><td style="font-weight:bold">${fV(l.f)} ${esc(l.l || '')}</td><td style="font-weight:bold">${esc(AERO_N[l.d] || l.d)}</td></tr>
+      <td style="width:112px;vertical-align:top;padding:12px 6px 10px 12px">${LOGO_AL(l.v) ? `<div style="width:100px;height:34px;display:flex;align-items:center"><img src="${LOGO_AL(l.v)}" style="max-width:96px;max-height:30px;display:block" alt=""></div>` : '<div style="width:40px;height:40px;border:1px solid #c9c9c9;background:#e2e2e2;display:flex;align-items:center;justify-content:center;font-size:22px;color:#9a9a9a">✈</div>'}</td>
+      <td style="padding:10px 10px 10px 4px">
+        <table style="width:100%;border-collapse:collapse;font:15px Arial,sans-serif;color:#222">
+          <tr><td colspan="3" style="font:bold 18px Arial,sans-serif;padding:2px 0 8px">${esc(LOGO_AL(l.v) ? LINEA(l.v).replace(/^(Aeromexico|Volaris|Viva Aerobus) /, 'Vuelo ') : LINEA(l.v))}</td></tr>
+          <tr><td style="width:95px;font-weight:bold;padding:3px 0">Salida</td><td style="width:195px;font-weight:bold">${fV(l.f)} ${esc(l.s || '')}</td><td>${AERO_B(l.o)}</td></tr>
+          <tr><td style="font-weight:bold;padding:2px 0">Llegada</td><td style="font-weight:bold">${fV(l.f)} ${esc(l.l || '')}</td><td>${AERO_B(l.d)}</td></tr>
           <tr><td style="padding:2px 0">Duración</td><td></td><td>${dur(l)}</td></tr>
         </table></td></tr></table>`;
-  return `<div style="width:760px;background:#fff;padding:18px 26px 22px;box-sizing:border-box;font-family:Arial,sans-serif">
+  return `<div style="width:1200px;background:#fff;padding:18px 22px 22px;box-sizing:border-box;font-family:Arial,sans-serif">
     ${ida.map(l => leg(l, 'IDA')).join('')}${reg.map(l => leg(l, 'REGRESO')).join('')}
-    <div style="margin-top:10px;font:11px Arial,sans-serif;color:#666">Horarios en hora local de cada aeropuerto.</div>
+    <div style="margin-top:10px;font:13px Arial,sans-serif;color:#666">Horarios en hora local de cada aeropuerto.</div>
   </div>`;
 }
 async function vueloPropPNG(r){
@@ -2098,7 +2127,7 @@ function agMover(dentro){ const ag = document.getElementById('agenda'), inf = do
     tabs.querySelectorAll('[data-day]').forEach(b => b.hidden = !vis.includes(+b.dataset.day)); tabs.style.gridTemplateColumns = `repeat(${Math.max(1, vis.length)},1fr)`;
     if(!fin && !vis.includes(+AG_DAY)) renderAgenda(vis[0]);
     ag.hidden = fin; inf.hidden = fin; if(imp && r) imp.hidden = viajeHecho(r);
-    { const db = document.getElementById('dbye'); if(db && r) db.textContent = despedida(r); }
+    { const db = document.getElementById('dbye'); if(db && r) db.innerHTML = esc(despedida(r)).replace('ConoceMet by MetLife', '<b>ConoceMet by MetLife</b>'); }
     const vh = !!r && viajeHecho(r), ci = document.getElementById('cierre'), fq = document.querySelector('section.faq'); // viaje concluido: sin Importante, despedida ni preguntas
     if(ci) ci.hidden = vh; if(fq) fq.hidden = vh; }
   else { ag.hidden = false; tabs.querySelectorAll('[data-day]').forEach(b => b.hidden = false); tabs.style.gridTemplateColumns = ''; { const fq = document.querySelector('section.faq'); if(fq) fq.hidden = false; }
@@ -2302,6 +2331,9 @@ function trLegs(r){ const lle = CTL.tab === 'lle', out = [], val = (R, k) => ((R
     if(r.loc){ const f = HOTEL.ci, h = lle ? '12:00' : '23:00', t = at(f, h);
       return [{terr: true, tr: true, loc: true, f, l: h, s: h, v: '🅿️ Local · por su cuenta', ini: t, fin: t,
         route: lle ? 'Cita 12:00 h · MetLife Torre Manacar, piso 7 · estacionamiento' : 'Regresa por su cuenta al terminar el evento'}]; }
+    if(porCuentaR(r) && !(lle ? [r.c1, r.ida] : [r.reg, r.c2]).some(Boolean)){ const hot = tieneHotel(r), f = lle || !hot ? HOTEL.ci : HOTEL.co; // foráneo por su cuenta («NO REQUIERE TRASLADO»)
+      return [{terr: true, tr: true, cta: true, f, l: '—', s: '—', v: '🚙 Por su cuenta', ini: null, fin: null,
+        route: lle ? 'Llega por su cuenta a la sede del evento · no aplica traslado terrestre' : hot ? 'Regresa por su cuenta desde el Hotel NH T2 · no aplica traslado terrestre' : 'Regresa por su cuenta al terminar el evento · no aplica traslado terrestre'}]; }
     if(r.tc && soloTierra(r) && /^(|Traslado terrestre desde.*)$/i.test(((r.notas || []).find(n => n.k === 'tr') || {}).t || '')){
       const f = lle ? HOTEL.ci : HOTEL.co;
       return [{terr: true, tr: true, f, l: '—', s: '—', v: '🚐 Traslado terrestre', ini: null, fin: null,
@@ -2459,7 +2491,7 @@ function ctlRender(){
         const pern = lle && (r.notas||[]).some(n => n.k === 'pe') ? '<span class="ctag">Hotel NH</span>' : '';
         const sig = (G.pe || G.cl) && r.ida ? `<small class="csig">sigue ${esc(fmtDate(r.ida.f))} · ${esc(r.ida.v)} ${esc(r.ida.o)} ${esc(r.ida.s)} → ${esc(r.ida.d)}</small>`
           : G.cx && r.reg ? `<small class="csig">viene de ${esc(fmtDate(r.reg.f))} · ${esc(r.reg.v)} ${esc(r.reg.o)} → ${esc(r.reg.d)} ${esc(r.reg.l)}</small>` : '';
-        return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${esCancel(r.n) ? ' <small class="ktag">❌ Cancelado</small>' : ''}${sig}</li>`; }).join('') + '</ul></section>';
+        return `<li>${esc(r.n)}${rolTag(r.rol || (r.staff ? 'STAFF' : ''))}${esCancel(r.n) ? ' <small class="ktag">❌ Declina invitación</small>' : ''}${sig}</li>`; }).join('') + '</ul></section>';
   });
   alUI();
   setTimeout(cvApply, 0);
@@ -2571,7 +2603,7 @@ function rolBar(){ const el = document.getElementById('rolbar'); if(!el) return;
   const chip = (k, t, n) => `<button type="button" data-rol="${esc(k)}" class="${CLA.rol === k ? 'on' : ''}${/^STAFF/.test(k) ? ' st' : ''}" aria-pressed="${CLA.rol === k}">${esc(t)} <b>${n}</b></button>`;
   const nV = DATA.filter(conVue).length;
   el.innerHTML = chip('', 'Todos', DATA.length) + orden.filter(k => !/^STAFF/.test(k)).map(k => chip(k, k, c[k])).join('') + (nSt ? chip('STAFF*', 'STAFF', nSt) : '')
-    + `<button type="button" data-cvue="1" class="cvchip${CLA.vue ? ' on' : ''}" aria-pressed="${!!CLA.vue}" title="Mostrar solo quienes tienen vuelo o clave de reserva">✈️ Con vuelo o clave <b>${nV}</b></button>`; }
+    + `<button type="button" data-cvue="1" class="cvchip${CLA.vue ? ' on' : ''}" aria-pressed="${!!CLA.vue}" title="Mostrar solo quienes tienen vuelo o clave de reserva">✈️ CON VUELO O CLAVE <b>${nV}</b></button>`; }
 document.addEventListener('click', e => { const b = e.target.closest('#rolbar [data-cvue], #ziproles [data-zver]'); if(!b) return; CLA.vue = b.dataset.zver ? true : !CLA.vue; claRender();
   if(b.dataset.zver){ const t = document.getElementById('rolbar'); if(t) t.scrollIntoView({behavior:'smooth', block:'start'}); } });
 document.addEventListener('click', e => { const b = e.target.closest('#rolbar [data-rol]'); if(!b) return; CLA.rol = CLA.rol === b.dataset.rol ? '' : b.dataset.rol; claRender(); });
@@ -2633,7 +2665,7 @@ const INV = () => DATA.filter(r => !r.staff); // invitados sin staff (Traslados 
 function pytData(){
   const by = (a, b) => a.n.localeCompare(b.n, 'es');
   const pern = INV().filter(pernoc).sort(by), grupos = new Map();
-  const locales = INV().filter(r => esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r))).sort(by);
+  const locales = INV().filter(r => !ctaNoLocal(r) && !tieneVuelo(r) && (esPorCuenta(r) || !conTraslado(r))).sort(by);
   INV().filter(conTraslado).sort(by).forEach(r => {
     const t = notaDe(r, 'tr'), m = t.match(/punto de encuentro (.+?)(?:, para llevarte|\. A tu regreso)/i), cd = ciudadTr(r, t);
     const cuando = (t.match(/el (\S+ \d+ de \S+) a las ([\d:]+ h)/) || []).slice(1).join(' · ') || (t.match(/a las ([\d:]+ h)/) || [])[1] || '';
@@ -2678,16 +2710,18 @@ const rutaHTML = r => { const L = rutaDe(r); return L.length ? `<ol class="pruta
 const svcTags = r => (conTraslado(r) ? '<span class="ptag">🚗 Traslado</span>' : '') + (pernoc(r) ? '<span class="ptag">🏨 Hotel NH</span>' : '') + (tieneVuelo(r) ? '<span class="ptag">✈️ Vuelo</span>' : '') + (esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r)) ? '<span class="ptag" style="background:#FFF7E6">🚙 Llega por su cuenta</span>' : '');
 /* Filtros de los cuadritos y del desglose: al tocar uno se muestra solo la lista de esas personas; al tocarlo otra vez vuelve a todo. */
 let PYT_F = '';
+const ctaNoLocal = r => !r.loc && porCuentaR(r) && !tieneVuelo(r) && !conTraslado(r); // foráneos que llegan por su cuenta (p. ej. «NO REQUIERE TRASLADO»)
 const PYT_FIL = {
   all:  ['👥 Todos los invitados', r => true],
   tr:   ['🚗 Con traslado terrestre', r => conTraslado(r)],
   pe:   ['🏨 Con pernocta en el Hotel NH', r => pernoc(r)],
   tres: ['🚗+🏨+✈️ Traslado + pernocta + vuelo', r => conTraslado(r) && pernoc(r) && tieneVuelo(r)],
-  pev:  ['🏨+✈️ Pernocta + vuelo, sin traslado', r => pernoc(r) && !conTraslado(r)],
+  pev:  ['🏨+✈️ Pernocta + vuelo, sin traslado', r => pernoc(r) && !conTraslado(r) && tieneVuelo(r)],
+  pcu:  ['🚙 Por su cuenta, no locales (sin traslado ni vuelo)', r => ctaNoLocal(r)],
   trv:  ['🚗+✈️ Traslado + vuelo, sin pernocta', r => conTraslado(r) && !pernoc(r) && tieneVuelo(r)],
   trs:  ['🚗 Solo traslado terrestre (sin vuelo)', r => conTraslado(r) && !pernoc(r) && !tieneVuelo(r)],
-  loc:  ['🅿️ Locales (cita 12:00 h · estacionamiento)', r => esPorCuenta(r) || (!tieneVuelo(r) && !conTraslado(r))],
-  sv:   ['✈️ Solo vuelo (sin traslado ni pernocta)', r => tieneVuelo(r) && !conTraslado(r) && !pernoc(r) && !esPorCuenta(r)]
+  loc:  ['🅿️ Locales (cita 12:00 h · estacionamiento)', r => !ctaNoLocal(r) && !tieneVuelo(r) && (esPorCuenta(r) || !conTraslado(r))],
+  sv:   ['✈️ Solo vuelo (sin traslado ni pernocta)', r => tieneVuelo(r) && !conTraslado(r) && !pernoc(r)]
 };
 document.addEventListener('click', e => { const b = e.target.closest('#pout [data-pf]'); if(!b) return; PYT_F = PYT_F === b.dataset.pf ? '' : b.dataset.pf; pytRender(); const t = document.querySelector('#pout .pres') || document.getElementById('pout'); t.scrollIntoView({block:'start', behavior:'smooth'}); });
 function pytRender(){
@@ -2699,7 +2733,7 @@ function pytRender(){
   const porCd = new Map(); grupos.forEach(g => porCd.set(g.cd, (porCd.get(g.cd) || 0) + g.pax.length));
   const tile = (k, t, sub, cls = '') => `<button type="button" class="ptile ${cls}${on(k)}" data-pf="${k}" aria-pressed="${PYT_F === k}"><b>${N(k)}</b><span>${t}</span>${sub ? `<small>${sub}</small>` : ''}</button>`;
   const chip = (k, t) => `<button type="button" class="pchip${on(k)}" data-pf="${k}" aria-pressed="${PYT_F === k}">${t} <b>${N(k)}</b></button>`;
-  const ex = ['tres','pev','trv','trs','loc','sv'], suma = ex.reduce((a, k) => a + N(k), 0);
+  const ex = ['tres','pev','pcu','trv','trs','loc','sv'], suma = ex.reduce((a, k) => a + N(k), 0);
   let h = `<div class="pdesg"><b>Desglose exacto (cada persona una sola vez) · toca para ver la lista:</b>
     ${ex.map(k => chip(k, PYT_FIL[k][0])).join('')}
     <span class="tot">Total <b>${suma}</b>${suma === INV().length ? ' ✔' : ' ⚠ no cuadra con ' + INV().length}</span></div>
@@ -2712,9 +2746,11 @@ function pytRender(){
   }
   h += `<div class="pgrp"><h3>🚗+🏨+✈️ Traslado + pernocta + vuelo</h3><p class="pw"><span class="pc">${tres.length} ${tres.length===1?'persona':'personas'}</span></p>`
     + tabla(tres.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
-  const peSolo = pern.filter(r => !conTraslado(r));
+  const peSolo = pern.filter(r => !conTraslado(r) && tieneVuelo(r)), peCta = INV().filter(ctaNoLocal).sort((a, b) => a.n.localeCompare(b.n, 'es'));
   h += `<div class="pgrp"><h3>🏨+✈️ Pernocta + vuelo (sin traslado)</h3><p class="pw"><span class="pc">${peSolo.length} ${peSolo.length===1?'persona':'personas'}</span> · llegan en vuelo a CDMX el miércoles 2 de diciembre y se hospedan en el Hotel NH T2 del 2 al 4 de diciembre</p>`
     + tabla(peSolo.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
+  if(peCta.length) h += `<div class="pgrp"><h3>🚙 Por su cuenta, no locales (sin traslado ni vuelo)</h3><p class="pw"><span class="pc">${peCta.length} ${peCta.length===1?'persona':'personas'}</span> · llegan y regresan por su cuenta (no aplica traslado terrestre)${peCta.some(tieneHotel) ? '; hospedaje en el Hotel NH T2 la noche del evento (check-in 3 dic · check-out 4 dic)' : ''}</p>`
+    + tabla(peCta.map(r => `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`)) + '</div>';
   h += `<div class="pgrp"><h3>🏨 Pernoctan en el Hotel NH Collection Mexico City Airport T2</h3><p class="pw"><span class="pc">${pern.length} ${pern.length===1?'persona':'personas'}</span> · por ruta a su llegada · check-in miércoles 2 dic · check-out viernes 4 dic (incluye la noche del evento)</p>`
     + tabla(pern.map(r => { return `<tr><td class="kn">${esc(r.n)}${rolTag(r.rol)}</td></tr>`; })) + '</div>';
   h += `<div class="pgrp"><h3>🚗 Traslados terrestres por ciudad</h3><p class="pw"><span class="pc">${tras} ${tras===1?'persona':'personas'}</span></p></div>`;
@@ -2769,7 +2805,7 @@ function kRows(){
      · vuelo por ruta un día antes para pernoctar en México (llegadas) y conexión a su ciudad (salidas). */
   const lle = KON.m === 'lle', t0 = CTL.tab; CTL.tab = KON.m; const extra = [];
   try{ rows.forEach(x => { const r = x.r;
-    (r.loc ? [] : trLegs(r)).forEach((l, i) => { const y = {r, l:null, n:r.n, k:r.n + '#tr' + i, f:l.f + ' ' + (l.l === '—' ? '99:99' : l.l), v:'Traslado terrestre', lab:fmtDate(l.f), det:(l.l === '—' ? '' : l.l + ' h · ') + l.route, tag:'🚐 Traslado terrestre', tl:l};
+    (r.loc ? [] : trLegs(r).filter(l => !l.cta)).forEach((l, i) => { const y = {r, l:null, n:r.n, k:r.n + '#tr' + i, f:l.f + ' ' + (l.l === '—' ? '99:99' : l.l), v:'Traslado terrestre', lab:fmtDate(l.f), det:(l.l === '—' ? '' : l.l + ' h · ') + l.route, tag:'🚐 Traslado terrestre', tl:l};
       if(!x.l && !x.k && x.v === 'Terrestre' && !x.rep){ Object.assign(x, y, {k:r.n, tag:''}); x.rep = 1; } else extra.push(y); });
     const c = lle ? r.c1 : r.c2, base = lle ? r.ida : r.reg;
     if(c && c.f && base && (lle ? c.f !== base.f : true)) extra.push({r, l:c, n:r.n, k:r.n + (lle ? '#pe' : '#cx'), f:c.f + ' ' + kHora(c), v:c.v,
@@ -2779,7 +2815,7 @@ function kRows(){
   rows.forEach(x => { if(!x.k){ x.k = x.n; } if(x.k === x.n) x.s = kSt(x.n); });
   /* Llegadas: el check-in es automático al aterrizar el vuelo o llegar el traslado (según horario); solo el No show se marca a mano */
   { CTL.tab = KON.m; // llegadas y regresos: check-in automático al aterrizar o llegar
-    try{ rows.forEach(x => { const l = (x.r.loc && !x.l) ? {terr:true, f:HOTEL.ci, l:'12:00', s:'23:00'} : (x.l || x.tl || tierraLeg(x.r, lle)); x.fase = l && l.f ? faseVuelo(l) : 'prog';
+    try{ rows.forEach(x => { const l = (!x.l && !x.tl && porCuentaR(x.r)) ? {terr:true, f: lle || x.r.loc || !tieneHotel(x.r) ? HOTEL.ci : HOTEL.co, l:'12:00', s: x.r.loc || !tieneHotel(x.r) ? '23:00' : '12:00'} : (x.l || x.tl || tierraLeg(x.r, lle)); x.fase = l && l.f ? faseVuelo(l) : 'prog';
       x.s = esCancel(x.n) || (CTL.marks[KON.m] || {})[x.k] === 'ns' ? 'ns' : x.fase === 'ater' ? 'ok' : 'pe'; }); }
     finally{ CTL.tab = t0; } }
   const k = KON.sort;
@@ -2825,7 +2861,7 @@ function konRender(){
   document.querySelectorAll('#con .ktable th button').forEach(b => { if(b.dataset.sort === KON.sort){ b.setAttribute('aria-sort', KON.dir>0?'ascending':'descending'); b.querySelector('span').dataset.a = KON.dir>0?'▲':'▼'; } else b.removeAttribute('aria-sort'); });
   const rows = all.filter(x => KON.filter === 'all' || x.s === KON.filter);
   $('#kbody').innerHTML = rows.map(x => { const l = x.l;
-    return `<tr class="st-${x.s}${x.tag ? ' kx' : ''}"><td class="kn">${esc(x.n)}${rolTag((DATA.find(r => r.n === x.n) || {}).rol || (stTag(x.n) ? 'STAFF' : ''))}${x.tag ? `<small class="ktag">${esc(x.tag)}</small>` : ''}${esCancel(x.n) ? '<small class="ktag">❌ Cancelado en el Excel (no show)</small>' : ''}</td>${l ? `<td class="kf">${esc(fmtDate(l.f))}<small>${esc(lle ? l.l : l.s)} · ${esc(l.o)}→${esc(l.d)}</small></td>
+    return `<tr class="st-${x.s}${x.tag ? ' kx' : ''}"><td class="kn">${esc(x.n)}${rolTag((DATA.find(r => r.n === x.n) || {}).rol || (stTag(x.n) ? 'STAFF' : ''))}${x.tag ? `<small class="ktag">${esc(x.tag)}</small>` : ''}${esCancel(x.n) ? '<small class="ktag">❌ Declina invitación</small>' : ''}</td>${l ? `<td class="kf">${esc(fmtDate(l.f))}<small>${esc(lle ? l.l : l.s)} · ${esc(l.o)}→${esc(l.d)}</small></td>
       <td class="kv">${esc(l.v)}</td>` : `<td class="kf">${esc(x.lab)}<small>${x.v === 'Por su cuenta' ? '🚗' : '🚐'} ${esc(x.det)}</small></td><td class="kv">${esc(x.v)}</td>`}<td><div class="kb">${true ? `<span class="kauto ${x.s}">${x.s === 'ns' ? '✗ No show' : x.s === 'ok' ? '✓ Check-in' : x.fase === 'ruta' ? '✈️ En camino' : lle ? '🕒 Por llegar' : '🕒 Por salir'}</span>
       <button class="bns" data-n="${esc(x.k || x.n)}" data-s="ns" aria-pressed="${x.s==='ns'}">${x.s === 'ns' ? '↺ Quitar no show' : '✗ No show'}</button>` : `<button class="bok" data-n="${esc(x.k || x.n)}" data-s="ok" aria-pressed="${x.s==='ok'}">✓ Check-in</button>
       <button class="bns" data-n="${esc(x.k || x.n)}" data-s="ns" aria-pressed="${x.s==='ns'}">✗ No show</button>
@@ -3126,7 +3162,7 @@ $('#creset').addEventListener('click', async () => {
   window.addEventListener('resize', setH);
   if(window.ResizeObserver) new ResizeObserver(setH).observe(h); setH(); requestAnimationFrame(setH);
 })();
-const APP_V = 525;
+const APP_V = 542;
 const PIN_KEY = 'manifiesto-pin';
 const OPEN_PIN = 'hermosillo'; // acceso abierto: la página ya no pide PIN. Para volver a pedirlo, dejar vacío ('').
 try{ localStorage.removeItem(PIN_KEY); }catch(e){}
@@ -3145,7 +3181,7 @@ window.addEventListener('pagehide', e => { if(e.persisted) lockNow(); });
 async function unlock(pin, fromSaved){
   try{ const d = await Cifra.descifrar(PACK.enc, pin);
     if(UNLOCKED){ document.body.classList.remove('locked'); return; } // re-entrada tras salir de la app
-    UNLOCKED = true; DATA = d.filas; $('#upd').textContent = 'Actualizado: ' + PACK.actualizado + ' · v' + APP_V; { const vv = document.getElementById('verv'); if(vv) vv.textContent = 'Versión ' + APP_V + ' · datos actualizados ' + PACK.actualizado; } init(); syncStart(pin); if(!pdfDirecto()) restoreView(); }
+    UNLOCKED = true; DATA = d.filas; llegadaPrevia(DATA); $('#upd').textContent = 'Actualizado: ' + PACK.actualizado + ' · v' + APP_V; { const vv = document.getElementById('verv'); if(vv) vv.textContent = 'Versión ' + APP_V + ' · datos actualizados ' + PACK.actualizado; } init(); syncStart(pin); if(!pdfDirecto()) restoreView(); }
   catch(e){ showGate('No se pudo cargar la información. Recarga la página.'); }
 }
 

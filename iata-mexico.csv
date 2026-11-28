@@ -1,0 +1,100 @@
+﻿IATA,OACI,Ciudad,Aeropuerto,Estado,Vuelos comerciales,Tipo
+AGU,MMAS,Aguascalientes,Aeropuerto Internacional Aguascalientes,Aguascalientes,Sí,Grande
+MXL,MMML,Mexicali,Aeropuerto Internacional General Rodolfo Sánchez Taboada,Baja California,Sí,Mediano
+TIJ,MMTJ,Tijuana,Aeropuerto Internacional General Abelardo L. Rodríguez,Baja California,Sí,Grande
+CSW,MMSL,Cabo San Lucas,Aeropuerto Internacional Cabo San Lucas,Baja California Sur,Sí,Mediano
+CUA,MMDA,Comondú,Aeropuerto Nacional Ciudad Constitución,Baja California Sur,Sí,Pequeño
+GUB,MMGR,Guerrero Negro,Aeropuerto Guerrero Negro,Baja California Sur,Sí,Pequeño
+LAP,MMLP,La Paz,Aeropuerto Internacional Manuel Márquez de León,Baja California Sur,Sí,Mediano
+LTO,MMLT,Loreto,Aeropuerto Internacional Loreto,Baja California Sur,Sí,Grande
+SRL,,Mulegé,Aeropuerto Palo Verde,Baja California Sur,Sí,Pequeño
+SJD,MMSD,San José del Cabo,Aeropuerto Internacional Los Cabos,Baja California Sur,Sí,Grande
+CPE,MMCP,Campeche,Aeropuerto Internacional Ingeniero Alberto Acuña Ongay,Campeche,Sí,Mediano
+CME,MMCE,Ciudad del Carmen,Aeropuerto Internacional Ciudad del Carmen,Campeche,Sí,Mediano
+TAP,MMTP,Tapachula,Aeropuerto Internacional Tapachula,Chiapas,Sí,Mediano
+TGZ,MMTG,Tuxtla Gutiérrez,Aeropuerto Internacional Ángel Albino Corzo,Chiapas,Sí,Mediano
+CUU,MMCU,Chihuahua,Aeropuerto Internacional General Roberto Fierro Villalobos,Chihuahua,Sí,Grande
+CJS,MMCS,Ciudad Juárez,Aeropuerto Internacional Abraham González,Chihuahua,Sí,Grande
+MEX,MMMX,Ciudad de México,Aeropuerto Internacional Benito Juárez de la Ciudad de México (AICM),Ciudad de México,Sí,Grande
+PDS,MMPG,Piedras Negras,Aeropuerto Internacional Piedras Negras,Coahuila,Sí,Mediano
+SLW,MMIO,Saltillo,Aeropuerto Internacional Plan de Guadalupe,Coahuila,Sí,Mediano
+TRC,MMTC,Torreón,Aeropuerto Internacional Francisco Sarabia Tinoco,Coahuila,Sí,Mediano
+CLQ,MMIA,Colima,Aeropuerto Internacional Licenciado Miguel de la Madrid,Colima,Sí,Mediano
+ZLO,MMZO,Manzanillo,Aeropuerto Internacional Playa de Oro,Colima,Sí,Mediano
+DGO,MMDO,Durango,Aeropuerto Internacional General Guadalupe Victoria,Durango,Sí,Mediano
+TLC,MMTO,Toluca,Aeropuerto Internacional Adolfo López Mateos,Estado de México,Sí,Grande
+NLU,MMSM,Zumpango (Ciudad de México),Aeropuerto Internacional Felipe Ángeles (AIFA),Estado de México,Sí,Grande
+BJX,MMLO,Silao,Aeropuerto Internacional de Guanajuato (Bajío),Guanajuato,Sí,Grande
+ACA,MMAA,Acapulco,Aeropuerto Internacional General Juan N. Álvarez,Guerrero,Sí,Grande
+ZIH,MMZH,Ixtapa,Aeropuerto Internacional Ixtapa-Zihuatanejo,Guerrero,Sí,Grande
+GDL,MMGL,Guadalajara,Aeropuerto Internacional de Guadalajara,Jalisco,Sí,Grande
+PVR,MMPR,Puerto Vallarta,Aeropuerto Internacional Lic. Gustavo Díaz Ordaz (Puerto Vallarta),Jalisco,Sí,Grande
+MLM,MMMM,Morelia,Aeropuerto Internacional General Francisco J. Mujica,Michoacán,Sí,Grande
+UPN,MMPN,Uruapan,Aeropuerto Internacional de Uruapan,Michoacán,Sí,Mediano
+TPQ,MMEP,Tepic,Aeropuerto Nacional Amado Nervo,Nayarit,Sí,Mediano
+MTY,MMMY,Monterrey,Aeropuerto Internacional de Monterrey,Nuevo León,Sí,Grande
+HUX,MMBT,Huatulco,Aeropuerto Internacional Bahías de Huatulco,Oaxaca,Sí,Grande
+IZT,MMIT,Ixtepec,Aeropuerto Nacional de Ixtepec,Oaxaca,Sí,Mediano
+OAX,MMOX,Oaxaca,Aeropuerto Internacional de Oaxaca,Oaxaca,Sí,Grande
+PXM,MMPS,Puerto Escondido,Aeropuerto Internacional Puerto Escondido,Oaxaca,Sí,Mediano
+PBC,MMPB,Puebla,Aeropuerto Internacional Hermanos Serdán,Puebla,Sí,Grande
+QRO,MMQT,Querétaro,Aeropuerto Intercontinental Querétaro,Querétaro,Sí,Grande
+CUN,MMUN,Cancún,Aeropuerto Internacional de Cancún,Quintana Roo,Sí,Grande
+CTM,MMCM,Chetumal,Aeropuerto Internacional Chetumal,Quintana Roo,Sí,Mediano
+CZM,MMCZ,Cozumel,Aeropuerto Internacional Cozumel,Quintana Roo,Sí,Grande
+TQO,MMTL,Tulum,Aeropuerto Internacional Felipe Carrillo Puerto de Tulum,Quintana Roo,Sí,Grande
+SLP,MMSP,San Luis Potosí,Aeropuerto Internacional Ponciano Arriaga,San Luis Potosí,Sí,Mediano
+CUL,MMCL,Culiacán,Aeropuerto Internacional de Culiacán,Sinaloa,Sí,Grande
+LMM,MMLM,Los Mochis,Aeropuerto Internacional Valle del Fuerte,Sinaloa,Sí,Mediano
+MZT,MMMZ,Mazatlán,Aeropuerto Internacional General Rafael Buelna,Sinaloa,Sí,Grande
+CEN,MMCN,Ciudad Obregón,Aeropuerto Internacional Ciudad Obregón,Sonora,Sí,Mediano
+GYM,MMGM,Guaymas,Aeropuerto Internacional General José María Yáñez,Sonora,Sí,Mediano
+HMO,MMHO,Hermosillo,Aeropuerto Internacional General Ignacio L. Pesqueira,Sonora,Sí,Grande
+PPE,MMPE,Puerto Peñasco,Aeropuerto Internacional Mar de Cortés,Sonora,Sí,Pequeño
+VSA,MMVA,Villahermosa,Aeropuerto Internacional Carlos Rovirosa Pérez,Tabasco,Sí,Grande
+CVM,MMCV,Ciudad Victoria,Aeropuerto Internacional General Pedro Jose Mendez,Tamaulipas,Sí,Mediano
+MAM,MMMA,Matamoros,Aeropuerto Internacional General Servando Canales,Tamaulipas,Sí,Mediano
+NLD,MMNL,Nuevo Laredo,Aeropuerto Internacional Quetzalcóatl,Tamaulipas,Sí,Mediano
+REX,MMRX,Reynosa,Aeropuerto Internacional General Lucio Blanco,Tamaulipas,Sí,Mediano
+TAM,MMTM,Tampico,Aeropuerto Internacional General Francisco Javier Mina,Tamaulipas,Sí,Mediano
+MTT,MMMT,Minatitlán,Aeropuerto Internacional Minatitlán/Coatzacoalcos,Veracruz,Sí,Mediano
+PAZ,MMPA,Poza Rica,Aeropuerto Nacional El Tajín,Veracruz,Sí,Mediano
+VER,MMVR,Veracruz,Aeropuerto Internacional General Heriberto Jara,Veracruz,Sí,Grande
+MID,MMMD,Mérida,Aeropuerto Internacional Manuel Crescencio Rejón,Yucatán,Sí,Grande
+ZCL,MMZC,Zacatecas,Aeropuerto Internacional General Leobardo C. Ruiz,Zacatecas,Sí,Mediano
+BHL,,Ensenada,Aeropuerto Bahía de los Ángeles,Baja California,No,Pequeño
+ESE,MMES,Ensenada,Aeropuerto Internacional Ensenada (/ El Ciprés Air Base),Baja California,No,Mediano
+SFH,MMSF,Mexicali,Aeropuerto Internacional San Felipe,Baja California,No,Pequeño
+SNQ,,San Quintín,San Quintín Military Airstrip,Baja California,No,Pequeño
+PCO,MMPL,La Ribera,Aeropuerto Punta Colorada,Baja California Sur,No,Pequeño
+AJS,,Mulegé,Aeropuerto Punta Abreojos,Baja California Sur,No,Pequeño
+MUG,MMMG,Mulegé,Aeropuerto Mulege,Baja California Sur,No,Pequeño
+PCV,,Mulegé,Aeropuerto Punta Chivato,Baja California Sur,No,Pequeño
+SGM,,Mulegé,Aeropuerto San Ignacio,Baja California Sur,No,Pequeño
+CJT,MMCO,Comitán,Aeropuerto San Antonio Copalar,Chiapas,No,Pequeño
+PQM,MMPQ,Palenque,Aeropuerto Internacional Palenque,Chiapas,No,Pequeño
+NCG,MMCG,Nuevo Casas Grandes,Aeropuerto Municipal de Nuevo Casas Grandes,Chihuahua,No,Pequeño
+ACN,MMCC,Ciudad Acuña,Aeropuerto Internacional Ciudad Acuña,Coahuila,No,Mediano
+LOV,MMMV,Monclova,Aeropuerto Internacional Monclova,Coahuila,No,Mediano
+AZP,MMJC,Atizapán de Zaragoza,Aeropuerto Nacional Jorge Jiménez Cantú,Estado de México,No,Pequeño
+CYW,MMCY,Celaya,Aeropuerto Nacional Captain Rogelio Castillo,Guanajuato,No,Mediano
+LOM,MMOO,Lagos de Moreno,Aeropuerto Francisco Primo de Verdad y Ramos,Jalisco,No,Pequeño
+AZG,MMAG,Apatzingán,Aeropuerto Apatzingán - Pablo L. Sidar,Michoacán,No,Pequeño
+LZC,MMLC,Lázaro Cárdenas,Aeropuerto Lázaro Cárdenas,Michoacán,No,Mediano
+ZMM,MMZM,Zamora,Aeropuerto Zamora,Michoacán,No,Pequeño
+CVJ,MMCB,Cuernavaca,Aeropuerto Internacional General Mariano Matamoros,Morelos,No,Mediano
+NTR,MMAN,Monterrey,Aeropuerto Internacional Del Norte,Nuevo León,No,Mediano
+SCX,MMSZ,Salina Cruz,Estación Aeronaval de Salina Cruz,Oaxaca,No,Pequeño
+TCN,MMHC,Tehuacán,Aeropuerto Nacional Tehuacán,Puebla,No,Pequeño
+ISJ,MMIM,Isla Mujeres,Aeropuerto Nacional Isla Mujeres,Quintana Roo,No,Pequeño
+PCM,MMPY,Playa del Carmen,Aeropuerto Nacional Playa del Carmen,Quintana Roo,No,Pequeño
+TUY,MMTU,Tulum,Base Aeronaval de Tulum,Quintana Roo,No,Pequeño
+TSL,MMTN,Tamuín,Aeropuerto Nacional Tamuín,San Luis Potosí,No,Pequeño
+CNA,MMCA,Cananea,Aeropuerto Nacional Cananea,Sonora,No,Pequeño
+NOG,MMNG,Nogales,Aeropuerto Internacional Nogales,Sonora,No,Mediano
+UAC,MM76,San Luis Río Colorado,Aeropuerto San Luis Río Colorado,Sonora,No,Pequeño
+XAL,MM45,Álamos,Aeropuerto Álamos,Sonora,No,Pequeño
+MMC,MMDM,Ciudad Mante,Aeropuerto Nacional Ciudad Mante Los Huastecas,Tamaulipas,No,Pequeño
+JAL,MMJA,Xalapa,Aeropuerto El Lencero,Veracruz,No,Mediano
+CZA,MMCT,Chichén Itzá,Aeropuerto Internacional Chichén Itzá,Yucatán,No,Pequeño
+TZM,MM72,Tizimín,Aeródromo de Cupul,Yucatán,No,Pequeño
